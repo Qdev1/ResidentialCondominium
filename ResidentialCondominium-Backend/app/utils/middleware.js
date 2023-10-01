@@ -21,5 +21,22 @@ module.exports = {
             return res.status(403).send('Forbidden');
         }
         next();
-    }
+    },
+
+    authenticateToken: (req, res, next) => {
+        const token = req.headers.authorization;
+
+        if (!token) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        jwt.verify(token, _const.JWT_ACCESS_KEY, (err, decodedToken) => {
+            if (err) {
+                return res.status(401).json({ error: "Invalid token" });
+            }
+
+            req.user = decodedToken.user;
+            next();
+        });
+    },
 }

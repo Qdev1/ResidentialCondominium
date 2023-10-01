@@ -6,6 +6,7 @@ const app = express();
 const _CONST = require('./app/config/constant')
 
 const authRoute = require('./app/routers/auth');
+const userRoute = require('./app/routers/user');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -18,7 +19,7 @@ require('./app/models/createTables');
 const db = mysql.createConnection({
     host: 'localhost', 
     user: 'root',
-    password: '12345678',
+    password: 'root',
     database: 'residential'
 });
 
@@ -31,6 +32,7 @@ db.connect((err) => {
 });
 
 app.use('/api/auth', authRoute);
+app.use('/api/user', userRoute);
 
 const PORT = process.env.PORT || _CONST.PORT;
 
