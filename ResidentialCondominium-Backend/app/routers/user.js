@@ -5,6 +5,8 @@ const verifyToken = require('../utils/middleware');
 router.post('/search', verifyToken.checkLogin, userController.getAllUsers);
 router.get('/profile', verifyToken.checkLogin, userController.getProfile);
 router.get("/searchByEmail", verifyToken.checkLogin, userController.searchUserByEmail);
+router.put('/updateProfile/:id', verifyToken.checkLogin, userController.updateProfile);
+router.put('/changePassword/:id', verifyToken.checkLogin, userController.changePassword);
 
 router.post('/', verifyToken.checkLogin, userController.createUser);
 router.put('/:id', verifyToken.checkLogin, userController.updateUser);

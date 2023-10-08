@@ -84,7 +84,6 @@ const userController = {
             const updatedValues = [
                 username || null,
                 email || null,
-                password || null,
                 role || null,
                 phone || null,
                 status || null,
@@ -139,6 +138,71 @@ const userController = {
             }
         });
     },
+
+    updateProfile: async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const { username, email, phone, status } = req.body;
+    
+            const updateQuery = 'UPDATE users SET username = ?, email = ?, phone = ?, status = ? WHERE id = ?';
+    
+            const updatedValues = [
+                username || null,
+                email || null,
+                phone || null,
+                status || null,
+                userId
+            ];
+    
+            const [result] = await db.execute(updateQuery, updatedValues);
+    
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            res.status(200).json("Profile updated successfully");
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    changePassword: async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const { currentPassword, newPassword } = req.body;
+    
+            const [user] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
+    
+            if (user.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            const isPasswordValid = await bcrypt.compare(currentPassword, user[0].password);
+    
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'Current password is incorrect' });
+            }
+    
+            const salt = await bcrypt.genSalt(10);
+            const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+    
+            const updateQuery = 'UPDATE users SET password = ? WHERE id = ?';
+    
+            const updatedValues = [
+                hashedNewPassword || null,
+                userId
+            ];
+    
+            await db.execute(updateQuery, updatedValues);
+    
+            res.status(200).json("Password changed successfully");
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+    
 };
 
 module.exports = userController;
