@@ -22,6 +22,33 @@ const userApi = {
         return axiosClient.get(url);
     },
    
+    listUserByAdmin(data) {
+        const url = '/user/search';
+        if (!data.page || !data.limit) {
+            data.limit = 10;
+            data.page = 1;
+        }
+        return axiosClient.post(url, data);
+    },
+    
+    banAccount(data, id) {
+        const url = '/user/' + id;
+        return axiosClient.put(url, data);
+    },
+
+    unBanAccount(data, id) {
+        const url = '/user/' + id;
+        return axiosClient.put(url, data);
+    },
+
+    searchUser(email) {
+        console.log(email);
+        const params = {
+            email: email.target.value
+        }
+        const url = '/user/searchByEmail';
+        return axiosClient.get(url, { params });
+    },
 }
 
 export default userApi;

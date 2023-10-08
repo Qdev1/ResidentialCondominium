@@ -33,6 +33,14 @@ const DashBoard = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const AccountManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/AccountManagement/accountManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -63,6 +71,12 @@ const RouterURL = withRouter(({ location }) => {
                                 <DashBoard />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/account-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <AccountManagement />
+                            </Suspense>
+                        </PrivateRoute>
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -87,8 +101,11 @@ const RouterURL = withRouter(({ location }) => {
                     <Route exact path="/news-list">
                         <DefaultContainer />
                     </Route>
-                
                     <Route exact path="/dash-board">
+                        <DefaultContainer />
+                    </Route>
+                    
+                    <Route exact path="/account-management">
                         <DefaultContainer />
                     </Route>
                     <Route>
