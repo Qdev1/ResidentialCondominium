@@ -7,6 +7,7 @@ const _CONST = require('./app/config/constant')
 
 const authRoute = require('./app/routers/auth');
 const userRoute = require('./app/routers/user');
+const roomRoute = require('./app/routers/roomRoutes');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -33,6 +34,7 @@ db.connect((err) => {
 
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
+app.use('/api/room', roomRoute);
 
 const PORT = process.env.PORT || _CONST.PORT;
 
