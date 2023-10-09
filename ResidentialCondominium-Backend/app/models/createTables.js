@@ -54,6 +54,19 @@ const createTables = async () => {
 
         console.log('Table "room_residents" created or already exists.');
 
+        // Thêm bảng "asset_categories"
+        await db.execute(`
+         CREATE TABLE IF NOT EXISTS asset_categories (
+             id INT AUTO_INCREMENT PRIMARY KEY,
+             name VARCHAR(255) NOT NULL,
+             description TEXT,
+             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+         )
+     `);
+
+        console.log('Table "asset_categories" created or already exists.');
+
     } catch (error) {
         console.error('Error creating tables:', error);
     } finally {
