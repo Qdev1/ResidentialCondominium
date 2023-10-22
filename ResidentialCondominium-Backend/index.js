@@ -5,11 +5,6 @@ const mysql = require('mysql2');
 const app = express();
 const _CONST = require('./app/config/constant')
 
-const authRoute = require('./app/routers/auth');
-const userRoute = require('./app/routers/user');
-const roomRoute = require('./app/routers/roomRoutes');
-const assetCategoryRoute = require('./app/routers/assetCategoryRoutes');
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -21,7 +16,7 @@ require('./app/models/createTables');
 const db = mysql.createConnection({
     host: 'localhost', 
     user: 'root',
-    password: 'root',
+    password: '12345678',
     database: 'residential'
 });
 
@@ -33,10 +28,17 @@ db.connect((err) => {
     }
 });
 
+const authRoute = require('./app/routers/auth');
+const userRoute = require('./app/routers/user');
+const roomRoute = require('./app/routers/roomRoutes');
+const assetCategoryRoute = require('./app/routers/assetCategoryRoutes');
+const assetsRoute = require('./app/routers/assetRoutes');
+
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/room', roomRoute);
 app.use('/api/assetCategory', assetCategoryRoute);
+app.use('/api/assets', assetsRoute);
 
 const PORT = process.env.PORT || _CONST.PORT;
 

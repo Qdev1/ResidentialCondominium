@@ -81,6 +81,24 @@ const createTables = async () => {
 
         console.log('Table "password_reset_tokens" created or already exists.');
 
+        // Tạo bảng "assets " nếu chưa tồn tại
+        await db.execute(`
+          CREATE TABLE IF NOT EXISTS assets (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            description TEXT,
+            value DECIMAL(10, 2), -- Thay đổi kiểu dữ liệu tùy theo cần
+            location VARCHAR(255),
+            status VARCHAR(255),
+            category_id INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (category_id) REFERENCES asset_categories(id)
+        )
+          `);
+
+        console.log('Table "assets " created or already exists.');
+
     } catch (error) {
         console.error('Error creating tables:', error);
     } finally {
