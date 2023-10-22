@@ -16,7 +16,7 @@ require('./app/models/createTables');
 const db = mysql.createConnection({
     host: 'localhost', 
     user: 'root',
-    password: '12345678',
+    password: 'root',
     database: 'residential'
 });
 

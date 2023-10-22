@@ -97,7 +97,22 @@ const createTables = async () => {
         )
           `);
 
-        console.log('Table "assets " created or already exists.');
+        console.log('Table "assets" created or already exists.');
+
+        // Tạo bảng "asset_reports" nếu chưa tồn tại
+        await db.execute(`
+         CREATE TABLE IF NOT EXISTS asset_reports (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            asset_id INT,
+            report_date DATE,
+            report_description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (asset_id) REFERENCES assets(id)
+        )
+         `);
+
+        console.log('Table "asset_reports" created or already exists.');
 
     } catch (error) {
         console.error('Error creating tables:', error);
