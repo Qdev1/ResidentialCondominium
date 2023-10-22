@@ -90,6 +90,7 @@ const createTables = async () => {
             value DECIMAL(10, 2), -- Thay đổi kiểu dữ liệu tùy theo cần
             location VARCHAR(255),
             status VARCHAR(255),
+            quantity INT,
             category_id INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -113,6 +114,27 @@ const createTables = async () => {
          `);
 
         console.log('Table "asset_reports" created or already exists.');
+
+        // Tạo bảng "asset_event_history" nếu chưa tồn tại
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS asset_event_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                asset_id INT,
+                event_type VARCHAR(255),
+                event_date TIMESTAMP,
+                description TEXT,
+                quantity INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (asset_id) REFERENCES assets(id)
+            )
+            `);
+
+        console.log('Table "asset_event_history" created or already exists.');
+
+        // await db.execute(`
+        //     ALTER TABLE assets
+        //     ADD quantity INT;
+        //     `);
 
     } catch (error) {
         console.error('Error creating tables:', error);

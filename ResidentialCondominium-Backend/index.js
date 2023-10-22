@@ -33,12 +33,15 @@ const userRoute = require('./app/routers/user');
 const roomRoute = require('./app/routers/roomRoutes');
 const assetCategoryRoute = require('./app/routers/assetCategoryRoutes');
 const assetsRoute = require('./app/routers/assetRoutes');
+const eventsRoute = require('./app/routers/assetEventRoutes');
 
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/room', roomRoute);
 app.use('/api/assetCategory', assetCategoryRoute);
 app.use('/api/assets', assetsRoute);
+app.use('/api/events', eventsRoute);
+
 
 const PORT = process.env.PORT || _CONST.PORT;
 
