@@ -131,8 +131,8 @@ const createTables = async () => {
 
         console.log('Table "asset_event_history" created or already exists.');
 
-         // Tạo bảng "maintenance_plans" nếu chưa tồn tại
-         await db.execute(`
+        // Tạo bảng "maintenance_plans" nếu chưa tồn tại
+        await db.execute(`
          CREATE TABLE IF NOT EXISTS maintenance_plans (
             id INT AUTO_INCREMENT PRIMARY KEY,
             asset_id INT,
@@ -145,7 +145,23 @@ const createTables = async () => {
         )
          `);
 
-     console.log('Table "maintenance_plans" created or already exists.');
+        console.log('Table "maintenance_plans" created or already exists.');
+
+        // Tạo bảng "vendors " nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS vendors (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            phone VARCHAR(255),
+            address TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );
+        
+      `);
+
+        console.log('Table "vendors " created or already exists.');
 
         // await db.execute(`
         //     ALTER TABLE assets
