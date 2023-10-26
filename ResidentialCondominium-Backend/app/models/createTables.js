@@ -194,6 +194,22 @@ const createTables = async () => {
 
         console.log('Table "family_info" created or already exists.');
 
+        // Tạo bảng "complaints" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS complaints (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            subject VARCHAR(255) NOT NULL,
+            description TEXT,
+            status VARCHAR(255) DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+      `);
+
+        console.log('Table "complaints" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
