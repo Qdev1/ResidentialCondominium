@@ -163,6 +163,37 @@ const createTables = async () => {
 
         console.log('Table "vendors " created or already exists.');
 
+        // Tạo bảng "personal_info " nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS personal_info (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            full_name VARCHAR(255),
+            address TEXT,
+            phone_number VARCHAR(20),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+        `);
+
+        console.log('Table "personal_info" created or already exists.');
+
+        // Tạo bảng "family_info" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS family_info (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            personal_info_id INT,
+            spouse_name VARCHAR(255),
+            child_name VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (personal_info_id) REFERENCES personal_info(id)
+        )
+      `);
+
+        console.log('Table "family_info" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
