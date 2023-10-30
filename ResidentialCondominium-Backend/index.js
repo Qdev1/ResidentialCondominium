@@ -38,6 +38,7 @@ const maintenancePlanRoute = require('./app/routers/maintenancePlanRoutes');
 const vendorsRoute = require('./app/routers/vendorRoutes');
 const complaintRoutes = require('./app/routers/complaintRoutes');
 const notificationRoutes = require('./app/routers/notificationRoutes');
+const visitorsRoutes = require('./app/routers/visitorsRoutes');
 
 
 app.use('/api/auth', authRoute);
@@ -50,6 +51,7 @@ app.use('/api/maintenance-plans', maintenancePlanRoute);
 app.use('/api/vendors', vendorsRoute);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/visitors', visitorsRoutes);
 
 
 const PORT = process.env.PORT || _CONST.PORT;

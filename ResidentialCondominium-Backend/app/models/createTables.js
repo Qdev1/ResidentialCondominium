@@ -223,9 +223,32 @@ const createTables = async () => {
 
         console.log('Table "notifications" created or already exists.');
 
+        // Tạo bảng "visitors" nếu chưa tồn tại
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS visitors (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255),
+                phone VARCHAR(255),
+                entryDate DATETIME,
+                reasonToVisit TEXT,
+                citizenId VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+       `);
+
+        console.log('Table "visitors" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
+        //     `);
+
+        // Thêm trường "role" vào bảng "notifications"
+        // await db.execute(`
+        //     ALTER TABLE notifications
+        //     ADD role VARCHAR(255) AFTER content;
         //     `);
 
     } catch (error) {
