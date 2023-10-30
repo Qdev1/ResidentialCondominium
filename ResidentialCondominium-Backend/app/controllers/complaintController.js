@@ -21,14 +21,90 @@ const complaintController = {
 
             const complaintId = complaintRows.insertId;
 
-            // Sau khi lưu thông tin khiếu nại, bạn có thể thực hiện các hành động thông báo tới quản lý hoặc cập nhật trạng thái
-
             res.status(201).json({ message: 'Complaint submitted successfully', status: true });
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
         }
     },
+
+    // Lấy tất cả thông tin về khiếu nại
+    getAllComplaints: async (req, res) => {
+        try {
+            const [complaints] = await db.execute('SELECT * FROM complaints');
+            res.status(200).json(complaints);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // Cập nhật thông tin của một khiếu nại
+    updateComplaint: async (req, res) => {
+        try {
+            const { complaintId } = req.params;
+            const { user_id, subject, description } = req.body;
+            const query = 'UPDATE complaints SET user_id = ?, subject = ?, description = ? WHERE id = ?';
+            await db.execute(query, [user_id, subject, description, complaintId]);
+            res.status(200).json({ message: 'Complaint updated successfully', status: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // Xóa thông tin của một khiếu nại
+    deleteComplaint: async (req, res) => {
+        try {
+            const { complaintId } = req.params;
+            const query = 'DELETE FROM complaints WHERE id = ?';
+            await db.execute(query, [complaintId]);
+            res.status(200).json({ message: 'Complaint deleted successfully', status: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // Lấy thông tin của một khiếu nại dựa trên ID
+    getComplaintById: async (req, res) => {
+        try {
+            const { complaintId } = req.params;
+            const [complaint] = await db.execute('SELECT * FROM complaints WHERE id = ?', [complaintId]);
+
+            if (complaint.length === 0) {
+                res.status(404).json({ message: 'Complaint not found', status: false });
+            } else {
+                res.status(200).json(complaint[0]);
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // Tìm kiếm khiếu nại dựa trên tiêu đề
+    searchComplaintsBySubject: async (req, res) => {
+        try {
+            const { subject } = req.query;
+
+            if (!subject) {
+                return res.status(400).json({ message: 'Subject is required', status: false });
+            }
+
+            const query = 'SELECT * FROM complaints WHERE subject LIKE ?';
+            const [complaints] = await db.execute(query, [`%${subject}%`]);
+
+            if (complaints.length === 0) {
+                res.status(404).json({ message: 'No complaints found with the specified subject', status: false });
+            } else {
+                res.status(200).json(complaints);
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    }
 };
 
 module.exports = complaintController;
