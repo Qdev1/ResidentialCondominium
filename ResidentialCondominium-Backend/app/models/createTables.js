@@ -240,6 +240,19 @@ const createTables = async () => {
 
         console.log('Table "visitors" created or already exists.');
 
+        // Tạo bảng "residence_rules" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS residence_rules (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            content TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+    `);
+
+        console.log('Table "residence_rules" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
