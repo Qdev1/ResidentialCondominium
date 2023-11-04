@@ -253,6 +253,52 @@ const createTables = async () => {
 
         console.log('Table "residence_rules" created or already exists.');
 
+        // Tạo bảng "meetings" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS meetings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            date DATETIME,
+            description TEXT,
+            location VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+        `);
+
+        console.log('Table "meetings" created or already exists.');
+
+        // Tạo bảng "events" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS events (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            event_name VARCHAR(255) NOT NULL,
+            event_date DATE NOT NULL,
+            description TEXT,
+            meeting_id INT,
+            FOREIGN KEY (meeting_id) REFERENCES meetings(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+        `);
+
+        console.log('Table "events" created or already exists.');
+
+         // Tạo bảng "meeting_participants" nếu chưa tồn tại
+         await db.execute(`
+         CREATE TABLE IF NOT EXISTS meeting_participants (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            meeting_id INT,
+            user_id INT,
+            FOREIGN KEY (meeting_id) REFERENCES meetings(id),
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+         `);
+ 
+         console.log('Table "meeting_participants" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
