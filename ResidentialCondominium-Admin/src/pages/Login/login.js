@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import "./login.css";
-import userApi from "../../apis/userApi";
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Button, Divider, Form, Input, notification } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Form, Input, Button, Checkbox, Divider, Alert, notification } from 'antd';
+import userApi from "../../apis/userApi";
 import backgroundLogin from "../../assets/image/background-login.png";
+import "./login.css";
 
 const Login = () => {
 

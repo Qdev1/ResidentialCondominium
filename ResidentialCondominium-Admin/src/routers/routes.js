@@ -57,6 +57,14 @@ const Profile = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const AssetCategory = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/AssetCategory/assetCategory'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -71,7 +79,7 @@ const RouterURL = withRouter(({ location }) => {
             <PublicRoute exact path="/login">
                 <Login />
             </PublicRoute>
-           
+
         </div>
     )
 
@@ -105,7 +113,13 @@ const RouterURL = withRouter(({ location }) => {
                                 <ChangePassword />
                             </Suspense>
                         </PrivateRoute>
-                        
+
+                        <PrivateRoute exact path="/asset-list">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <AssetCategory />
+                            </Suspense>
+                        </PrivateRoute>
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -135,14 +149,19 @@ const RouterURL = withRouter(({ location }) => {
                     <Route exact path="/change-password/:id">
                         <DefaultContainer />
                     </Route>
-                    
+
                     <Route exact path="/dash-board">
                         <DefaultContainer />
                     </Route>
-                    
+
                     <Route exact path="/account-management">
                         <DefaultContainer />
                     </Route>
+
+                    <Route exact path="/asset-list">
+                        <DefaultContainer />
+                    </Route>
+
                     <Route>
                         <NotFound />
                     </Route>

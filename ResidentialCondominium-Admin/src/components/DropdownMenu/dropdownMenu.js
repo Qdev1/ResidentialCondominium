@@ -1,9 +1,9 @@
+import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Dropdown, Menu, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import "./dropdownMenu.css";
 import { useHistory } from "react-router-dom";
-import { Avatar, Dropdown, Row, Menu } from 'antd';
-import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
 import userApi from "../../apis/userApi";
+import "./dropdownMenu.css";
 
 function DropdownAvatar() {
 

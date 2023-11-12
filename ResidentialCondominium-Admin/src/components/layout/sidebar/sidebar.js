@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import "./sidebar.css";
+import { DashboardOutlined, ShoppingOutlined, UserOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
+import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
-import { UserOutlined, DashboardOutlined } from '@ant-design/icons';
+import "./sidebar.css";
 
 const { Sider } = Layout;
 
@@ -23,6 +23,12 @@ function Sidebar() {
       title: "Quản Lý Tài Khoản",
       link: "/account-management",
       icon: <UserOutlined />
+    },
+    {
+      key: "asset-list",
+      title: "Danh mục tài sản",
+      link: "/asset-list",
+      icon: <ShoppingOutlined />
     },
  
   ];
