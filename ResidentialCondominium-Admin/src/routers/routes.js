@@ -41,6 +41,22 @@ const AccountManagement = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const ChangePassword = lazy(() => {
+    return Promise.all([
+        import('../pages/ChangePassword/changePassword'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+const Profile = lazy(() => {
+    return Promise.all([
+        import('../pages/Profile/profile'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -77,6 +93,18 @@ const RouterURL = withRouter(({ location }) => {
                                 <AccountManagement />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/profile">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <Profile />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        <PrivateRoute exact path="/change-password/:id">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <ChangePassword />
+                            </Suspense>
+                        </PrivateRoute>
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -95,12 +123,19 @@ const RouterURL = withRouter(({ location }) => {
                     <Route exact path="/">
                         <LoginContainer />
                     </Route>
+
                     <Route exact path="/login">
                         <LoginContainer />
                     </Route>
-                    <Route exact path="/news-list">
+
+                    <Route exact path="/profile">
                         <DefaultContainer />
                     </Route>
+
+                    <Route exact path="/change-password/:id">
+                        <DefaultContainer />
+                    </Route>
+                    
                     <Route exact path="/dash-board">
                         <DefaultContainer />
                     </Route>
