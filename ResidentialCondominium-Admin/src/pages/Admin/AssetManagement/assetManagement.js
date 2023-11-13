@@ -17,25 +17,27 @@ import {
     Space,
     Spin,
     Table,
-    notification
+    notification,
+    Select
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import assetCategoryApi from "../../../apis/assetCategoryApi";
-import "./assetCategory.css";
+import assetManagementApi from "../../../apis/assetManagementApi";
+import "./assetManagement.css";
+import assetCategoryApi from '../../../apis/assetCategoryApi';
 
-const AssetCategory = () => {
+const { Option } = Select;
+
+const AssetManagement = () => {
 
     const [category, setCategory] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
-
-    const history = useHistory();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -47,20 +49,26 @@ const AssetCategory = () => {
             const categoryList = {
                 "name": values.name,
                 "description": values.description,
+                "value": values.value,
+                "location": values.location,
+                "status": values.status,
+                "categoryId": values.categoryId,
+                "quantity": values.quantity,
+
             }
-            return assetCategoryApi.createAssetCategory(categoryList).then(response => {
+            return assetManagementApi.createAssetManagement(categoryList).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo danh mục tài sản thất bại',
+                            'Tạo tài sản thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo danh mục tài sản thành công',
+                            'Tạo tài sản thành công',
                     });
                     setOpenModalCreate(false);
                     handleCategoryList();
@@ -78,20 +86,25 @@ const AssetCategory = () => {
             const categoryList = {
                 "name": values.name,
                 "description": values.description,
+                "value": values.value,
+                "location": values.location,
+                "status": values.status,
+                "categoryId": values.categoryId,
+                "quantity": values.quantity,
             }
-            return assetCategoryApi.updateAssetCategory(categoryList, id).then(response => {
+            return assetManagementApi.updateAssetManagement(categoryList, id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Chỉnh sửa danh mục tài sản thất bại',
+                            'Chỉnh sửa tài sản thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Chỉnh sửa danh mục tài sản thành công',
+                            'Chỉnh sửa tài sản thành công',
                     });
                     handleCategoryList();
                     setOpenModalUpdate(false);
@@ -114,7 +127,7 @@ const AssetCategory = () => {
 
     const handleCategoryList = async () => {
         try {
-            await assetCategoryApi.listAssetCategories().then((res) => {
+            await assetManagementApi.listAssetManagement().then((res) => {
                 setCategory(res.data);
                 setLoading(false);
             });
@@ -127,12 +140,12 @@ const AssetCategory = () => {
     const handleDeleteCategory = async (id) => {
         setLoading(true);
         try {
-            await assetCategoryApi.deleteAssetCategory(id).then(response => {
+            await assetManagementApi.deleteAssetManagement(id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Xóa danh mục tài sản thất bại',
+                            'Xóa tài sản thất bại',
 
                     });
                     setLoading(false);
@@ -141,7 +154,7 @@ const AssetCategory = () => {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Xóa danh mục tài sản thành công',
+                            'Xóa tài sản thành công',
 
                     });
                     handleCategoryList();
@@ -159,11 +172,16 @@ const AssetCategory = () => {
         setOpenModalUpdate(true);
         (async () => {
             try {
-                const response = await assetCategoryApi.getDetailAssetCategory(id);
+                const response = await assetManagementApi.getDetailAssetManagement(id);
                 setId(id);
                 form2.setFieldsValue({
                     name: response.data.name,
                     description: response.data.description,
+                    value: response.data.value,
+                    location: response.data.location,
+                    status: response.data.status,
+                    categoryId: response.data.category_id,
+                    quantity: response.data.quantity,
                 });
                 console.log(form2);
                 setLoading(false);
@@ -175,7 +193,7 @@ const AssetCategory = () => {
 
     const handleFilter = async (name) => {
         try {
-            const res = await assetCategoryApi.searchAssetCategory(name);
+            const res = await assetManagementApi.searchAssetManagement(name);
             setCategory(res.data);
         } catch (error) {
             console.log('search to fetch category list:' + error);
@@ -200,10 +218,41 @@ const AssetCategory = () => {
             key: 'description',
         },
         {
+            title: 'Giá trị',
+            dataIndex: 'value',
+            key: 'value',
+        },
+        {
+            title: 'Vị trí',
+            dataIndex: 'location',
+            key: 'location',
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+        },
+        {
+            title: 'Danh mục',
+            dataIndex: 'category_name',
+            key: 'category_name',
+        },
+        {
             title: 'Ngày tạo',
             key: 'created_at',
             dataIndex: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
+        {
+            title: 'Ngày cập nhật',
+            key: 'updated_at',
+            dataIndex: 'updated_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
+        {
+            title: 'Số lượng',
+            key: 'quantity',
+            dataIndex: 'quantity',
         },
         {
             title: 'Action',
@@ -221,7 +270,7 @@ const AssetCategory = () => {
                         <div
                             style={{ marginLeft: 10 }}>
                             <Popconfirm
-                                title="Bạn có chắc chắn xóa danh mục tài sản này?"
+                                title="Bạn có chắc chắn xóa tài sản này?"
                                 onConfirm={() => handleDeleteCategory(record.id)}
                                 okText="Yes"
                                 cancelText="No"
@@ -244,9 +293,15 @@ const AssetCategory = () => {
     useEffect(() => {
         (async () => {
             try {
-                await assetCategoryApi.listAssetCategories().then((res) => {
+                await assetManagementApi.listAssetManagement().then((res) => {
                     console.log(res);
                     setCategory(res.data);
+                    setLoading(false);
+                });
+
+                await assetCategoryApi.listAssetCategories().then((res) => {
+                    console.log(res);
+                    setCategoryList(res.data);
                     setLoading(false);
                 });
                 ;
@@ -266,7 +321,7 @@ const AssetCategory = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Danh mục tài sản</span>
+                                <span>Tài sản</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
@@ -289,7 +344,7 @@ const AssetCategory = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
-                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo danh mục tài sản</Button>
+                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo tài sản</Button>
                                             </Space>
                                         </Row>
                                     </Col>
@@ -305,7 +360,7 @@ const AssetCategory = () => {
                 </div>
 
                 <Modal
-                    title="Tạo danh mục tài sản mới"
+                    title="Tạo tài sản mới"
                     visible={openModalCreate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -360,12 +415,88 @@ const AssetCategory = () => {
                         >
                             <Input placeholder="Mô tả" />
                         </Form.Item>
+                        <Form.Item
+                            name="value"
+                            label="Giá trị"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập giá trị!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Giá trị" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="location"
+                            label="Vị trí"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập vị trí!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Vị trí" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="status"
+                            label="Trạng thái"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập trạng thái!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Trạng thái" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="categoryId"
+                            label="Danh mục"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn danh mục!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn danh mục">
+                                {categoryList.map(category => (
+                                    <Option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="quantity"
+                            label="Số lượng"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập số lượng!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Số lượng" />
+                        </Form.Item>
+
 
                     </Form>
                 </Modal>
 
                 <Modal
-                    title="Chỉnh sửa danh mục tài sản"
+                    title="Chỉnh sửa tài sản"
                     visible={openModalUpdate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -420,6 +551,76 @@ const AssetCategory = () => {
                         >
                             <Input placeholder="Mô tả" />
                         </Form.Item>
+                        <Form.Item
+                            name="value"
+                            label="Giá trị"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập giá trị!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Giá trị" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="location"
+                            label="Vị trí"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập vị trí!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Vị trí" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="status"
+                            label="Trạng thái"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập trạng thái!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Trạng thái" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="categoryId"
+                            label="ID Danh mục"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập ID danh mục!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="ID Danh mục" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="quantity"
+                            label="Số lượng"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập số lượng!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Số lượng" />
+                        </Form.Item>
+
 
                     </Form>
                 </Modal>
@@ -430,4 +631,4 @@ const AssetCategory = () => {
     )
 }
 
-export default AssetCategory;
+export default AssetManagement;

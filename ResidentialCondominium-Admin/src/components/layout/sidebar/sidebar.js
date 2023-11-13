@@ -1,4 +1,4 @@
-import { DashboardOutlined, ShoppingOutlined, UserOutlined } from '@ant-design/icons';
+import { DashboardOutlined, ShoppingOutlined, UserOutlined,ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -23,6 +23,12 @@ function Sidebar() {
       title: "Quản Lý Tài Khoản",
       link: "/account-management",
       icon: <UserOutlined />
+    },
+    {
+      key: "asset-management",
+      title: "Quản lý tài sản",
+      link: "/asset-management",
+      icon: <ContainerOutlined />
     },
     {
       key: "asset-list",

@@ -4,8 +4,7 @@ const db = require('../config/db');
 const assetController = {
     getAllAssets: async (req, res) => {
         try {
-            // Thực hiện truy vấn SQL để lấy tất cả các tài sản từ bảng tài sản
-            const query = 'SELECT * FROM assets';
+            const query = 'SELECT assets.*, asset_categories.name AS category_name FROM assets LEFT JOIN asset_categories ON assets.category_id = asset_categories.id';
             const [assets] = await db.execute(query);
             res.status(200).json({ data: assets });
         } catch (err) {
@@ -15,16 +14,12 @@ const assetController = {
 
     createAsset: async (req, res) => {
         try {
-            const { name, description, value, location, status, categoryId } = req.body;
-
-            console.log(name, description, value, location, status, categoryId)
-
-            const query = 'INSERT INTO assets (name, description, value, location, status, category_id) VALUES (?, ?, ?, ?, ?, ?)';
-            console.log(query);
-
-            const [result] = await db.execute(query, [name, description, value, location, status, categoryId]);
+            const { name, description, value, location, status, categoryId, quantity } = req.body;
+    
+            const query = 'INSERT INTO assets (name, description, value, location, status, category_id, quantity) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const [result] = await db.execute(query, [name, description, value, location, status, categoryId, quantity]);
             const assetId = result.insertId;
-            res.status(201).json({ id: assetId, name, description, value, location, status, categoryId });
+            res.status(201).json({ id: assetId, name, description, value, location, status, categoryId, quantity });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -53,10 +48,10 @@ const assetController = {
         }
     },
 
-    getAssetById: async (req, res) => {
+   getAssetById: async (req, res) => {
         try {
             const assetId = req.params.id;
-            const query = 'SELECT * FROM assets WHERE id = ?';
+            const query = 'SELECT assets.*, asset_categories.name AS category_name FROM assets LEFT JOIN asset_categories ON assets.category_id = asset_categories.id WHERE assets.id = ?';
             const [asset] = await db.execute(query, [assetId]);
 
             if (asset.length === 0) {

@@ -65,6 +65,14 @@ const AssetCategory = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const AssetManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/AssetManagement/assetManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -120,6 +128,12 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        <PrivateRoute exact path="/asset-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <AssetManagement />
+                            </Suspense>
+                        </PrivateRoute>
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -155,6 +169,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/account-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/asset-management">
                         <DefaultContainer />
                     </Route>
 
