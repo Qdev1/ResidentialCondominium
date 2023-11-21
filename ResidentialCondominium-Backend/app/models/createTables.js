@@ -284,8 +284,8 @@ const createTables = async () => {
 
         console.log('Table "events" created or already exists.');
 
-         // Tạo bảng "meeting_participants" nếu chưa tồn tại
-         await db.execute(`
+        // Tạo bảng "meeting_participants" nếu chưa tồn tại
+        await db.execute(`
          CREATE TABLE IF NOT EXISTS meeting_participants (
             id INT AUTO_INCREMENT PRIMARY KEY,
             meeting_id INT,
@@ -296,8 +296,24 @@ const createTables = async () => {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )
          `);
- 
-         console.log('Table "meeting_participants" created or already exists.');
+
+        console.log('Table "meeting_participants" created or already exists.');
+
+        // Tạo bảng "maintenance_history" nếu chưa tồn tại
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS maintenance_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                asset_id INT,
+                description TEXT,
+                date DATE,
+                cost DECIMAL(10, 2), -- Thay đổi kiểu dữ liệu tùy theo cần
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (asset_id) REFERENCES assets(id)
+            )
+            `);
+
+        console.log('Table "maintenance_history" created or already exists.');
 
         // await db.execute(`
         //     ALTER TABLE assets

@@ -41,6 +41,7 @@ const notificationRoutes = require('./app/routers/notificationRoutes');
 const visitorsRoutes = require('./app/routers/visitorsRoutes');
 const residenceRulesRoutes = require('./app/routers/residenceRulesRoutes');
 const residentMeetingRoutes = require('./app/routers/residentEventsRoutes');
+const maintenanceHistoryRoutes = require('./app/routers/maintenanceHistoryRoutes');
 
 
 app.use('/api/auth', authRoute);
@@ -56,6 +57,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/visitors', visitorsRoutes);
 app.use('/api/residence-rules', residenceRulesRoutes);
 app.use('/api/meetings', residentMeetingRoutes);
+app.use('/api/maintenance-history', maintenanceHistoryRoutes);
 
 const PORT = process.env.PORT || _CONST.PORT;
 
