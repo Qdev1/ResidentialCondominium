@@ -1,4 +1,4 @@
-import { DashboardOutlined, ShoppingOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined,ContainerOutlined } from '@ant-design/icons';
+import { DashboardOutlined, ShoppingOutlined, AlertOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -31,6 +31,12 @@ function Sidebar() {
       icon: <ContainerOutlined />
     },
     {
+      key: "sales-management",
+      title: "Quản lý mua bán tài sản",
+      link: "/sales-management",
+      icon: <BarcodeOutlined />
+    },
+    {
       key: "asset-list",
       title: "Danh mục tài sản",
       link: "/asset-list",
@@ -48,10 +54,16 @@ function Sidebar() {
       link: "/vendor-management",
       icon: <PicLeftOutlined />
     },
- 
+    {
+      key: "asset-history",
+      title: "Lịch sử mua bán",
+      link: "/asset-history",
+      icon: <AlertOutlined />
+    },
+
   ];
 
-  
+
 
   const navigate = (link, key) => {
     history.push(link);
@@ -75,28 +87,28 @@ function Sidebar() {
         boxShadow: " 0 1px 4px -1px rgb(0 0 0 / 15%)"
       }}
     >
-     <Menu
-          mode="inline"
-          selectedKeys={location.pathname.split("/")}
-          defaultOpenKeys={['account']}
-          style={{ height: '100%', borderRight: 0, backgroundColor: "#FFFFFF" }}
-          theme='light'
-        >
+      <Menu
+        mode="inline"
+        selectedKeys={location.pathname.split("/")}
+        defaultOpenKeys={['account']}
+        style={{ height: '100%', borderRight: 0, backgroundColor: "#FFFFFF" }}
+        theme='light'
+      >
 
-          {
-            menuSidebarAdmin.map((map) => (
-              <Menu.Item
-                onClick={() => navigate(map.link, map.key)}
-                key={map.key}
-                icon={map.icon}
-                className="customeClass"
-              >
-                {map.title}
-              </Menu.Item>
-            ))
-          }
-         
-        </Menu>
+        {
+          menuSidebarAdmin.map((map) => (
+            <Menu.Item
+              onClick={() => navigate(map.link, map.key)}
+              key={map.key}
+              icon={map.icon}
+              className="customeClass"
+            >
+              {map.title}
+            </Menu.Item>
+          ))
+        }
+
+      </Menu>
 
     </Sider >
   );

@@ -89,6 +89,23 @@ const MaintenancePlanning = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+
+const SalesManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/SalesManagement/assetManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+const AssetHistory = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/AssetHistory/assetHistory'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -161,6 +178,18 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        <PrivateRoute exact path="/sales-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <SalesManagement />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        <PrivateRoute exact path="/asset-history">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <AssetHistory />
+                            </Suspense>
+                        </PrivateRoute>
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -212,6 +241,14 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/vendor-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/sales-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/asset-history">
                         <DefaultContainer />
                     </Route>
 
