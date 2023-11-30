@@ -73,6 +73,21 @@ const AssetManagement = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const VendorManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/VendorManagement/vendorManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+const MaintenancePlanning = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/MaintenancePlanning/maintenancePlanning'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -134,6 +149,18 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        <PrivateRoute exact path="/maintenance-planning">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <MaintenancePlanning />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        <PrivateRoute exact path="/vendor-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <VendorManagement />
+                            </Suspense>
+                        </PrivateRoute>
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -177,6 +204,14 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/asset-list">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/maintenance-planning">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/vendor-management">
                         <DefaultContainer />
                     </Route>
 

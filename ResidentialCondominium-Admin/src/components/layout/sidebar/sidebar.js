@@ -1,4 +1,4 @@
-import { DashboardOutlined, ShoppingOutlined, UserOutlined,ContainerOutlined } from '@ant-design/icons';
+import { DashboardOutlined, ShoppingOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined,ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -35,6 +35,18 @@ function Sidebar() {
       title: "Danh mục tài sản",
       link: "/asset-list",
       icon: <ShoppingOutlined />
+    },
+    {
+      key: "maintenance-planning",
+      title: "Kế hoạch bảo trì",
+      link: "/maintenance-planning",
+      icon: <BorderLeftOutlined />
+    },
+    {
+      key: "vendor-management",
+      title: "Quản lý nhà cung cấp",
+      link: "/vendor-management",
+      icon: <PicLeftOutlined />
     },
  
   ];
