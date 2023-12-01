@@ -1,4 +1,4 @@
-import { DashboardOutlined, ShoppingOutlined,CloudSyncOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
+import { DashboardOutlined, ShoppingOutlined, CommentOutlined, CloudSyncOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -72,6 +72,12 @@ function Sidebar() {
       link: "/maintenance-history",
       icon: <CloudSyncOutlined />
     },
+    {
+      key: "residence-event",
+      title: "Quản lý sự kiện cư dân",
+      link: "/residence-event",
+      icon: <CommentOutlined />
+    },
   ];
 
 
@@ -86,7 +92,7 @@ function Sidebar() {
   return (
     <Sider
       className={'ant-layout-sider-trigger'}
-      width={215}
+      width={230}
       style={{
         position: "fixed",
         top: 60,

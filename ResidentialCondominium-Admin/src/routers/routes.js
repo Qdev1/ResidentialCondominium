@@ -122,6 +122,14 @@ const MaintenanceHistory = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const RecordResidentEvents = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/Residents/RecordResidentEvents/recordResidentEvents'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -219,6 +227,14 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        <PrivateRoute exact path="/residence-event">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <RecordResidentEvents />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -286,6 +302,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/asset-report">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/residence-event">
                         <DefaultContainer />
                     </Route>
 
