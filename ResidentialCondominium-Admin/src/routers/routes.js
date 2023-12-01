@@ -106,6 +106,15 @@ const AssetHistory = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const AssetReport = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/AssetReport/assetReport'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -190,6 +199,13 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        
+                        <PrivateRoute exact path="/asset-report">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <AssetReport />
+                            </Suspense>
+                        </PrivateRoute>
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -251,6 +267,12 @@ const RouterURL = withRouter(({ location }) => {
                     <Route exact path="/asset-history">
                         <DefaultContainer />
                     </Route>
+
+                    <Route exact path="/asset-report">
+                        <DefaultContainer />
+                    </Route>
+
+                    
 
                     <Route>
                         <NotFound />

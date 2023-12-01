@@ -1,4 +1,4 @@
-import { DashboardOutlined, ShoppingOutlined, AlertOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
+import { DashboardOutlined, ShoppingOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -60,7 +60,12 @@ function Sidebar() {
       link: "/asset-history",
       icon: <AlertOutlined />
     },
-
+    {
+      key: "asset-report",
+      title: "Báo cáo tài sản",
+      link: "/asset-report",
+      icon: <FileOutlined />
+    },
   ];
 
 
