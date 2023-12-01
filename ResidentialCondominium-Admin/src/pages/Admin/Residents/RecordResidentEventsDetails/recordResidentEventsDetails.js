@@ -1,8 +1,7 @@
 import {
     HomeOutlined,
     PlusOutlined,
-    ShoppingOutlined,
-    EyeOutlined
+    ShoppingOutlined
 } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
@@ -21,21 +20,19 @@ import {
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import meetingResidentsApi from "../../../../apis/meetingResidentsApi";
-import "./recordResidentEvents.css";
+import "./recordResidentEventsDetails.css";
 
-const RecordResidentEvents = () => {
+const RecordResidentEventsDetails = () => {
 
     const [category, setCategory] = useState([]);
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [form] = Form.useForm();
-    const [form2] = Form.useForm();
-    const [id, setId] = useState();
 
-    const history = useHistory();
+    const { id } = useParams();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -45,25 +42,24 @@ const RecordResidentEvents = () => {
         setLoading(true);
         try {
             const categoryList = {
-                "title": values.title,
-                "date": values.date.format("YYYY-MM-DD"),
+                "eventName": values.eventName,
+                "eventDate": values.eventDate.format("YYYY-MM-DD"),
                 "description": values.description,
-                "location": values.location,
-                "role": "resident"
+                "meetingId": id,
             };
-            return meetingResidentsApi.createMeeting(categoryList).then(response => {
+            return meetingResidentsApi.recordEvent(categoryList).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo sự kiện cư dân thất bại',
+                            'Tạo báo cáo cuộc họp thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo sự kiện cư dân thành công',
+                            'Tạo báo cáo cuộc họp thành công',
                     });
                     setOpenModalCreate(false);
                     handleCategoryList();
@@ -86,8 +82,8 @@ const RecordResidentEvents = () => {
 
     const handleCategoryList = async () => {
         try {
-            await meetingResidentsApi.getAllMeetings().then((res) => {
-                setCategory(res);
+            await meetingResidentsApi.getAllEventsByMeetingId(id).then((res) => {
+                setCategory(res.data);
                 setLoading(false);
             });
             ;
@@ -105,11 +101,6 @@ const RecordResidentEvents = () => {
         }
     }
 
-    const handleViewOrder = (id) => {
-        ;
-        history.push(`/residence-event-details/${id}`);
-    };
-
     const columns = [
         {
             title: 'ID',
@@ -117,9 +108,9 @@ const RecordResidentEvents = () => {
             key: 'id',
         },
         {
-            title: 'Tên',
-            dataIndex: 'title',
-            key: 'title',
+            title: 'Tên sự kiện',
+            dataIndex: 'event_name',
+            key: 'event_name',
             render: (text, record) => <a>{text}</a>,
         },
         {
@@ -133,34 +124,17 @@ const RecordResidentEvents = () => {
             key: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <div>
-                    <Row>
-                        <Button
-                            size="small"
-                            icon={<EyeOutlined />}
-                            style={{ width: 150, borderRadius: 15, height: 30 }}
-                            onClick={() => handleViewOrder(record.id)}
-                        >
-                            Xem
-                        </Button>
-                    </Row>
-                </div>
-            ),
-        },
     ];
+
 
 
 
     useEffect(() => {
         (async () => {
             try {
-                await meetingResidentsApi.getAllMeetings().then((res) => {
+                await meetingResidentsApi.getAllEventsByMeetingId(id).then((res) => {
                     console.log(res);
-                    setCategory(res);
+                    setCategory(res.data);
                     setLoading(false);
                 });
                 ;
@@ -180,7 +154,7 @@ const RecordResidentEvents = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Sự kiện cư dân</span>
+                                <span>Báo cáo cuộc họp</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
@@ -203,7 +177,7 @@ const RecordResidentEvents = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
-                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo sự kiện cư dân</Button>
+                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo báo cáo cuộc họp </Button>
                                             </Space>
                                         </Row>
                                     </Col>
@@ -219,7 +193,7 @@ const RecordResidentEvents = () => {
                 </div>
 
                 <Modal
-                    title="Tạo sự kiện cư dân mới"
+                    title="Tạo báo cáo cuộc họp mới"
                     visible={openModalCreate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -242,37 +216,33 @@ const RecordResidentEvents = () => {
                         form={form}
                         name="eventCreate"
                         layout="vertical"
-                        initialValues={{
-                            residence: ['zhejiang', 'hangzhou', 'xihu'],
-                            prefix: '86',
-                        }}
                         scrollToFirstError
                     >
                         <Form.Item
-                            name="title"
-                            label="Tên"
+                            name="eventName"
+                            label="Tên sự kiện"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập tên!',
+                                    message: 'Vui lòng nhập tên sự kiện!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Tên" />
+                            <Input placeholder="Tên sự kiện" />
                         </Form.Item>
                         <Form.Item
-                            name="date"
-                            label="Ngày"
+                            name="eventDate"
+                            label="Ngày viết báo cáo"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập ngày!',
+                                    message: 'Vui lòng nhập ngày sự kiện!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                            <DatePicker format="YYYY-MM-DD" />
                         </Form.Item>
                         <Form.Item
                             name="description"
@@ -280,28 +250,16 @@ const RecordResidentEvents = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập mô tả!',
+                                    message: 'Vui lòng nhập mô tả sự kiện!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="location"
-                            label="Địa điểm"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập địa điểm!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Địa điểm" />
+                            <Input.TextArea placeholder="Mô tả sự kiện" />
                         </Form.Item>
                     </Form>
                 </Modal>
+
 
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>
@@ -309,4 +267,4 @@ const RecordResidentEvents = () => {
     )
 }
 
-export default RecordResidentEvents;
+export default RecordResidentEventsDetails;
