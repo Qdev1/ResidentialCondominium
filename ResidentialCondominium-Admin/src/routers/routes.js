@@ -114,6 +114,14 @@ const AssetReport = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const MaintenanceHistory = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/MaintenanceHistory/maintenanceHistory'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -199,7 +207,12 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
-                        
+                        <PrivateRoute exact path="/maintenance-history">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <MaintenanceHistory />
+                            </Suspense>
+                        </PrivateRoute>
+
                         <PrivateRoute exact path="/asset-report">
                             <Suspense fallback={<LoadingScreen />}>
                                 <AssetReport />
@@ -265,6 +278,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/asset-history">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/maintenance-history">
                         <DefaultContainer />
                     </Route>
 
