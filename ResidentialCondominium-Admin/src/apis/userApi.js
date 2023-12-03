@@ -26,6 +26,11 @@ const userApi = {
         const url = '/user/updateProfile/'+id;
         return axiosClient.put(url, data);
     },
+
+    forgotPassword(data) {
+        const url = '/auth/forgot-password';
+        return axiosClient.post(url, data);
+    },
    
     listUserByAdmin(data) {
         const url = '/user/search';

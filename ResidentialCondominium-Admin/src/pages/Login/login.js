@@ -1,5 +1,5 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Alert, Button, Divider, Form, Input, notification } from 'antd';
+import { Alert, Button, Divider, Form, Input,Modal, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import userApi from "../../apis/userApi";
@@ -9,6 +9,8 @@ import "./login.css";
 const Login = () => {
 
   const [isLogin, setLogin] = useState(true);
+  const [forgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
+  const [forgotPasswordForm] = Form.useForm(); // Add this line
 
   let history = useHistory();
 
@@ -42,6 +44,38 @@ const Login = () => {
         console.log("email or password error" + error)
       });
   }
+
+  const showForgotPasswordModal = () => {
+    setForgotPasswordModalVisible(true);
+  };
+
+  const handleForgotPasswordCancel = () => {
+    setForgotPasswordModalVisible(false);
+  };
+
+  const handleForgotPasswordSubmit = async () => {
+    const values = await forgotPasswordForm.validateFields(); 
+    console.log(values.email);
+
+    try {
+      const data = {
+        "email": values.email
+      }
+      await userApi.forgotPassword(data);
+      notification.success({
+        message: 'Thông báo',
+        description: 'Đã gửi đường dẫn đổi mật khẩu qua email.',
+      });
+      setForgotPasswordModalVisible(false);
+    } catch (error) {
+      notification.error({
+        message: 'Lỗi',
+        description: 'Đã có lỗi xảy ra khi gửi đường dẫn đổi mật khẩu.',
+      });
+      console.error('Forgot password error:', error);
+    }
+  };
+
   useEffect(() => {
 
   }, [])
@@ -114,13 +148,53 @@ const Login = () => {
               />
             </Form.Item>
 
-            <Form.Item style={{ width: '100%', marginTop: 20 }}>
+            <Form.Item style={{ width: '100%', marginTop: 20, marginBottom: 5 }}>
               <Button className="button" type="primary" htmlType="submit"  >
                 Đăng Nhập
               </Button>
             </Form.Item>
+
+            <Form.Item style={{ textAlign: 'center' }}>
+              <a onClick={showForgotPasswordModal}>Quên mật khẩu?</a>
+            </Form.Item>
           </Form>
         </div>
+
+        <Modal
+          title="Quên mật khẩu"
+          visible={forgotPasswordModalVisible}
+          onCancel={handleForgotPasswordCancel}
+          footer={[
+            <Button key="back" onClick={handleForgotPasswordCancel}>
+              Hủy
+            </Button>,
+            <Button key="submit" type="primary" onClick={handleForgotPasswordSubmit}>
+              Gửi đường dẫn đổi mật khẩu
+            </Button>,
+          ]}
+        >
+          <Form
+            name="forgot_password"
+            onFinish={handleForgotPasswordSubmit}
+            form={forgotPasswordForm}
+          >
+            <Form.Item
+              name="email"
+              rules={[
+                {
+                  type: 'email',
+                  message: 'Email không hợp lệ',
+                },
+                {
+                  required: true,
+                  message: 'Vui lòng nhập email',
+                },
+              ]}
+            >
+              <Input prefix={<UserOutlined />} placeholder="Email" />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     </div>
   );
