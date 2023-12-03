@@ -10,10 +10,14 @@ import {
     Col,
     Divider,
     Row,
-    Spin
+    Spin,
+    notification,
+    Form, Input,
+    Button, Modal
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ReactWeather, { useOpenWeather } from 'react-open-weather';
+import { useHistory } from 'react-router-dom';
 import userApi from "../../apis/userApi";
 import "./profile.css";
 
@@ -22,17 +26,16 @@ const Profile = () => {
 
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState([]);
+    const [isVisibleModal, setVisibleModal] = useState(false);
 
     const { data, isLoading, errorMessage } = useOpenWeather({
         key: '03b81b9c18944e6495d890b189357388',
         lat: '16.060094749570567',
         lon: '108.2097695823264',
         lang: 'en',
-        unit: 'metric', 
+        unit: 'metric',
     });
-
-
-    useEffect(() => {
+    const handleList = () => {
         (async () => {
             try {
                 const response = await userApi.getProfile();
@@ -43,8 +46,45 @@ const Profile = () => {
                 console.log('Failed to fetch profile user:' + error);
             }
         })();
+    }
+
+    useEffect(() => {
+        (async () => {
+            handleList();
+        })();
         window.scrollTo(0, 0);
     }, [])
+
+    const handleFormSubmit = async (values) => {
+        try {
+            const formatData = {
+                "email": values.email,
+                "phone": values.phone,
+                "username": values.username,
+            };
+            console.log(userData);
+            await userApi.updateProfile(formatData, userData.id)
+                .then(response => {
+                    console.log(response);
+                    if (response === '' || response === undefined) {
+                        notification.error({
+                            message: 'Thông báo',
+                            description: 'Cập nhật tài khoản thất bại',
+                        });
+                    } else {
+                        notification.success({
+                            message: 'Thông báo',
+                            description: 'Cập nhật tài khoản thành công',
+                        });
+                        setVisibleModal(false)
+                    }
+                });
+            handleList();
+        } catch (error) {
+            throw error;
+        }
+    };
+
     return (
         <div>
             <Spin spinning={loading}>
@@ -90,7 +130,7 @@ const Profile = () => {
                                                 <Col span="8">
                                                     <Row justify="center">
                                                         <p>{<SafetyOutlined />}</p>
-                                                        <p style={{ marginLeft: 5 }}>{userData?.type}</p>
+                                                        <p style={{ marginLeft: 5 }}>{userData?.status ? "Đang hoạt động" : "Đã chặn"}</p>
                                                     </Row>
                                                 </Col>
                                                 <Col span="8">
@@ -101,7 +141,10 @@ const Profile = () => {
                                                 </Col>
                                             </Row>
                                         </Col>
+                                        <Button type="primary" style={{ marginRight: 10 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
+
                                     </Row>
+
                                 </Card>
                             </Col>
 
@@ -120,7 +163,57 @@ const Profile = () => {
                     </div>
                 </div>
 
-
+                <div>
+                    <Modal
+                        title="Cập nhật thông tin cá nhân"
+                        visible={isVisibleModal}
+                        onCancel={() => setVisibleModal(false)}
+                        footer={null}
+                    >
+                        <Form
+                            initialValues={{
+                                username: userData?.username,
+                                email: userData?.email,
+                                phone: userData?.phone,
+                            }}
+                            onFinish={handleFormSubmit}
+                        >
+                            <Form.Item
+                                label="Tên"
+                                name="username"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập username!',
+                                    },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item label="Email" name="email" rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập email!',
+                                },
+                            ]}>
+                                <Input />
+                            </Form.Item>
+                            <Form.Item label="Số điện thoại" name="phone" rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập số điện thoại!',
+                                },
+                            ]}>
+                                <Input />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Cập nhật
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Modal>
+                </div>
             </Spin>
         </div >
     )

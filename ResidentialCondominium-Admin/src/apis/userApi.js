@@ -21,6 +21,11 @@ const userApi = {
         const url = '/user/profile';
         return axiosClient.get(url);
     },
+
+    updateProfile(data, id) {
+        const url = '/user/updateProfile/'+id;
+        return axiosClient.put(url, data);
+    },
    
     listUserByAdmin(data) {
         const url = '/user/search';
