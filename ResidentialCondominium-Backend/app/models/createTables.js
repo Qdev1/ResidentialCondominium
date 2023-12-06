@@ -334,23 +334,46 @@ const createTables = async () => {
 
         console.log('Table "contracts" created or already exists.');
 
-         // Tạo bảng "entry_records" nếu chưa tồn tại
-         await db.execute(`
-         CREATE TABLE IF NOT EXISTS entry_records (
-             id INT AUTO_INCREMENT PRIMARY KEY,
-             user_id INT,
-             entry_time DATETIME,
-             exit_time DATETIME,
-             building VARCHAR(255),
-             authorized BOOLEAN,
-             stranger_name VARCHAR(255),  -- Thêm trường cho tên của khách lạ
-             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-             FOREIGN KEY (user_id) REFERENCES users(id)
-         )
-         `);
-         
-         console.log('Table "entry_records" created or already exists.');
+        // Tạo bảng "entry_records" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS entry_records (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            entry_time DATETIME,
+            exit_time DATETIME,
+            building VARCHAR(255),
+            authorized BOOLEAN,
+            stranger_name VARCHAR(255),  -- Thêm trường cho tên của khách lạ
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+        `);
+
+        console.log('Table "entry_records" created or already exists.');
+
+        // Tạo bảng "emergency_maintenance" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS emergency_maintenance (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            asset_id INT,
+            description TEXT,
+            reported_by INT,
+            reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            status VARCHAR(255) DEFAULT 'reported',
+            resolved_at TIMESTAMP,
+            resolved_description TEXT,
+            resolved_by INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (asset_id) REFERENCES assets(id),
+            FOREIGN KEY (reported_by) REFERENCES users(id),
+            FOREIGN KEY (resolved_by) REFERENCES users(id)
+        )
+        `);
+        
+        console.log('Table "emergency_maintenance" created or already exists.');
+
 
         // await db.execute(`
         //     ALTER TABLE assets
