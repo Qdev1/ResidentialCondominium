@@ -390,6 +390,23 @@ const createTables = async () => {
 
         console.log('Table "customers" created or already exists.');
 
+        // Tạo bảng "receptions" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS receptions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            resident_id INT,
+            guest_name VARCHAR(255) NOT NULL,
+            entry_date DATETIME NOT NULL,
+            purpose TEXT,
+            note TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (resident_id) REFERENCES users(id)
+        )
+        `);
+
+        console.log('Table "receptions" created or already exists.');
+
 
         // await db.execute(`
         //     ALTER TABLE assets
