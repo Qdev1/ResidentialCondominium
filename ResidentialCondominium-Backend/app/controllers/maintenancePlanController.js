@@ -46,6 +46,16 @@ const maintenancePlanController = {
             res.status(500).json(err);
         }
     },
+
+    getAllMaintenancePlans: async (req, res) => {
+        try {
+            const query = 'SELECT * FROM maintenance_plans';
+            const [maintenancePlans] = await db.execute(query);
+            res.status(200).json({ data: maintenancePlans });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 };
 
 module.exports = maintenancePlanController;

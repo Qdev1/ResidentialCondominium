@@ -4,6 +4,9 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+// Route để lấy tất cả kế hoạch bảo trì
+router.get('/', verifyToken.checkLogin, maintenancePlanController.getAllMaintenancePlans);
+
 // Route để tạo kế hoạch bảo trì
 router.post('/', verifyToken.checkLogin, maintenancePlanController.createMaintenancePlan);
 
