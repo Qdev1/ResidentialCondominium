@@ -425,6 +425,15 @@ const createTables = async () => {
         //     ADD role VARCHAR(255) AFTER content;
         //     `);
 
+        
+        //  await db.execute(`
+        //  ALTER TABLE complaints
+        //  ADD status VARCHAR(255) DEFAULT 'pending',
+        //  ADD progress INT DEFAULT 0,
+        //  ADD assigned_to INT,
+        //  ADD FOREIGN KEY (assigned_to) REFERENCES users(id)
+        //    `);
+
     } catch (error) {
         console.error('Error creating tables:', error);
     } finally {

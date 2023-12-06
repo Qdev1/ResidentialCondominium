@@ -1,9 +1,10 @@
 const db = require('../config/db');
 
 const complaintController = {
+    
     submitComplaint: async (req, res) => {
         try {
-            const { user_id, subject, description } = req.body;
+            const { user_id, subject, description, assigned_to } = req.body;
 
             // Kiểm tra xem user_id có tồn tại trong cơ sở dữ liệu không
             const [userRows] = await db.execute('SELECT * FROM users WHERE id = ?', [user_id]);
@@ -15,8 +16,8 @@ const complaintController = {
 
             // Lưu thông tin khiếu nại vào cơ sở dữ liệu
             const [complaintRows] = await db.execute(
-                'INSERT INTO complaints (user_id, subject, description) VALUES (?, ?, ?)',
-                [user_id, subject, description]
+                'INSERT INTO complaints (user_id, subject, description, status, progress, assigned_to) VALUES (?, ?, ?, ?, ?, ?)',
+                [user_id, subject, description, 'pending', 0, assigned_to]
             );
 
             const complaintId = complaintRows.insertId;
@@ -43,9 +44,9 @@ const complaintController = {
     updateComplaint: async (req, res) => {
         try {
             const { complaintId } = req.params;
-            const { user_id, subject, description } = req.body;
-            const query = 'UPDATE complaints SET user_id = ?, subject = ?, description = ? WHERE id = ?';
-            await db.execute(query, [user_id, subject, description, complaintId]);
+            const { user_id, subject, description, status, progress, assigned_to } = req.body;
+            const query = 'UPDATE complaints SET user_id = ?, subject = ?, description = ?, status = ?, progress = ?, assigned_to = ? WHERE id = ?';
+            await db.execute(query, [user_id, subject, description, status, progress, assigned_to, complaintId]);
             res.status(200).json({ message: 'Complaint updated successfully', status: true });
         } catch (err) {
             console.error(err);
