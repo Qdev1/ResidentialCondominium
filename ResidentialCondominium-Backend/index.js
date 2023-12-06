@@ -45,6 +45,7 @@ const maintenanceHistoryRoutes = require('./app/routers/maintenanceHistoryRoutes
 const contractsRoutes = require('./app/routers/contractsRouter');
 const entryRoutes = require('./app/routers/entryRoutes');
 const emergencyRoutes = require('./app/routers/emergencyRoutes');
+const customerEnrollmentRoutes = require('./app/routers/customerEnrollmentRoutes');
 
 
 app.use('/api/auth', authRoute);
@@ -64,6 +65,7 @@ app.use('/api/maintenance-history', maintenanceHistoryRoutes);
 app.use('/api/contracts', contractsRoutes);
 app.use('/api/entry', entryRoutes);
 app.use('/api/emergency', emergencyRoutes);
+app.use('/api/customerEnrollment', customerEnrollmentRoutes);
 
 const PORT = process.env.PORT || _CONST.PORT;
 

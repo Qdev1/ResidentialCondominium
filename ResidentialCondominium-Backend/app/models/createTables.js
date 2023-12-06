@@ -374,6 +374,22 @@ const createTables = async () => {
         
         console.log('Table "emergency_maintenance" created or already exists.');
 
+        // Tạo bảng "customers" nếu chưa tồn tại
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS customers (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE,
+                phone VARCHAR(20),
+                address TEXT,
+                note TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        console.log('Table "customers" created or already exists.');
+
 
         // await db.execute(`
         //     ALTER TABLE assets
