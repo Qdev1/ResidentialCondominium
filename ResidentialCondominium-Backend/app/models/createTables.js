@@ -334,6 +334,24 @@ const createTables = async () => {
 
         console.log('Table "contracts" created or already exists.');
 
+         // Tạo bảng "entry_records" nếu chưa tồn tại
+         await db.execute(`
+         CREATE TABLE IF NOT EXISTS entry_records (
+             id INT AUTO_INCREMENT PRIMARY KEY,
+             user_id INT,
+             entry_time DATETIME,
+             exit_time DATETIME,
+             building VARCHAR(255),
+             authorized BOOLEAN,
+             stranger_name VARCHAR(255),  -- Thêm trường cho tên của khách lạ
+             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+             FOREIGN KEY (user_id) REFERENCES users(id)
+         )
+         `);
+         
+         console.log('Table "entry_records" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
