@@ -315,9 +315,34 @@ const createTables = async () => {
 
         console.log('Table "maintenance_history" created or already exists.');
 
+        // Tạo bảng "contracts" nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS contracts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            vendor_id INT,
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
+            start_date DATE,
+            end_date DATE,
+            value DECIMAL(10, 2),
+            status VARCHAR(255) DEFAULT 'active',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (vendor_id) REFERENCES vendors(id)
+        )
+        `);
+
+        console.log('Table "contracts" created or already exists.');
+
         // await db.execute(`
         //     ALTER TABLE assets
         //     ADD quantity INT;
+        //     `);
+
+        // await db.execute(`
+        //  ALTER TABLE maintenance_history
+        //  ADD plan_id INT,
+        //  ADD FOREIGN KEY (plan_id) REFERENCES maintenance_plans(id);
         //     `);
 
         // Thêm trường "role" vào bảng "notifications"
