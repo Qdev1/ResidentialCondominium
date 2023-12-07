@@ -1,6 +1,15 @@
 const db = require('../config/db');
 
 const emergencyMaintenanceController = {
+    getAllSecurityUsers: async (req, res) => {
+        try {
+            const query = 'SELECT * FROM users WHERE role = "isSecurity"';
+            const [securityUsers] = await db.execute(query);
+            res.status(200).json({ data: securityUsers });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
     createEmergencyMaintenance: async (req, res) => {
         try {
             const { asset_id, description, reported_by } = req.body;

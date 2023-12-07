@@ -4,6 +4,7 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+router.get('/security-users', verifyToken.checkLogin, emergencyMaintenanceController.getAllSecurityUsers);
 router.get('/search', verifyToken.checkLogin, emergencyMaintenanceController.searchEmergencyMaintenance);
 router.post('/', verifyToken.checkLogin, emergencyMaintenanceController.createEmergencyMaintenance);
 router.put('/:id', verifyToken.checkLogin, emergencyMaintenanceController.updateEmergencyMaintenance);
