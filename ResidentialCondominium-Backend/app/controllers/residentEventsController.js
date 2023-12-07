@@ -2,6 +2,28 @@ const db = require('../config/db');
 const nodemailer = require('nodemailer');
 
 const residentEventsController = {
+
+    getAllMeetingAndComplaint: async (req, res) => {
+        try {
+            // Lấy tất cả thông tin của khiếu nại
+            const [complaints] = await db.execute('SELECT * FROM complaints');
+    
+            // Lấy tất cả thông tin sự kiện cư dân
+            const [events] = await db.execute('SELECT * FROM events');
+    
+            // Tổng hợp dữ liệu và gửi về phản hồi
+            const allData = {
+                complaints: complaints,
+                residentEvents: events,
+            };
+    
+            res.status(200).json(allData);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
     createMeeting: async (req, res) => {
         try {
             // Lấy thông tin cuộc họp từ req.body
@@ -92,6 +114,22 @@ const residentEventsController = {
             });
     
             res.status(201).json({ message: 'Event recorded successfully', eventId, status: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
+    getAllEventsByMeetingId: async (req, res) => {
+        try {
+            // Lấy meeting_id từ tham số của yêu cầu
+            const { meetingId } = req.params;
+    
+            // Truy vấn SQL để lấy tất cả sự kiện theo meeting_id
+            const [eventRows] = await db.execute('SELECT * FROM events WHERE meeting_id = ?', [meetingId]);
+    
+            // Trả về danh sách sự kiện trong phản hồi HTTP
+            res.status(200).json({ data: eventRows });
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
