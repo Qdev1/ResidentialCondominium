@@ -407,6 +407,20 @@ const createTables = async () => {
 
         console.log('Table "receptions" created or already exists.');
 
+         // Tạo bảng "access_cards" nếu chưa tồn tại
+         await db.execute(`
+         CREATE TABLE IF NOT EXISTS access_cards (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            resident_id INT NOT NULL,
+            card_number VARCHAR(255) NOT NULL,
+            issue_date DATE NOT NULL,
+            expiration_date DATE NOT NULL,
+            FOREIGN KEY (resident_id) REFERENCES users(id)
+        )
+         `);
+ 
+         console.log('Table "access_cards" created or already exists.');
+
 
         // await db.execute(`
         //     ALTER TABLE assets

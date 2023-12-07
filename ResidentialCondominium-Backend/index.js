@@ -47,6 +47,7 @@ const entryRoutes = require('./app/routers/entryRoutes');
 const emergencyRoutes = require('./app/routers/emergencyRoutes');
 const customerEnrollmentRoutes = require('./app/routers/customerEnrollmentRoutes');
 const receptionRouter = require('./app/routers/receptionRouter');
+const accessCardRoutes = require('./app/routers/accessCardRoutes');
 
 
 app.use('/api/auth', authRoute);
@@ -68,6 +69,7 @@ app.use('/api/entry', entryRoutes);
 app.use('/api/emergency', emergencyRoutes);
 app.use('/api/customerEnrollment', customerEnrollmentRoutes);
 app.use('/api/reception', receptionRouter);
+app.use('/api/accessCard', accessCardRoutes);
 
 
 const PORT = process.env.PORT || _CONST.PORT;
