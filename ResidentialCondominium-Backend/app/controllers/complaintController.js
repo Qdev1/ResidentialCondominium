@@ -105,7 +105,32 @@ const complaintController = {
             console.error(err);
             res.status(500).json(err);
         }
-    }
+    },
+
+     // Gán người đảm nhiệm nhiệm vụ cho khiếu nại
+     assignComplaint: async (req, res) => {
+        try {
+            const { complaintId } = req.params;
+            const { assigned_to } = req.body;
+
+            // Kiểm tra xem người đảm nhiệm tồn tại trong cơ sở dữ liệu không
+            const [userRows] = await db.execute('SELECT * FROM users WHERE id = ?', [assigned_to]);
+            const user = userRows[0];
+
+            if (!user) {
+                return res.status(400).json({ message: 'Assigned user not found', status: false });
+            }
+
+            // Cập nhật người đảm nhiệm nhiệm vụ cho khiếu nại
+            const query = 'UPDATE complaints SET assigned_to = ? WHERE id = ?';
+            await db.execute(query, [assigned_to, complaintId]);
+
+            res.status(200).json({ message: 'Complaint assigned successfully', status: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
 };
 
 module.exports = complaintController;

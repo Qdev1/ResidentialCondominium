@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const complaintController = require('../controllers/complaintController');
 
+// Định nghĩa route để gán người đảm nhiệm nhiệm vụ cho khiếu nại
+router.put('/:complaintId/assign', complaintController.assignComplaint);
+
 // Tìm kiếm khiếu nại dựa trên tiêu đề
 router.get('/search', complaintController.searchComplaintsBySubject);
 
