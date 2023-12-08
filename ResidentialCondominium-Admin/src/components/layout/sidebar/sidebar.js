@@ -84,6 +84,12 @@ function Sidebar() {
       link: "/residence-rules",
       icon: <CommentOutlined />
     },
+    {
+      key: "customer-enrollment",
+      title: "Ghi danh khách hàng",
+      link: "/customer-enrollment",
+      icon: <CommentOutlined />
+    },
   ];
 
 

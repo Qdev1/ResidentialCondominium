@@ -154,6 +154,14 @@ const ResidenceRules = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const CustomerEnrollment = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/CustomerEnrollment/customerEnrollment'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -271,6 +279,12 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        <PrivateRoute exact path="/customer-enrollment">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <CustomerEnrollment />
+                            </Suspense>
+                        </PrivateRoute>
+
 
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -355,6 +369,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/residence-rules">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/customer-enrollment">
                         <DefaultContainer />
                     </Route>
 
