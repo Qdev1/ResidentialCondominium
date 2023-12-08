@@ -162,6 +162,16 @@ const CustomerEnrollment = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+
+const RoomManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/RoomManagement/roomManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -285,6 +295,12 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        <PrivateRoute exact path="/room-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <RoomManagement />
+                            </Suspense>
+                        </PrivateRoute>
+
 
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -373,6 +389,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/customer-enrollment">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/room-management">
                         <DefaultContainer />
                     </Route>
 

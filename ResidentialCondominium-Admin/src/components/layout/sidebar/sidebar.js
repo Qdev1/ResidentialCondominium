@@ -90,6 +90,12 @@ function Sidebar() {
       link: "/customer-enrollment",
       icon: <CommentOutlined />
     },
+    {
+      key: "room-management",
+      title: "Quản lý phòng",
+      link: "/room-management",
+      icon: <CommentOutlined />
+    },
   ];
 
 
