@@ -96,6 +96,12 @@ function Sidebar() {
       link: "/room-management",
       icon: <CommentOutlined />
     },
+    {
+      key: "contracts-management",
+      title: "Quản lý giầy tờ",
+      link: "/contracts-management",
+      icon: <CommentOutlined />
+    },
   ];
 
 

@@ -171,6 +171,13 @@ const RoomManagement = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const ContractManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/ContractManagement/contractManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -301,6 +308,13 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
+                        
+                        <PrivateRoute exact path="/contracts-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <ContractManagement />
+                            </Suspense>
+                        </PrivateRoute>
+                        
 
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -393,6 +407,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/room-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/contracts-management">
                         <DefaultContainer />
                     </Route>
 
