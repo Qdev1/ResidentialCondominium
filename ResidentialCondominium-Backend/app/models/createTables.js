@@ -407,6 +407,7 @@ const createTables = async () => {
 
         console.log('Table "receptions" created or already exists.');
 
+        
          // Tạo bảng "access_cards" nếu chưa tồn tại
          await db.execute(`
          CREATE TABLE IF NOT EXISTS access_cards (
@@ -420,6 +421,20 @@ const createTables = async () => {
          `);
  
          console.log('Table "access_cards" created or already exists.');
+
+        // Tạo bảng "maintenance_funds " nếu chưa tồn tại
+        await db.execute(`
+        CREATE TABLE IF NOT EXISTS maintenance_funds (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            description VARCHAR(255) NOT NULL,
+            amount DECIMAL(10, 2) NOT NULL,
+            allocation_date DATE NOT NULL,
+            utilization_date DATE,
+            status VARCHAR(50) DEFAULT 'pending'
+        )
+        `);
+
+    console.log('Table "maintenance_funds " created or already exists.');
 
 
         // await db.execute(`
@@ -439,7 +454,6 @@ const createTables = async () => {
         //     ADD role VARCHAR(255) AFTER content;
         //     `);
 
-        
         //  await db.execute(`
         //  ALTER TABLE complaints
         //  ADD status VARCHAR(255) DEFAULT 'pending',

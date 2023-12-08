@@ -49,6 +49,7 @@ const customerEnrollmentRoutes = require('./app/routers/customerEnrollmentRoutes
 const receptionRouter = require('./app/routers/receptionRouter');
 const accessCardRoutes = require('./app/routers/accessCardRoutes');
 const paymentRoute = require('./app/routers/paypal');
+const maintenanceFundsRoute = require('./app/routers/maintenanceFundsRoutes');
 
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
@@ -71,6 +72,7 @@ app.use('/api/customerEnrollment', customerEnrollmentRoutes);
 app.use('/api/reception', receptionRouter);
 app.use('/api/accessCard', accessCardRoutes);
 app.use('/api/payment', paymentRoute);
+app.use('/api/maintenance-funds', maintenanceFundsRoute);
 
 
 const PORT = process.env.PORT || _CONST.PORT;
