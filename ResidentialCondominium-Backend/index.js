@@ -48,7 +48,7 @@ const emergencyRoutes = require('./app/routers/emergencyRoutes');
 const customerEnrollmentRoutes = require('./app/routers/customerEnrollmentRoutes');
 const receptionRouter = require('./app/routers/receptionRouter');
 const accessCardRoutes = require('./app/routers/accessCardRoutes');
-
+const paymentRoute = require('./app/routers/paypal');
 
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
@@ -70,6 +70,7 @@ app.use('/api/emergency', emergencyRoutes);
 app.use('/api/customerEnrollment', customerEnrollmentRoutes);
 app.use('/api/reception', receptionRouter);
 app.use('/api/accessCard', accessCardRoutes);
+app.use('/api/payment', paymentRoute);
 
 
 const PORT = process.env.PORT || _CONST.PORT;
