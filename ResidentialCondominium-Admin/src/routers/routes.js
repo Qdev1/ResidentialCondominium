@@ -138,7 +138,21 @@ const RecordResidentEventsDetails = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const ResetPassword = lazy(() => {
+    return Promise.all([
+        import('../pages/ResetPassword/resetPassword'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 
+const ResidenceRules = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/ResidenceRules/residenceRules'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -152,6 +166,9 @@ const RouterURL = withRouter(({ location }) => {
             </PublicRoute>
             <PublicRoute exact path="/login">
                 <Login />
+            </PublicRoute>
+            <PublicRoute exact path="/reset-password/:id">
+                <ResetPassword />
             </PublicRoute>
 
         </div>
@@ -247,7 +264,14 @@ const RouterURL = withRouter(({ location }) => {
                                 <RecordResidentEventsDetails />
                             </Suspense>
                         </PrivateRoute>
-                        
+
+                        <PrivateRoute exact path="/residence-rules">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <ResidenceRules />
+                            </Suspense>
+                        </PrivateRoute>
+
+
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -270,6 +294,10 @@ const RouterURL = withRouter(({ location }) => {
                         <LoginContainer />
                     </Route>
 
+                    <Route exact path="/reset-password/:id">
+                        <LoginContainer />
+                    </Route>
+                    
                     <Route exact path="/profile">
                         <DefaultContainer />
                     </Route>
@@ -326,7 +354,9 @@ const RouterURL = withRouter(({ location }) => {
                         <DefaultContainer />
                     </Route>
 
-
+                    <Route exact path="/residence-rules">
+                        <DefaultContainer />
+                    </Route>
 
                     <Route>
                         <NotFound />

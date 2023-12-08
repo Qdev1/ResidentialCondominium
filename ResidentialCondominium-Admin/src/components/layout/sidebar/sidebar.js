@@ -78,6 +78,12 @@ function Sidebar() {
       link: "/residence-event",
       icon: <CommentOutlined />
     },
+    {
+      key: "residence-rules",
+      title: "Quy định cư dân",
+      link: "/residence-rules",
+      icon: <CommentOutlined />
+    },
   ];
 
 
