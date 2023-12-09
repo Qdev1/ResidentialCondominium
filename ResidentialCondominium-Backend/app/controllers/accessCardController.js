@@ -3,7 +3,12 @@ const db = require('../config/db');
 const accessCardController = {
     getAllAccessCards: async (req, res) => {
         try {
-            const [accessCards] = await db.execute('SELECT * FROM access_cards');
+            const query = `
+                SELECT access_cards.*, users.username AS resident_username
+                FROM access_cards
+                INNER JOIN users ON access_cards.resident_id = users.id
+            `;
+            const [accessCards] = await db.execute(query);
             res.status(200).json(accessCards);
         } catch (err) {
             console.error(err);
@@ -64,18 +69,19 @@ const accessCardController = {
             res.status(500).json(err);
         }
     },
-
+ 
     searchAccessCards: async (req, res) => {
         try {
             const { query } = req.query;
-            const searchQuery = 'SELECT * FROM access_cards WHERE card_number LIKE ?';
+            const searchQuery = `
+                SELECT access_cards.*, users.username AS resident_username
+                FROM access_cards
+                INNER JOIN users ON access_cards.resident_id = users.id
+                WHERE access_cards.card_number LIKE ?
+            `;
             const [result] = await db.execute(searchQuery, [`%${query}%`]);
 
-            if (result.length === 0) {
-                res.status(404).json({ message: 'No access cards found with the specified query', status: false });
-            } else {
                 res.status(200).json(result);
-            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
