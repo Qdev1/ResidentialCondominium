@@ -102,6 +102,12 @@ function Sidebar() {
       link: "/contracts-management",
       icon: <CommentOutlined />
     },
+    {
+      key: "complaint-management",
+      title: "Quản lý kiểu nại",
+      link: "/complaint-management",
+      icon: <CommentOutlined />
+    },
   ];
 
 

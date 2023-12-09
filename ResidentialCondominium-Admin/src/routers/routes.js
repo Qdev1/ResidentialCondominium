@@ -179,6 +179,14 @@ const ContractManagement = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const ComplaintManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/ComplaintManagement/complaintManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -314,6 +322,12 @@ const RouterURL = withRouter(({ location }) => {
                                 <ContractManagement />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/complaint-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <ComplaintManagement />
+                            </Suspense>
+                        </PrivateRoute>
                         
 
                         <PrivateRoute exact path="/notfound">
@@ -411,6 +425,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/contracts-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/complaint-management">
                         <DefaultContainer />
                     </Route>
 
