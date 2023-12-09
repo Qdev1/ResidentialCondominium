@@ -1,4 +1,4 @@
-import { DashboardOutlined, ShoppingOutlined, CommentOutlined, CloudSyncOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
+import { FileDoneOutlined,ExportOutlined,AppstoreOutlined, CarryOutOutlined, CalendarOutlined,BookOutlined, BlockOutlined, DashboardOutlined, ShoppingOutlined, CommentOutlined, CloudSyncOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -82,31 +82,43 @@ function Sidebar() {
       key: "residence-rules",
       title: "Quy định cư dân",
       link: "/residence-rules",
-      icon: <CommentOutlined />
+      icon:<FileDoneOutlined />
     },
     {
       key: "customer-enrollment",
       title: "Ghi danh khách hàng",
       link: "/customer-enrollment",
-      icon: <CommentOutlined />
+      icon: <ExportOutlined />
     },
     {
       key: "room-management",
       title: "Quản lý phòng",
       link: "/room-management",
-      icon: <CommentOutlined />
+      icon: <AppstoreOutlined />
     },
     {
       key: "contracts-management",
       title: "Quản lý giầy tờ",
       link: "/contracts-management",
-      icon: <CommentOutlined />
+      icon: <CarryOutOutlined />
     },
     {
       key: "complaint-management",
       title: "Quản lý kiểu nại",
       link: "/complaint-management",
-      icon: <CommentOutlined />
+      icon: <CalendarOutlined />
+    },
+    {
+      key: "access-card",
+      title: "Quản lý cấp thẻ",
+      link: "/access-card",
+      icon: <BookOutlined />
+    },
+    {
+      key: "reception-management",
+      title: "Quản lý đặt lịch",
+      link: "/reception-management",
+      icon: <BlockOutlined />
     },
   ];
 

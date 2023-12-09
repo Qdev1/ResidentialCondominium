@@ -187,6 +187,21 @@ const ComplaintManagement = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const AssetCards = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/AssetCards/assetCards'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+const ReceptionManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/ReceptionManagement/receptionManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -328,6 +343,18 @@ const RouterURL = withRouter(({ location }) => {
                                 <ComplaintManagement />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/reception-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <ReceptionManagement />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        <PrivateRoute exact path="/access-card">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <AssetCards />
+                            </Suspense>
+                        </PrivateRoute>
                         
 
                         <PrivateRoute exact path="/notfound">
@@ -429,6 +456,14 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/complaint-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/reception-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/access-card">
                         <DefaultContainer />
                     </Route>
 
