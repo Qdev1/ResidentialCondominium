@@ -26,6 +26,7 @@ import complaintApi from "../../../apis/complaintApi";
 import "./complaintManagement.css";
 import dayjs from 'dayjs';
 import moment from 'moment';
+import userApi from '../../../apis/userApi';
 
 const { Option } = Select;
 
@@ -39,6 +40,7 @@ const ComplaintManagement = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [userList, setUserList] = useState();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -232,8 +234,8 @@ const ComplaintManagement = () => {
         },
         {
             title: 'Đảm nhiệm bởi',
-            dataIndex: 'assigned_to',
-            key: 'assigned_to',
+            dataIndex: 'assigned_to_name',
+            key: 'assigned_to_name',
         },
         {
             title: 'Action',
@@ -283,6 +285,13 @@ const ComplaintManagement = () => {
                     setCategory(res);
                     setLoading(false);
                 });
+
+                await userApi.listUserByAdmin().then((res) => {
+                    console.log(res);
+                    setUserList(res.data);
+                    setLoading(false);
+                });
+
 
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
@@ -368,19 +377,27 @@ const ComplaintManagement = () => {
                         }}
                         scrollToFirstError
                     >
+
                         <Form.Item
                             name="user_id"
-                            label="User ID"
+                            label="Người khiếu nại"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập User ID!',
+                                    message: 'Vui lòng chọn người khiếu nại!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="User ID" />
+                            <Select placeholder="Chọn người khiếu nại">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
+
                         <Form.Item
                             name="subject"
                             label="Subject"
@@ -433,18 +450,25 @@ const ComplaintManagement = () => {
                         >
                             <Input placeholder="Progress" />
                         </Form.Item>
+
                         <Form.Item
                             name="assigned_to"
-                            label="Assigned To"
+                            label="Người đảm nhiệm!"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập người đảm nhiệm!',
+                                    message: 'Vui lòng chọn người đảm nhiệm!!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Assigned To" />
+                            <Select placeholder="Chọn người đảm nhiệm!">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
 
                     </Form>
@@ -481,19 +505,26 @@ const ComplaintManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
+                       <Form.Item
                             name="user_id"
-                            label="User ID"
+                            label="Người khiếu nại"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập User ID!',
+                                    message: 'Vui lòng chọn người khiếu nại!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="User ID" />
+                            <Select placeholder="Chọn người khiếu nại">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
+
                         <Form.Item
                             name="subject"
                             label="Subject"
@@ -546,20 +577,26 @@ const ComplaintManagement = () => {
                         >
                             <Input placeholder="Progress" />
                         </Form.Item>
+
                         <Form.Item
                             name="assigned_to"
-                            label="Assigned To"
+                            label="Người đảm nhiệm!"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập người đảm nhiệm!',
+                                    message: 'Vui lòng chọn người đảm nhiệm!!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Assigned To" />
+                            <Select placeholder="Chọn người đảm nhiệm!">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
-
                     </Form>
                 </Modal>
 

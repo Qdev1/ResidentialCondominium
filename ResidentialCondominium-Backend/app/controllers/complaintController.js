@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 const complaintController = {
-    
+
     submitComplaint: async (req, res) => {
         try {
             const { user_id, subject, description, assigned_to } = req.body;
@@ -32,7 +32,8 @@ const complaintController = {
     // Lấy tất cả thông tin về khiếu nại
     getAllComplaints: async (req, res) => {
         try {
-            const [complaints] = await db.execute('SELECT * FROM complaints');
+            const query = 'SELECT complaints.*, users.username AS user_name, assigned_users.username AS assigned_to_name FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN users AS assigned_users ON complaints.assigned_to = assigned_users.id';
+            const [complaints] = await db.execute(query);
             res.status(200).json(complaints);
         } catch (err) {
             console.error(err);
@@ -88,27 +89,19 @@ const complaintController = {
     searchComplaintsBySubject: async (req, res) => {
         try {
             const { subject } = req.query;
-
-            if (!subject) {
-                return res.status(400).json({ message: 'Subject is required', status: false });
-            }
-
-            const query = 'SELECT * FROM complaints WHERE subject LIKE ?';
+    
+            const query = 'SELECT complaints.*, users.username AS user_name, assigned_users.username AS assigned_to_name FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN users AS assigned_users ON complaints.assigned_to = assigned_users.id WHERE complaints.subject LIKE ?';
             const [complaints] = await db.execute(query, [`%${subject}%`]);
-
-            if (complaints.length === 0) {
-                res.status(404).json({ message: 'No complaints found with the specified subject', status: false });
-            } else {
-                res.status(200).json(complaints);
-            }
+    
+            res.status(200).json(complaints);
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
         }
     },
 
-     // Gán người đảm nhiệm nhiệm vụ cho khiếu nại
-     assignComplaint: async (req, res) => {
+    // Gán người đảm nhiệm nhiệm vụ cho khiếu nại
+    assignComplaint: async (req, res) => {
         try {
             const { complaintId } = req.params;
             const { assigned_to } = req.body;
