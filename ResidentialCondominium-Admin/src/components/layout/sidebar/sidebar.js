@@ -144,6 +144,12 @@ function Sidebar() {
       link: "/notifications",
       icon: <FolderOpenOutlined />
     },
+    {
+      key: "maintenance-funds",
+      title: "Quản lý chi phí bảo trì",
+      link: "/maintenance-funds",
+      icon: <FolderOpenOutlined />
+    },
   ];
 
   

@@ -236,6 +236,13 @@ const Notification = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const MaintenanceFunds = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/MaintenanceFunds/maintenanceFunds'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -414,6 +421,12 @@ const RouterURL = withRouter(({ location }) => {
                                 <Notification />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/maintenance-funds">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <MaintenanceFunds />
+                            </Suspense>
+                        </PrivateRoute>
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -538,6 +551,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/notifications">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/maintenance-funds">
                         <DefaultContainer />
                     </Route>
                     

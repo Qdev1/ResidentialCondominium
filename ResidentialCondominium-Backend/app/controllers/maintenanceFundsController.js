@@ -72,18 +72,10 @@ const maintenanceFundsController = {
         try {
             const { description } = req.query;
 
-            if (!description) {
-                return res.status(400).json({ message: 'Description is required', status: false });
-            }
-
             const query = 'SELECT * FROM maintenance_funds WHERE description LIKE ?';
             const [funds] = await db.execute(query, [`%${description}%`]);
 
-            if (funds.length === 0) {
-                res.status(404).json({ message: 'No funds found with the specified description', status: false });
-            } else {
-                res.status(200).json(funds);
-            }
+            res.status(200).json(funds);
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
