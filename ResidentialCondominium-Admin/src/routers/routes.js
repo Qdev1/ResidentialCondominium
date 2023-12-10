@@ -228,6 +228,14 @@ const Visitors = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const Notification = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/Notification/notification'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -400,6 +408,12 @@ const RouterURL = withRouter(({ location }) => {
                                 <Visitors />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/notifications">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <Notification />
+                            </Suspense>
+                        </PrivateRoute>
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -520,6 +534,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/visitors">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/notifications">
                         <DefaultContainer />
                     </Route>
                     

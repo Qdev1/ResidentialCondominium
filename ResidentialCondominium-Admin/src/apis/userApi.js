@@ -34,10 +34,6 @@ const userApi = {
    
     listUserByAdmin(data) {
         const url = '/user/search';
-        if (!data.page || !data.limit) {
-            data.limit = 10;
-            data.page = 1;
-        }
         return axiosClient.post(url, data);
     },
     
@@ -58,6 +54,12 @@ const userApi = {
         }
         const url = '/user/searchByEmail';
         return axiosClient.get(url, { params });
+    },
+
+    sendNotification(data) {
+        console.log(data);
+        const url = '/auth/notifications';
+        return axiosClient.post(url, data);
     },
 }
 

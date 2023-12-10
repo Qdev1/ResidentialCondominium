@@ -138,6 +138,12 @@ function Sidebar() {
       link: "/visitors",
       icon: <FolderOpenOutlined />
     },
+    {
+      key: "notifications",
+      title: "Gửi thông báo",
+      link: "/notifications",
+      icon: <FolderOpenOutlined />
+    },
   ];
 
   

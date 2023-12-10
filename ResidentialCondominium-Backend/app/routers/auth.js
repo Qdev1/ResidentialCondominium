@@ -8,5 +8,6 @@ router.post("/forgot-password", authController.forgotPassword);
 router.post("/reset-password", authController.resetPassword);
 router.post('/register-personal-info', registrationController.registerPersonalInfo);
 router.put('/update/:userId', registrationController.updatePersonalInfo);
+router.post('/notifications', authController.createNotification);
 
 module.exports = router;
