@@ -43,7 +43,9 @@ const EmergencyMaintenance = () => {
     const [id, setId] = useState();
     const [userList, setUserList] = useState();
     const [assetList, setAssetList] = useState();
+    const [security, setSecurity] = useState();
 
+    
     const showModal = () => {
         setOpenModalCreate(true);
     };
@@ -302,6 +304,13 @@ const EmergencyMaintenance = () => {
                     setLoading(false);
                 });
 
+                await userApi.listUserByAdmin().then((res) => {
+                    console.log(res);
+                    const securityUsers = res.data.filter(user => user.role == 'isSecurity');
+                    setSecurity(securityUsers);
+                    setLoading(false);
+                });
+
                 await assetManagementApi.listAssetManagement().then((res) => {
                     console.log(res);
                     setAssetList(res.data);
@@ -550,7 +559,7 @@ const EmergencyMaintenance = () => {
                             style={{ marginBottom: 10 }}
                         >
                             <Select placeholder="Chọn người giải quyết">
-                                {userList?.map(user => (
+                                {security?.map(user => (
                                     <Option key={user.id} value={user.id}>
                                         {user.username}
                                     </Option>
