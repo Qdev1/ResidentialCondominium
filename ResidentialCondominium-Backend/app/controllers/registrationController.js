@@ -85,6 +85,46 @@ const registrationController = {
             res.status(500).json(err);
         }
     },
+
+    getAllPersonalInfo: async (req, res) => {
+        try {
+            // Query to retrieve all personal information records along with family_info
+            const [personalInfoRows] = await db.execute(`
+                SELECT 
+                pi.id,
+                pi.full_name,
+                pi.address,
+                pi.phone_number,
+                fi.spouse_name, 
+                GROUP_CONCAT(fi.child_name SEPARATOR ', ') AS children
+                FROM personal_info pi
+                LEFT JOIN family_info fi ON pi.id = fi.personal_info_id
+                GROUP BY pi.id, pi.full_name, pi.address, pi.phone_number, fi.spouse_name;
+            `);
+    
+            // If there are no records, return an empty array
+            if (!personalInfoRows || personalInfoRows.length === 0) {
+                return res.status(404).json({ message: 'No personal information records found', status: false });
+            }
+    
+            // Transform the structure of each personalInfo object
+            const transformedData = personalInfoRows.map(personalInfo => ({
+                id: personalInfo.id,
+                full_name: personalInfo.full_name,
+                address: personalInfo.address,
+                phone_number: personalInfo.phone_number,
+                spouse_name: personalInfo.spouse_name,
+                children: personalInfo.children,
+            }));
+    
+            // Return the list of transformed personal information records
+            res.status(200).json({ data: transformedData });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+    
 };
 
 module.exports = registrationController;

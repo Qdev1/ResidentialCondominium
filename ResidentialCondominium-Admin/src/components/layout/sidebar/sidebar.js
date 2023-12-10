@@ -150,6 +150,14 @@ function Sidebar() {
       link: "/maintenance-funds",
       icon: <FolderOpenOutlined />
     },
+    {
+      key: "family-management",
+      title: "Hộ gia đình",
+      link: "/family-management",
+      icon: <FolderOpenOutlined />
+    },
+
+   
   ];
 
   

@@ -9,5 +9,6 @@ router.post("/reset-password", authController.resetPassword);
 router.post('/register-personal-info', registrationController.registerPersonalInfo);
 router.put('/update/:userId', registrationController.updatePersonalInfo);
 router.post('/notifications', authController.createNotification);
+router.get('/getAll', registrationController.getAllPersonalInfo);
 
 module.exports = router;

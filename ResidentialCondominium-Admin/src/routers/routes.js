@@ -244,6 +244,14 @@ const MaintenanceFunds = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+const FamilyManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/FamilyManagement/familyManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -427,6 +435,14 @@ const RouterURL = withRouter(({ location }) => {
                                 <MaintenanceFunds />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/family-management">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <FamilyManagement />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -557,6 +573,11 @@ const RouterURL = withRouter(({ location }) => {
                     <Route exact path="/maintenance-funds">
                         <DefaultContainer />
                     </Route>
+
+                    <Route exact path="/family-management">
+                        <DefaultContainer />
+                    </Route>
+                    
                     
                     <Route>
                         <NotFound />

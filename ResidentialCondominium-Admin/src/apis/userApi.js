@@ -1,6 +1,17 @@
 import axiosClient from "./axiosClient";
 
 const userApi = {
+    async getAllPersonalInfo() {
+        const url = '/auth/getAll';
+        try {
+            const response = await axiosClient.get(url);
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     login(email, password) {
         const url = '/auth/login';
         return axiosClient
@@ -16,14 +27,14 @@ const userApi = {
                 return response;
             });
     },
-   
+
     getProfile() {
         const url = '/user/profile';
         return axiosClient.get(url);
     },
 
     updateProfile(data, id) {
-        const url = '/user/updateProfile/'+id;
+        const url = '/user/updateProfile/' + id;
         return axiosClient.put(url, data);
     },
 
@@ -31,12 +42,12 @@ const userApi = {
         const url = '/auth/forgot-password';
         return axiosClient.post(url, data);
     },
-   
+
     listUserByAdmin(data) {
         const url = '/user/search';
         return axiosClient.post(url, data);
     },
-    
+
     banAccount(data, id) {
         const url = '/user/' + id;
         return axiosClient.put(url, data);
@@ -61,6 +72,7 @@ const userApi = {
         const url = '/auth/notifications';
         return axiosClient.post(url, data);
     },
+
 }
 
 export default userApi;
