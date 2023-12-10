@@ -202,6 +202,24 @@ const ReceptionManagement = lazy(() => {
     ])
         .then(([moduleExports]) => moduleExports);
 });
+
+const UnauthorizedEntry = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/UnauthorizedEntry/unauthorizedEntry'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+const EmergencyMaintenance = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/EmergencyMaintenance/emergencyMaintenance'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -355,8 +373,19 @@ const RouterURL = withRouter(({ location }) => {
                                 <AssetCards />
                             </Suspense>
                         </PrivateRoute>
-                        
 
+                        <PrivateRoute exact path="/unauthorized-entry">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <UnauthorizedEntry />
+                            </Suspense>
+                        </PrivateRoute>
+
+                        <PrivateRoute exact path="/emergency">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <EmergencyMaintenance />
+                            </Suspense>
+                        </PrivateRoute>
+                        
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
                         </PrivateRoute>
@@ -467,6 +496,15 @@ const RouterURL = withRouter(({ location }) => {
                         <DefaultContainer />
                     </Route>
 
+                    <Route exact path="/unauthorized-entry">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/emergency">
+                        <DefaultContainer />
+                    </Route>
+
+                    
                     <Route>
                         <NotFound />
                     </Route>

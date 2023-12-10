@@ -82,6 +82,6 @@ const maintenanceHistoryApi = {
             throw error;
         }
     },  
-}
+} 
 
 export default maintenanceHistoryApi;

@@ -10,6 +10,7 @@ const emergencyMaintenanceController = {
             res.status(500).json(err);
         }
     },
+    
     createEmergencyMaintenance: async (req, res) => {
         try {
             const { asset_id, description, reported_by } = req.body;
@@ -48,7 +49,12 @@ const emergencyMaintenanceController = {
     getEmergencyMaintenanceById: async (req, res) => {
         try {
             const maintenanceId = req.params.id;
-            const query = 'SELECT * FROM emergency_maintenance WHERE id = ?';
+            const query = `
+                SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
+                FROM emergency_maintenance
+                LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
+                LEFT JOIN users ON emergency_maintenance.reported_by = users.id
+                WHERE emergency_maintenance.id = ?`;
             const [maintenance] = await db.execute(query, [maintenanceId]);
 
             if (maintenance.length === 0) {
@@ -63,7 +69,11 @@ const emergencyMaintenanceController = {
 
     getAllEmergencyMaintenance: async (req, res) => {
         try {
-            const query = 'SELECT * FROM emergency_maintenance';
+            const query = `
+            SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
+            FROM emergency_maintenance
+            LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
+            LEFT JOIN users ON emergency_maintenance.reported_by = users.id`;
             const [maintenanceRecords] = await db.execute(query);
             res.status(200).json({ data: maintenanceRecords });
         } catch (err) {
@@ -75,10 +85,13 @@ const emergencyMaintenanceController = {
         try {
             const { keyword } = req.query;
             const query = `
-                SELECT * FROM emergency_maintenance
+                SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
+                FROM emergency_maintenance
+                LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
+                LEFT JOIN users ON emergency_maintenance.reported_by = users.id
                 WHERE 
-                    description LIKE ? OR 
-                    resolved_description LIKE ?
+                    emergency_maintenance.description LIKE ? OR 
+                    emergency_maintenance.resolved_description LIKE ?
             `;
             const [result] = await db.execute(query, [`%${keyword}%`, `%${keyword}%`]);
 

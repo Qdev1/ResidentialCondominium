@@ -1,4 +1,4 @@
-import { FileDoneOutlined,ExportOutlined,AppstoreOutlined, CarryOutOutlined, CalendarOutlined,BookOutlined, BlockOutlined, DashboardOutlined, ShoppingOutlined, CommentOutlined, CloudSyncOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
+import { FileDoneOutlined, ExportOutlined, AppstoreOutlined, FolderOpenOutlined, FileTextOutlined, CarryOutOutlined, CalendarOutlined, BookOutlined, BlockOutlined, DashboardOutlined, ShoppingOutlined, CommentOutlined, CloudSyncOutlined, AlertOutlined, FileOutlined, BarcodeOutlined, PicLeftOutlined, BorderLeftOutlined, UserOutlined, ContainerOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from "react-router-dom";
@@ -82,7 +82,7 @@ function Sidebar() {
       key: "residence-rules",
       title: "Quy định cư dân",
       link: "/residence-rules",
-      icon:<FileDoneOutlined />
+      icon: <FileDoneOutlined />
     },
     {
       key: "customer-enrollment",
@@ -120,6 +120,18 @@ function Sidebar() {
       link: "/reception-management",
       icon: <BlockOutlined />
     },
+    {
+      key: "unauthorized-entry",
+      title: "Kiểm tra ra vào",
+      link: "/unauthorized-entry",
+      icon: <FileTextOutlined />
+    },
+    {
+      key: "emergency",
+      title: "Vấn đề khẩn cấp",
+      link: "/emergency",
+      icon: <FolderOpenOutlined />
+    },
   ];
 
 
@@ -138,12 +150,13 @@ function Sidebar() {
       style={{
         position: "fixed",
         top: 60,
-        height: '100%',
+        height: 'calc(100% - 60px)',
         left: 0,
         padding: 0,
         zIndex: 1,
         marginTop: 0,
-        boxShadow: " 0 1px 4px -1px rgb(0 0 0 / 15%)"
+        boxShadow: " 0 1px 4px -1px rgb(0 0 0 / 15%)",
+        overflowY: 'auto'
       }}
     >
       <Menu

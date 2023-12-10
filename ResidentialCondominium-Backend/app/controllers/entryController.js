@@ -65,7 +65,7 @@ const entryController = {
 
     searchEntryRecords: async (req, res) => {
         try {
-            const { queryParam } = req.params;
+            const { queryParam } = req.query;
             const query = 'SELECT * FROM entry_records WHERE user_id LIKE ? OR building LIKE ? OR stranger_name LIKE ?';
             const [entryRecords] = await db.execute(query, [`%${queryParam}%`, `%${queryParam}%`, `%${queryParam}%`]);
 
