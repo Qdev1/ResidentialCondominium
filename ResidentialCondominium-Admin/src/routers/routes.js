@@ -220,6 +220,15 @@ const EmergencyMaintenance = lazy(() => {
 });
 
 
+const Visitors = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/Visitors/visitors'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -385,6 +394,12 @@ const RouterURL = withRouter(({ location }) => {
                                 <EmergencyMaintenance />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/visitors">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <Visitors />
+                            </Suspense>
+                        </PrivateRoute>
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -504,6 +519,9 @@ const RouterURL = withRouter(({ location }) => {
                         <DefaultContainer />
                     </Route>
 
+                    <Route exact path="/visitors">
+                        <DefaultContainer />
+                    </Route>
                     
                     <Route>
                         <NotFound />

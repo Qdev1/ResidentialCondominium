@@ -132,8 +132,15 @@ function Sidebar() {
       link: "/emergency",
       icon: <FolderOpenOutlined />
     },
+    {
+      key: "visitors",
+      title: "Quản lý khách hàng",
+      link: "/visitors",
+      icon: <FolderOpenOutlined />
+    },
   ];
 
+  
 
 
   const navigate = (link, key) => {
