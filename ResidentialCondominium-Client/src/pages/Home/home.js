@@ -1,8 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./home.module.css";
 import { Spin, BackTop, } from "antd";
+import { useHistory } from "react-router-dom";
+import userApi from "../../apis/userApi";
 
 const Home = () => {
+    const history = useHistory();
+    const [userData, setUserData] = useState(null);
+
+
+    const handleClick = (link) => {
+        history.push(link);
+    };
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await userApi.getProfile();
+                console.log(response);
+                if(response != "Invalid Token"){
+                    setUserData(response.user);
+                }
+            } catch (error) {
+                console.log('Failed to fetch profile user:' + error);
+            }
+        })();
+    }, [])
 
     return (
         <div className={styles.container}>
@@ -12,12 +35,16 @@ const Home = () => {
                     <img className={styles.heroImageIcon} alt="" src="/hero-image@2x.png" />
                     <div className={styles.navBar}>
                         <div className={styles.navContent}>
-                            <div className={styles.aboutUs}>About Us</div>
-                            <div className={styles.services}>Services</div>
-                            <div className={styles.project}>Project</div>
+                            <div className={styles.aboutUs} onClick={() => handleClick("/residence-event")}>Residence</div>
+                            <div className={styles.services} onClick={() => handleClick("/maintenance-planning")}>Maintenance</div>
+                            {userData ?
+                                <div className={styles.project} onClick={() => handleClick("/login")}>{userData?.username}</div>
+                                :
+                                <div className={styles.project} onClick={() => handleClick("/login")}>Login</div>
+                            }
                             <div className={styles.groupParent}>
                                 <div className={styles.homeWrapper}>
-                                    <div className={styles.home}>Home</div>
+                                    <div className={styles.home} onClick={() => handleClick("/home")}>Home</div>
                                 </div>
                                 <div className={styles.groupChild} />
                             </div>
