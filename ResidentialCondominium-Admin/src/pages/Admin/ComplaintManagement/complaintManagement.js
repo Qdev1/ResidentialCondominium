@@ -273,7 +273,27 @@ const ComplaintManagement = () => {
         },
     ];
 
-
+    const handleFilter2 = async (name) => {
+        try {
+            let res;
+            console.log(name)
+            // Fetch all complaints
+            const allComplaints = await complaintApi.listComplaints();
+    
+            // Perform filtering based on the selected role
+            if (name === "resident") {
+                res = allComplaints.filter(complaint => complaint.user_role === name);
+            } else {
+                // If the role is not 'resident', filter only by subject
+                res = allComplaints;
+            }
+    
+            setCategory(res);
+        } catch (error) {
+            console.log('Filtering complaints error:', error);
+        }
+    }
+    
 
 
 
@@ -332,6 +352,15 @@ const ComplaintManagement = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
+                                                <Select
+                                                    style={{ width: 120, marginRight: 10 }}
+                                                    onChange={(value) => {
+                                                        handleFilter2(value);
+                                                    }}
+                                                >
+                                                    <Option value="all">All Roles</Option>
+                                                    <Option value="resident">Resident</Option>
+                                                </Select>
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo khiếu nại</Button>
                                             </Space>
                                         </Row>
@@ -505,7 +534,7 @@ const ComplaintManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                       <Form.Item
+                        <Form.Item
                             name="user_id"
                             label="Người khiếu nại"
                             rules={[
