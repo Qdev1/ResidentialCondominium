@@ -6,220 +6,103 @@ jest.mock('../config/db');
 const nodemailer = require('nodemailer');
 jest.mock('nodemailer');
 
-describe('createNotification', () => {
-  it('successfully creates a notification and sends emails', async () => {
-    // Arrange
-    const req = {
-      body: {
-        title: 'New Event',
-        content: 'There is an upcoming event this weekend.',
-        role: 'resident',
-      },
-    };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-    db.execute.mockResolvedValueOnce([{ insertId: 1 }]);
-    db.execute.mockResolvedValueOnce([[
-      { email: 'user1@example.com' },
-      { email: 'user2@example.com' }
-    ]]);
+describe('notificationController', () => {
+  let mockResponse;
 
-    const sendMailMock = jest.fn();
-    nodemailer.createTransport.mockReturnValue({
-      sendMail: sendMailMock,
+  beforeEach(() => {
+      mockResponse = {
+          status: jest.fn().mockReturnThis(),
+          json: jest.fn().mockReturnThis(),
+      };
+  });
+
+  describe('createNotification', () => {
+      it('should successfully create a notification and send to residents', async () => {
+          const req = {
+              body: {
+                  title: 'Test Title',
+                  content: 'Test Content',
+                  role: 'resident'
+              }
+          };
+
+          const mockNotificationRows = { insertId: 1 };
+          db.execute.mockResolvedValueOnce([mockNotificationRows]);
+
+          const mockUserRows = [{ email: 'test@example.com' }];
+          db.execute.mockResolvedValueOnce([mockUserRows]);
+
+          const mockTransporter = {
+              sendMail: jest.fn().mockImplementation((mailOptions, callback) => callback(null, true)),
+          };
+          nodemailer.createTransport.mockReturnValue(mockTransporter);
+
+          await notificationController.createNotification(req, mockResponse);
+
+          expect(db.execute).toHaveBeenCalledWith(
+              'INSERT INTO notifications (title, content, role) VALUES (?, ?, ?)',
+              [req.body.title, req.body.content, req.body.role]
+          );
+          expect(db.execute).toHaveBeenCalledWith('SELECT * FROM users WHERE role = ?', [req.body.role]);
+          expect(mockTransporter.sendMail).toHaveBeenCalled();
+          expect(mockResponse.status).toHaveBeenCalledWith(201);
+          expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Notification created and sent to residents successfully', status: true });
+      });
+
+      it('should handle database errors when creating a notification', async () => {
+          const req = {
+              body: {
+                  title: 'Test Title',
+                  content: 'Test Content',
+                  role: 'resident'
+              }
+          };
+
+          const mockError = new Error('Database error');
+          db.execute.mockRejectedValueOnce(mockError);
+
+          await notificationController.createNotification(req, mockResponse);
+
+          expect(mockResponse.status).toHaveBeenCalledWith(500);
+          expect(mockResponse.json).toHaveBeenCalledWith(mockError);
+      });
+  });
+
+  describe('getNotificationsByRole', () => {
+    it('should successfully get notifications by role', async () => {
+        const req = {
+            params: {
+                role: 'resident'
+            }
+        };
+
+        const mockNotificationRows = [
+            { id: 1, title: 'Test Title', content: 'Test Content', role: 'resident' }
+        ];
+        db.execute.mockResolvedValueOnce([mockNotificationRows]);
+
+        await notificationController.getNotificationsByRole(req, mockResponse);
+
+        expect(db.execute).toHaveBeenCalledWith('SELECT * FROM notifications WHERE role = ?', [req.params.role]);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(mockNotificationRows);
     });
 
-    // Act
-    await notificationController.createNotification(req, res);
+    it('should handle database errors when getting notifications by role', async () => {
+        const req = {
+            params: {
+                role: 'resident'
+            }
+        };
 
-    // Assert
-    expect(db.execute).toHaveBeenCalledWith('INSERT INTO notifications (title, content, role) VALUES (?, ?, ?)', [req.body.title, req.body.content, req.body.role]);
-    expect(db.execute).toHaveBeenCalledWith('SELECT * FROM users WHERE role = ?', [req.body.role]);
-    expect(sendMailMock).toHaveBeenCalledTimes(2);
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Notification created and sent to residents successfully', status: true });
-  });
+        const mockError = new Error('Database error');
+        db.execute.mockRejectedValueOnce(mockError);
 
-  // Additional test cases should be added here
+        await notificationController.getNotificationsByRole(req, mockResponse);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith(mockError);
+    });
 });
 
-describe('getNotificationsByRole', () => {
-  it('successfully retrieves notifications by role', async () => {
-    // Arrange
-    const req = {
-      params: {
-        role: 'resident',
-      },
-    };
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-    const mockNotifications = [
-      { id: 1, title: 'Event Notification', content: 'Details about the event.', role: 'resident' },
-      // Add more mock notifications if needed
-    ];
-    db.execute.mockResolvedValueOnce([mockNotifications]);
-
-    // Act
-    await notificationController.getNotificationsByRole(req, res);
-
-    // Assert
-    expect(db.execute).toHaveBeenCalledWith('SELECT * FROM notifications WHERE role = ?', [req.params.role]);
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(mockNotifications);
-  });
-
-  // Additional test cases should be added here
 });
-
-
-// describe('createNotification', () => {
-//   // Test case 1: valid request body
-//   test('should create a notification and send it to all residents and return 201 status and a success message if the request body is valid', async () => {
-//     // Arrange
-//     const req = {
-//       body: {
-//         title: 'Thông báo về việc thu phí dịch vụ',
-//         content: 'Cư dân vui lòng nộp phí dịch vụ trước ngày 15 tháng 12 năm 2023',
-//         role: 'resident',
-//       },
-//     };
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     };
-//     const expectedMessage = {
-//       message: 'Notification created and sent to residents successfully',
-//       status: true,
-//     };
-//     db.execute.mockResolvedValueOnce([{ length: 2 }]); // Mock userRows
-//     db.execute.mockResolvedValueOnce([{ insertId: 1 }]); // Mock notificationRows
-
-//     // Act
-//     await notificationController.createNotification(req, res);
-
-//     // Assert
-//     expect(db.execute).toHaveBeenCalledWith(
-//       'SELECT * FROM users WHERE role = ?',
-//       [req.body.role]
-//     );
-//     expect(db.execute).toHaveBeenCalledWith(
-//       'INSERT INTO notifications (title, content) VALUES (?, ?)',
-//       [req.body.title, req.body.content]
-//     );
-//     expect(res.status).toHaveBeenCalledWith(201);
-//     expect(res.json).toHaveBeenCalledWith(expectedMessage);
-//   });
-
-//   // Test case 2: missing title in request body
-//   test('should return 400 status and an error message if the request body is missing title', async () => {
-//     // Arrange
-//     const req = {
-//       body: {
-//         content: 'Cư dân vui lòng nộp phí dịch vụ trước ngày 15 tháng 12 năm 2023',
-//         role: 'resident',
-//       },
-//     };
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     };
-//     const expectedError = {
-//       message: 'Title is required',
-//       status: false,
-//     };
-
-//     // Act
-//     await notificationController.createNotification(req, res);
-
-//     // Assert
-//     expect(db.execute).not.toHaveBeenCalled();
-//     expect(res.status).toHaveBeenCalledWith(400);
-//     expect(res.json).toHaveBeenCalledWith(expectedError);
-//   });
-
-//   // Test case 3: missing content in request body
-//   test('should return 400 status and an error message if the request body is missing content', async () => {
-//     // Arrange
-//     const req = {
-//       body: {
-//         title: 'Thông báo về việc thu phí dịch vụ',
-//         role: 'resident',
-//       },
-//     };
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     };
-//     const expectedError = {
-//       message: 'Content is required',
-//       status: false,
-//     };
-
-//     // Act
-//     await notificationController.createNotification(req, res);
-
-//     // Assert
-//     expect(db.execute).not.toHaveBeenCalled();
-//     expect(res.status).toHaveBeenCalledWith(400);
-//     expect(res.json).toHaveBeenCalledWith(expectedError);
-//   });
-
-//   // Test case 4: missing role in request body
-//   test('should return 400 status and an error message if the request body is missing role', async () => {
-//     // Arrange
-//     const req = {
-//       body: {
-//         title: 'Thông báo về việc thu phí dịch vụ',
-//         content: 'Cư dân vui lòng nộp phí dịch vụ trước ngày 15 tháng 12 năm 2023',
-//       },
-//     };
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     };
-//     const expectedError = {
-//       message: 'Role is required',
-//       status: false,
-//     };
-
-//     // Act
-//     await notificationController.createNotification(req, res);
-
-//     // Assert
-//     expect(db.execute).not.toHaveBeenCalled();
-//     expect(res.status).toHaveBeenCalledWith(400);
-//     expect(res.json).toHaveBeenCalledWith(expectedError);
-//   });
-
-//   // Test case 5: invalid role in request body
-//   test('should return 400 status and an error message if the role is not "resident"', async () => {
-//     // Arrange
-//     const req = {
-//       body: {
-//         title: 'Thông báo về việc thu phí dịch vụ',
-//         content: 'Cư dân vui lòng nộp phí dịch vụ trước ngày 15 tháng 12 năm 2023',
-//         role: 'manager',
-//       },
-//     };
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     };
-//     const expectedError = {
-//       message: 'Invalid role',
-//       status: false,
-//     };
-
-//     // Act
-//     await notificationController.createNotification(req, res);
-
-//     // Assert
-//     expect(db.execute).not.toHaveBeenCalled();
-//     expect(res.status).toHaveBeenCalledWith(400);
-//     expect(res.json).toHaveBeenCalledWith(expectedError);
-//   });
-// });
