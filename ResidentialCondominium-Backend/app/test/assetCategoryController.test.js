@@ -2,7 +2,6 @@ const assetCategoryController = require('../controllers/assetCategoryController'
 const db = require('../config/db');
 jest.mock('../config/db');
 
-
 describe('getAllAssetCategories', () => {
   it('should retrieve all asset categories successfully', async () => {
     const mockAssetCategories = [{ id: 1, name: 'Electronics' }, { id: 2, name: 'Furniture' }];
