@@ -4,6 +4,8 @@ const reportController = require('../controllers/reportController');
 const router = require('express').Router();
 const verifyToken = require('../utils/middleware');
 
+router.get('/searchAssetReport', verifyToken.checkLogin, reportController.searchAssetsByName);
+
 router.get('/statistics', verifyToken.checkLogin, reportController.generateAssetStatistics);
 
 router.get('/', verifyToken.checkLogin, assetController.getAllAssets);

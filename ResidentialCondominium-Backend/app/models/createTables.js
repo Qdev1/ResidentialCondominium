@@ -87,11 +87,12 @@ const createTables = async () => {
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             description TEXT,
-            value DECIMAL(10, 2), -- Thay đổi kiểu dữ liệu tùy theo cần
+            value DECIMAL(10, 2), 
             location VARCHAR(255),
             status VARCHAR(255),
             quantity INT,
             category_id INT,
+            image VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (category_id) REFERENCES asset_categories(id)
@@ -371,7 +372,7 @@ const createTables = async () => {
             FOREIGN KEY (resolved_by) REFERENCES users(id)
         )
         `);
-        
+
         console.log('Table "emergency_maintenance" created or already exists.');
 
         // Tạo bảng "customers" nếu chưa tồn tại
@@ -407,9 +408,9 @@ const createTables = async () => {
 
         console.log('Table "receptions" created or already exists.');
 
-        
-         // Tạo bảng "access_cards" nếu chưa tồn tại
-         await db.execute(`
+
+        // Tạo bảng "access_cards" nếu chưa tồn tại
+        await db.execute(`
          CREATE TABLE IF NOT EXISTS access_cards (
             id INT AUTO_INCREMENT PRIMARY KEY,
             resident_id INT NOT NULL,
@@ -419,8 +420,8 @@ const createTables = async () => {
             FOREIGN KEY (resident_id) REFERENCES users(id)
         )
          `);
- 
-         console.log('Table "access_cards" created or already exists.');
+
+        console.log('Table "access_cards" created or already exists.');
 
         // Tạo bảng "maintenance_funds " nếu chưa tồn tại
         await db.execute(`
@@ -434,7 +435,7 @@ const createTables = async () => {
         )
         `);
 
-    console.log('Table "maintenance_funds " created or already exists.');
+        console.log('Table "maintenance_funds " created or already exists.');
 
 
         // await db.execute(`
@@ -448,7 +449,7 @@ const createTables = async () => {
         //  ADD FOREIGN KEY (plan_id) REFERENCES maintenance_plans(id);
         //     `);
 
-        // Thêm trường "role" vào bảng "notifications"
+        // //Thêm trường "role" vào bảng "notifications"
         // await db.execute(`
         //     ALTER TABLE notifications
         //     ADD role VARCHAR(255) AFTER content;
@@ -461,6 +462,32 @@ const createTables = async () => {
         //  ADD assigned_to INT,
         //  ADD FOREIGN KEY (assigned_to) REFERENCES users(id)
         //    `);
+
+        //     await db.execute(`
+        //     ALTER TABLE assets
+        //     ADD COLUMN image VARCHAR(255) AFTER quantity
+        // `);
+
+        // //Sử dụng ALTER TABLE để thêm trường "file_url"
+        // await db.execute(`
+        // ALTER TABLE asset_reports
+        // ADD COLUMN file_url VARCHAR(255);
+        // `);
+
+        // //Bổ sung trường mới "file_url" vào bảng "events" nếu chưa tồn tại
+        // await db.execute(`
+        // ALTER TABLE events
+        // ADD COLUMN file_url VARCHAR(255);
+        // `);
+
+        // console.log('Column "file_url" added to the table "events".');
+
+        // //Alter contracts table to add file_url column
+        // await db.execute(`
+        // ALTER TABLE contracts
+        // ADD COLUMN file_url VARCHAR(255) AFTER value
+        // `);
+        // console.log('Column "file_url" added to the "contracts" table.');
 
     } catch (error) {
         console.error('Error creating tables:', error);
