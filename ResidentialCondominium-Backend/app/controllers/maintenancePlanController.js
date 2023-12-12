@@ -39,9 +39,23 @@ const maintenancePlanController = {
     getMaintenancePlansForAsset: async (req, res) => {
         try {
             const assetId = req.params.assetId;
-            const query = 'SELECT * FROM maintenance_plans WHERE asset_id = ?';
-            const [maintenancePlans] = await db.execute(query, [assetId]);
-            res.status(200).json({ data: maintenancePlans });
+            // Truy vấn để lấy thông tin asset
+            const assetQuery = 'SELECT * FROM assets WHERE id = ?';
+            const [assetResult] = await db.execute(assetQuery, [assetId]);
+
+            if (assetResult.length === 0) {
+                return res.status(404).json({ message: 'Asset not found' });
+            }
+
+            const assetName = assetResult[0].name;
+            console.log(assetResult[0])
+
+            // Truy vấn để lấy danh sách kế hoạch bảo trì cho asset
+            const planQuery = 'SELECT * FROM maintenance_plans WHERE asset_id = ?';
+            const [maintenancePlans] = await db.execute(planQuery, [assetId]);
+
+            // Gửi kết quả với tên asset kèm theo
+            res.status(200).json({ asset_name: assetName, data: maintenancePlans });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -49,7 +63,11 @@ const maintenancePlanController = {
 
     getAllMaintenancePlans: async (req, res) => {
         try {
-            const query = 'SELECT * FROM maintenance_plans';
+            const query = `
+                SELECT mp.*, a.name AS asset_name
+                FROM maintenance_plans mp
+                JOIN assets a ON mp.asset_id = a.id
+            `;
             const [maintenancePlans] = await db.execute(query);
             res.status(200).json({ data: maintenancePlans });
         } catch (err) {

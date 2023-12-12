@@ -4,13 +4,13 @@ const db = require('../config/db');
 const reportController = {
     createAssetReport: async (req, res) => {
         try {
-            const { assetId, reportDate, reportDescription } = req.body;
+            const { assetId, reportDate, reportDescription, fileUrl } = req.body;
 
-            // Thực hiện truy vấn SQL để thêm báo cáo tài sản vào bảng "asset_reports"
-            const query = 'INSERT INTO asset_reports (asset_id, report_date, report_description) VALUES (?, ?, ?)';
-            const [result] = await db.execute(query, [assetId, reportDate, reportDescription]);
+            // Thực hiện truy vấn SQL để thêm báo cáo tài sản vào bảng "asset_reports" với trường file_url
+            const query = 'INSERT INTO asset_reports (asset_id, report_date, report_description, file_url) VALUES (?, ?, ?, ?)';
+            const [result] = await db.execute(query, [assetId, reportDate, reportDescription, fileUrl]);
             const reportId = result.insertId;
-            res.status(201).json({ id: reportId, assetId, reportDate, reportDescription });
+            res.status(201).json({ id: reportId, assetId, reportDate, reportDescription, fileUrl });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -18,11 +18,14 @@ const reportController = {
 
     getAssetReports: async (req, res) => {
         try {
-            const assetId = req.params.assetId;
-
-            // Thực hiện truy vấn SQL để lấy danh sách báo cáo tài sản từ bảng "asset_reports"
-            const query = 'SELECT * FROM asset_reports WHERE asset_id = ?';
-            const [reports] = await db.execute(query, [assetId]);
+            // Thực hiện truy vấn SQL để lấy toàn bộ thông tin của báo cáo tài sản từ bảng "asset_reports" và tên của asset
+            const query = `
+                SELECT ar.*, assets.*
+                FROM asset_reports ar
+                JOIN assets ON ar.asset_id = assets.id
+            `;
+            const [reports] = await db.execute(query);
+    
             res.status(200).json({ data: reports });
         } catch (err) {
             res.status(500).json(err);
@@ -53,7 +56,28 @@ const reportController = {
             const statistics = result[0];
             res.status(200).json({ data: statistics });
         } catch (err) {
-            console.log(err)
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    searchAssetsByName: async (req, res) => {
+        try {
+            const { name } = req.query;
+
+            // Thực hiện truy vấn SQL để tìm kiếm tài sản theo tên trong bảng asset_reports
+            const query = `
+                SELECT ar.*, assets.*
+                FROM asset_reports ar
+                JOIN assets ON ar.asset_id = assets.id
+                WHERE assets.name LIKE ?;
+            `;
+
+            const [reports] = await db.execute(query, [`%${name}%`]);
+
+            res.status(200).json({ data: reports });
+        } catch (err) {
+            console.log(err);
             res.status(500).json(err);
         }
     },

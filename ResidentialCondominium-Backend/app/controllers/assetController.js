@@ -1,80 +1,80 @@
-// assetController.js
 const db = require('../config/db');
 
-const assetController = {
-    getAllAssets: async (req, res) => {
+const assetCategoryController = {
+    getAllAssetCategories: async (req, res) => {
         try {
-            const query = 'SELECT assets.*, asset_categories.name AS category_name FROM assets LEFT JOIN asset_categories ON assets.category_id = asset_categories.id';
-            const [assets] = await db.execute(query);
-            res.status(200).json({ data: assets });
+            const query = 'SELECT * FROM asset_categories';
+            const [assetCategories] = await db.execute(query);
+
+            res.status(200).json({ data: assetCategories });
         } catch (err) {
             res.status(500).json(err);
         }
     },
 
-    createAsset: async (req, res) => {
+    createAssetCategory: async (req, res) => {
         try {
-            const { name, description, value, location, status, categoryId, quantity } = req.body;
-    
-            const query = 'INSERT INTO assets (name, description, value, location, status, category_id, quantity) VALUES (?, ?, ?, ?, ?, ?, ?)';
-            const [result] = await db.execute(query, [name, description, value, location, status, categoryId, quantity]);
-            const assetId = result.insertId;
-            res.status(201).json({ id: assetId, name, description, value, location, status, categoryId, quantity });
+            const { name, description } = req.body;
+            const query = 'INSERT INTO asset_categories (name, description) VALUES (?, ?)';
+            const [result] = await db.execute(query, [name, description]);
+            const assetCategoryId = result.insertId;
+            res.status(201).json({ id: assetCategoryId, name, description });
         } catch (err) {
             res.status(500).json(err);
         }
     },
 
-    updateAsset: async (req, res) => {
+    deleteAssetCategory: async (req, res) => {
         try {
-            const assetId = req.params.id;
-            const { name, description, value, location, status, categoryId } = req.body;
-            const query = 'UPDATE assets SET name = ?, description = ?, value = ?, location = ?, status = ?, category_id = ? WHERE id = ?';
-            await db.execute(query, [name, description, value, location, status, categoryId, assetId]);
-            res.status(200).json({ message: 'Asset updated successfully' });
+            const assetCategoryId = req.params.id;
+            const query = 'DELETE FROM asset_categories WHERE id = ?';
+            await db.execute(query, [assetCategoryId]);
+            res.status(200).json({ message: 'Asset category deleted successfully' });
         } catch (err) {
             res.status(500).json(err);
         }
     },
 
-    deleteAsset: async (req, res) => {
+    updateAssetCategory: async (req, res) => {
         try {
-            const assetId = req.params.id;
-            const query = 'DELETE FROM assets WHERE id = ?';
-            await db.execute(query, [assetId]);
-            res.status(200).json({ message: 'Asset deleted successfully' });
+            const assetCategoryId = req.params.id;
+            const { name, description } = req.body;
+            const query = 'UPDATE asset_categories SET name = ?, description = ? WHERE id = ?';
+            await db.execute(query, [name, description, assetCategoryId]);
+            res.status(200).json({ message: 'Asset category updated successfully' });
         } catch (err) {
             res.status(500).json(err);
         }
     },
 
-   getAssetById: async (req, res) => {
-        try {
-            const assetId = req.params.id;
-            const query = 'SELECT assets.*, asset_categories.name AS category_name FROM assets LEFT JOIN asset_categories ON assets.category_id = asset_categories.id WHERE assets.id = ?';
-            const [asset] = await db.execute(query, [assetId]);
-
-            if (asset.length === 0) {
-                return res.status(404).json({ message: 'Asset not found' });
-            }
-
-            res.status(200).json({ data: asset[0] });
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    },
-
-    searchAssets: async (req, res) => {
+    searchAssetCategories: async (req, res) => {
         try {
             const { keyword } = req.query;
+            const query = 'SELECT * FROM asset_categories WHERE name LIKE ? OR description LIKE ?';
             const searchTerm = `%${keyword}%`;
-            const query = 'SELECT * FROM assets WHERE name LIKE ? OR description LIKE ? OR location LIKE ?';
-            const [assets] = await db.execute(query, [searchTerm, searchTerm, searchTerm]);
-            res.status(200).json({ data: assets });
+            const [assetCategories] = await db.execute(query, [searchTerm, searchTerm]);
+            res.status(200).json({ data: assetCategories });
         } catch (err) {
             res.status(500).json(err);
         }
     },
+
+    getAssetCategoryById: async (req, res) => {
+        try {
+          const categoryId = req.params.id;
+    
+          const query = 'SELECT id, name, description FROM asset_categories WHERE id = ?';
+          const [category] = await db.execute(query, [categoryId]);
+    
+          if (category.length === 0) {
+            return res.status(404).json({ message: 'Asset category not found' });
+          }
+    
+          res.status(200).json({ data: category[0] });
+        } catch (err) {
+          res.status(500).json(err);
+        }
+      },
 };
 
-module.exports = assetController;
+module.exports = assetCategoryController;

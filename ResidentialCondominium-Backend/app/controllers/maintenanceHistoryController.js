@@ -3,11 +3,11 @@ const db = require('../config/db');
 const maintenanceHistoryController = {
     createMaintenanceRecord: async (req, res) => {
         try {
-            const { asset_id, description, date, cost } = req.body;
-            const query = 'INSERT INTO maintenance_history (asset_id, description, date, cost) VALUES (?, ?, ?, ?)';
-            const [result] = await db.execute(query, [asset_id, description, date, cost]);
+            const { asset_id, description, date, cost, plan_id } = req.body;
+            const query = 'INSERT INTO maintenance_history (asset_id, description, date, cost, plan_id) VALUES (?, ?, ?, ?, ?)';
+            const [result] = await db.execute(query, [asset_id, description, date, cost, plan_id]);
             const recordId = result.insertId;
-            res.status(201).json({ id: recordId, asset_id, description, date, cost });
+            res.status(201).json({ id: recordId, asset_id, description, date, cost, plan_id });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -16,9 +16,9 @@ const maintenanceHistoryController = {
     updateMaintenanceRecord: async (req, res) => {
         try {
             const recordId = req.params.id;
-            const { asset_id, description, date, cost } = req.body;
-            const query = 'UPDATE maintenance_history SET asset_id = ?, description = ?, date = ?, cost = ? WHERE id = ?';
-            await db.execute(query, [asset_id, description, date, cost, recordId]);
+            const { asset_id, description, date, cost, plan_id } = req.body;
+            const query = 'UPDATE maintenance_history SET asset_id = ?, description = ?, date = ?, cost = ?, plan_id = ? WHERE id = ?';
+            await db.execute(query, [asset_id, description, date, cost, plan_id, recordId]);
             res.status(200).json({ message: 'Maintenance record updated successfully' });
         } catch (err) {
             res.status(500).json(err);
@@ -68,6 +68,20 @@ const maintenanceHistoryController = {
             const planId = req.params.planId;
             const query = 'SELECT * FROM maintenance_history WHERE plan_id = ?';
             const [maintenanceRecords] = await db.execute(query, [planId]);
+            res.status(200).json({ data: maintenanceRecords });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+
+    getAllMaintenanceRecords: async (req, res) => {
+        try {
+            const query = `
+                SELECT mh.*, mp.plan_description
+                FROM maintenance_history mh
+                JOIN maintenance_plans mp ON mh.plan_id = mp.id
+            `;
+            const [maintenanceRecords] = await db.execute(query);
             res.status(200).json({ data: maintenanceRecords });
         } catch (err) {
             res.status(500).json(err);

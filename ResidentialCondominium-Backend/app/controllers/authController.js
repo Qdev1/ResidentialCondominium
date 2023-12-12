@@ -59,7 +59,7 @@ const authController = {
 
             if (user && validatePassword) {
                 // Tạo mã thông báo JWT
-                const token = jwt.sign({ user: user }, _const.JWT_ACCESS_KEY, { expiresIn: '10h' });
+                const token = jwt.sign({ user: user }, _const.JWT_ACCESS_KEY, { expiresIn: '30d' });
 
                 res.header('Authorization', token);
                 res.status(200).json({ user, token, status: true });
@@ -192,7 +192,6 @@ const authController = {
             res.status(500).json(err);
         }
     },
-
    
 };
 

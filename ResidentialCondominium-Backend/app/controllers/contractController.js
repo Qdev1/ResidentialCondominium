@@ -3,13 +3,13 @@ const db = require('../config/db');
 const contractController = {
     createContract: async (req, res) => {
         try {
-            const { vendorId, contractorId, startDate, endDate, description, value } = req.body;
+            const { vendorId, title, startDate, endDate, description, value, fileUrl } = req.body;
 
-            const query = 'INSERT INTO contracts (vendor_id, contractor_id, start_date, end_date, description, value) VALUES (?, ?, ?, ?, ?, ?)';
-            const [result] = await db.execute(query, [vendorId, contractorId, startDate, endDate, description, value]);
+            const query = 'INSERT INTO contracts (vendor_id, title, start_date, end_date, description, value, file_url) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const [result] = await db.execute(query, [vendorId, title, startDate, endDate, description, value, fileUrl]);
             const contractId = result.insertId;
 
-            res.status(201).json({ id: contractId, vendorId, contractorId, startDate, endDate, description, value });
+            res.status(201).json({ id: contractId, vendorId, title, startDate, endDate, description, value, fileUrl });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -18,9 +18,9 @@ const contractController = {
     updateContract: async (req, res) => {
         try {
             const contractId = req.params.id;
-            const { vendorId, contractorId, startDate, endDate, description, value } = req.body;
-            const query = 'UPDATE contracts SET vendor_id = ?, contractor_id = ?, start_date = ?, end_date = ?, description = ?, value = ? WHERE id = ?';
-            await db.execute(query, [vendorId, contractorId, startDate, endDate, description, value, contractId]);
+            const { vendorId, title, startDate, endDate, description, value, fileUrl } = req.body;
+            const query = 'UPDATE contracts SET vendor_id = ?, title = ?, start_date = ?, end_date = ?, description = ?,file_url = ?, value = ? WHERE id = ?';
+            await db.execute(query, [vendorId, title, startDate, endDate, description, fileUrl, value, contractId]);
             res.status(200).json({ message: 'Contract updated successfully' });
         } catch (err) {
             res.status(500).json(err);
@@ -40,7 +40,11 @@ const contractController = {
 
     getAllContracts: async (req, res) => {
         try {
-            const query = 'SELECT * FROM contracts';
+            const query = `
+                SELECT contracts.*, vendors.name AS vendor_name
+                FROM contracts
+                LEFT JOIN vendors ON contracts.vendor_id = vendors.id
+            `;
             const [contracts] = await db.execute(query);
             res.status(200).json({ data: contracts });
         } catch (err) {
@@ -66,13 +70,13 @@ const contractController = {
 
     searchContracts: async (req, res) => {
         try {
-            const { vendorId, contractorId, startDate, endDate } = req.query;
+            const { vendorId, contractorId, startDate, endDate, title } = req.query;
 
             let conditions = [];
             let params = [];
 
             if (vendorId) {
-                conditions.push('vendor_id = ?');
+                conditions.push('contracts.vendor_id = ?');
                 params.push(vendorId);
             }
 
@@ -91,8 +95,18 @@ const contractController = {
                 params.push(endDate);
             }
 
+            if (title) {
+                conditions.push('title LIKE ?');
+                params.push(`%${title}%`);
+            }
+
             let conditionStr = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-            const query = `SELECT * FROM contracts ${conditionStr}`;
+            const query = `
+                SELECT contracts.*, vendors.name AS vendor_name
+                FROM contracts
+                LEFT JOIN vendors ON contracts.vendor_id = vendors.id
+                ${conditionStr}
+            `;
             const [contracts] = await db.execute(query, params);
 
             res.status(200).json({ data: contracts });
