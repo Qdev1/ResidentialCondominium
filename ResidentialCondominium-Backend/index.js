@@ -16,7 +16,7 @@ require('./app/models/createTables');
 const db = mysql.createConnection({
     host: 'localhost', 
     user: 'root',
-    password: '12345678',
+    password: 'root',
     database: 'residential'
 });
 
@@ -68,9 +68,9 @@ app.use('/api/maintenance-history', maintenanceHistoryRoutes);
 app.use('/api/contracts', contractsRoutes);
 app.use('/api/entry', entryRoutes);
 app.use('/api/emergency', emergencyRoutes);
-app.use('/api/customerEnrollment', customerEnrollmentRoutes);
+app.use('/api/customer-enrollment', customerEnrollmentRoutes);
 app.use('/api/reception', receptionRouter);
-app.use('/api/accessCard', accessCardRoutes);
+app.use('/api/access-card', accessCardRoutes);
 app.use('/api/payment', paymentRoute);
 app.use('/api/maintenance-funds', maintenanceFundsRoute);
 
