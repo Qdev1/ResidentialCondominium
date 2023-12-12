@@ -45,7 +45,7 @@ const EmergencyMaintenance = () => {
     const [assetList, setAssetList] = useState();
     const [security, setSecurity] = useState();
 
-    
+
     const showModal = () => {
         setOpenModalCreate(true);
     };
@@ -128,7 +128,7 @@ const EmergencyMaintenance = () => {
     const handleCategoryList = async () => {
         try {
             await emergencyMaintenanceApi.listEmergencyMaintenance().then((res) => {
-                setCategory(res);
+                setCategory(res.data);
                 setLoading(false);
             });
             ;
@@ -178,7 +178,9 @@ const EmergencyMaintenance = () => {
                     asset_id: response.data.asset_id,
                     description: response.data.description,
                     reported_by: response.data.reported_by,
-                  });
+                    resolved_by: response.data.resolved_by,
+                    resolved_description: response.data.resolved_description,
+                });
 
                 console.log(form2);
                 setLoading(false);
@@ -242,8 +244,8 @@ const EmergencyMaintenance = () => {
         },
         {
             title: 'Người giải quyết',
-            dataIndex: 'resolved_by',
-            key: 'resolved_by',
+            dataIndex: 'resolved_by_name',
+            key: 'resolved_by_name',
         },
         {
             title: 'Ngày tạo',
@@ -286,7 +288,7 @@ const EmergencyMaintenance = () => {
             ),
         },
     ];
-    
+
 
 
 

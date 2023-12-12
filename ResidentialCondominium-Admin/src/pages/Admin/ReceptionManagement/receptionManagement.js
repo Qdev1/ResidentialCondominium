@@ -204,29 +204,29 @@ const ReceptionManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: 'Resident ID',
+            title: 'Tên cư dân',
             dataIndex: 'resident_username',
             key: 'resident_username',
             render: (text) => <a>{text}</a>,
         },
         {
-            title: 'Guest Name',
+            title: 'Tên Khách',
             dataIndex: 'guest_name',
             key: 'guest_name',
         },
         {
-            title: 'Entry Date',
+            title: 'Ngày Nhập',
             dataIndex: 'entry_date',
             key: 'entry_date',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
-            title: 'Purpose',
+            title: 'Mục Đích',
             dataIndex: 'purpose',
             key: 'purpose',
         },
         {
-            title: 'Note',
+            title: 'Ghi Chú',
             dataIndex: 'note',
             key: 'note',
         },
@@ -374,16 +374,16 @@ const ReceptionManagement = () => {
 
                         <Form.Item
                             name="resident_id"
-                            label="Resident ID"
+                            label="Cư dân"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng chọn Resident ID!',
+                                    message: 'Vui lòng chọn cư dân!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Select placeholder="Chọn Resident ID">
+                            <Select placeholder="Chọn cư dân">
                                 {residentList?.map(resident => (
                                     <Option key={resident.id} value={resident.id}>
                                         {resident.username}
@@ -394,59 +394,60 @@ const ReceptionManagement = () => {
 
                         <Form.Item
                             name="guest_name"
-                            label="Guest Name"
+                            label="Tên Khách"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Guest Name!',
+                                    message: 'Vui lòng nhập Tên Khách!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Guest Name" />
+                            <Input placeholder="Tên Khách" />
                         </Form.Item>
 
                         <Form.Item
                             name="entry_date"
-                            label="Entry Date"
+                            label="Ngày Nhập"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Entry Date!',
+                                    message: 'Vui lòng nhập Ngày Nhập!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker style={{ width: '100%' }} placeholder="Chọn Entry Date" />
+                            <DatePicker style={{ width: '100%' }} placeholder="Chọn Ngày Nhập" />
                         </Form.Item>
 
                         <Form.Item
                             name="purpose"
-                            label="Purpose"
+                            label="Mục Đích"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Purpose!',
+                                    message: 'Vui lòng nhập Mục Đích!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Purpose" />
+                            <Input placeholder="Mục Đích" />
                         </Form.Item>
 
                         <Form.Item
                             name="note"
-                            label="Note"
+                            label="Ghi Chú"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Note!',
+                                    message: 'Vui lòng nhập Ghi Chú!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Note" />
+                            <Input placeholder="Ghi Chú" />
                         </Form.Item>
+
 
 
                     </Form>
@@ -483,18 +484,18 @@ const ReceptionManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
+                          <Form.Item
                             name="resident_id"
-                            label="Resident ID"
+                            label="Cư dân"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng chọn Resident ID!',
+                                    message: 'Vui lòng chọn cư dân!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Select placeholder="Chọn Resident ID">
+                            <Select placeholder="Chọn cư dân">
                                 {residentList?.map(resident => (
                                     <Option key={resident.id} value={resident.id}>
                                         {resident.username}
@@ -505,58 +506,58 @@ const ReceptionManagement = () => {
 
                         <Form.Item
                             name="guest_name"
-                            label="Guest Name"
+                            label="Tên Khách"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Guest Name!',
+                                    message: 'Vui lòng nhập Tên Khách!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Guest Name" />
+                            <Input placeholder="Tên Khách" />
                         </Form.Item>
 
                         <Form.Item
                             name="entry_date"
-                            label="Entry Date"
+                            label="Ngày Nhập"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Entry Date!',
+                                    message: 'Vui lòng nhập Ngày Nhập!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker style={{ width: '100%' }} placeholder="Chọn Entry Date" />
+                            <DatePicker style={{ width: '100%' }} placeholder="Chọn Ngày Nhập" />
                         </Form.Item>
 
                         <Form.Item
                             name="purpose"
-                            label="Purpose"
+                            label="Mục Đích"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Purpose!',
+                                    message: 'Vui lòng nhập Mục Đích!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Purpose" />
+                            <Input placeholder="Mục Đích" />
                         </Form.Item>
 
                         <Form.Item
                             name="note"
-                            label="Note"
+                            label="Ghi Chú"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Note!',
+                                    message: 'Vui lòng nhập Ghi Chú!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Note" />
+                            <Input placeholder="Ghi Chú" />
                         </Form.Item>
 
                     </Form>

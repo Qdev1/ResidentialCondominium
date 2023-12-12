@@ -16,7 +16,11 @@ const entryController = {
 
     getAllEntryRecords: async (req, res) => {
         try {
-            const query = 'SELECT * FROM entry_records';
+            const query = `
+                SELECT er.*, u.username AS user_name
+                FROM entry_records er
+                LEFT JOIN users u ON er.user_id = u.id
+            `;
             const [entryRecords] = await db.execute(query);
             res.status(200).json({ data: entryRecords });
         } catch (err) {

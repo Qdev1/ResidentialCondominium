@@ -70,31 +70,34 @@ const emergencyMaintenanceController = {
     getAllEmergencyMaintenance: async (req, res) => {
         try {
             const query = `
-            SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
-            FROM emergency_maintenance
-            LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
-            LEFT JOIN users ON emergency_maintenance.reported_by = users.id`;
+                SELECT em.*, a.name AS asset_name, ur.username AS reported_by_name, ures.username AS resolved_by_name
+                FROM emergency_maintenance em
+                LEFT JOIN assets a ON em.asset_id = a.id
+                LEFT JOIN users ur ON em.reported_by = ur.id
+                LEFT JOIN users ures ON em.resolved_by = ures.id
+            `;
             const [maintenanceRecords] = await db.execute(query);
             res.status(200).json({ data: maintenanceRecords });
         } catch (err) {
             res.status(500).json(err);
         }
     },
-
+    
     searchEmergencyMaintenance: async (req, res) => {
         try {
             const { keyword } = req.query;
             const query = `
-                SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
-                FROM emergency_maintenance
-                LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
-                LEFT JOIN users ON emergency_maintenance.reported_by = users.id
+                SELECT em.*, a.name AS asset_name, ur.username AS reported_by_name, ures.username AS resolved_by_name
+                FROM emergency_maintenance em
+                LEFT JOIN assets a ON em.asset_id = a.id
+                LEFT JOIN users ur ON em.reported_by = ur.id
+                LEFT JOIN users ures ON em.resolved_by = ures.id
                 WHERE 
-                    emergency_maintenance.description LIKE ? OR 
-                    emergency_maintenance.resolved_description LIKE ?
+                    em.description LIKE ? OR 
+                    em.resolved_description LIKE ?
             `;
             const [result] = await db.execute(query, [`%${keyword}%`, `%${keyword}%`]);
-
+    
             res.status(200).json({ data: result });
         } catch (err) {
             res.status(500).json(err);

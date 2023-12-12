@@ -211,8 +211,8 @@ const UnauthorizedEntry = () => {
         },
         {
             title: 'Người ra vào',
-            dataIndex: 'user_id',
-            key: 'user_id',
+            dataIndex: 'user_name',
+            key: 'user_name',
         },
         {
             title: 'Thời gian vào',
