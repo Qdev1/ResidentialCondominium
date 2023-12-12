@@ -222,6 +222,7 @@ const EmergencyMaintenance = () => {
             title: 'Ngày báo cáo',
             dataIndex: 'reported_at',
             key: 'reported_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Trạng thái',
@@ -232,6 +233,7 @@ const EmergencyMaintenance = () => {
             title: 'Ngày giải quyết',
             dataIndex: 'resolved_at',
             key: 'resolved_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Mô tả giải quyết',
@@ -247,6 +249,7 @@ const EmergencyMaintenance = () => {
             title: 'Ngày tạo',
             dataIndex: 'created_at',
             key: 'created_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Action',

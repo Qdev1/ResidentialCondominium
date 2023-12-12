@@ -20,6 +20,7 @@ import ReactWeather, { useOpenWeather } from 'react-open-weather';
 import { useHistory } from 'react-router-dom';
 import userApi from "../../apis/userApi";
 import "./profile.css";
+import uploadFileApi from '../../apis/uploadFileApi';
 
 
 const Profile = () => {
@@ -27,6 +28,7 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState([]);
     const [isVisibleModal, setVisibleModal] = useState(false);
+    const [file, setUploadFile] = useState();
 
     const { data, isLoading, errorMessage } = useOpenWeather({
         key: '03b81b9c18944e6495d890b189357388',
@@ -61,6 +63,7 @@ const Profile = () => {
                 "email": values.email,
                 "phone": values.phone,
                 "username": values.username,
+                "image": file,
             };
             console.log(userData);
             await userApi.updateProfile(formatData, userData.id)
@@ -85,6 +88,15 @@ const Profile = () => {
         }
     };
 
+    const handleChangeImage = async (e) => {
+        setLoading(true);
+        const response = await uploadFileApi.uploadFile(e);
+        if (response) {
+            setUploadFile(response);
+        }
+        setLoading(false);
+    }
+
     return (
         <div>
             <Spin spinning={loading}>
@@ -106,7 +118,14 @@ const Profile = () => {
                             <Col span="9" style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
                                 <Card hoverable={true} className="profile-card" style={{ padding: 0, margin: 0 }}>
                                     <Row justify="center">
-                                        <img src={userData?.image} style={{ width: 150, height: 150 }}></img>
+                                        <img
+                                            src={userData?.image}
+                                            style={{
+                                                width: 150,
+                                                height: 150,
+                                                borderRadius: '50%', 
+                                            }}
+                                        />
                                     </Row>
                                     <Row justify="center">
                                         <Col span="24">
@@ -178,39 +197,59 @@ const Profile = () => {
                             }}
                             onFinish={handleFormSubmit}
                         >
-                            <Form.Item
-                                label="Tên"
-                                name="username"
-                                rules={[
+                            <Spin spinning={loading}>
+                                <Form.Item
+                                    label="Tên"
+                                    name="username"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập username!',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Email" name="email" rules={[
                                     {
                                         required: true,
-                                        message: 'Vui lòng nhập username!',
+                                        message: 'Vui lòng nhập email!',
                                     },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Email" name="email" rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập email!',
-                                },
-                            ]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Số điện thoại" name="phone" rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập số điện thoại!',
-                                },
-                            ]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Cập nhật
-                                </Button>
-                            </Form.Item>
+                                ]}>
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Số điện thoại" name="phone" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số điện thoại!',
+                                    },
+                                ]}>
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    name="image"
+                                    label="Chọn ảnh"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng chọn ảnh!',
+                                        },
+                                    ]}
+                                >
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleChangeImage}
+                                        id="avatar"
+                                        name="file"
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">
+                                        Cập nhật
+                                    </Button>
+                                </Form.Item>
+                            </Spin>
                         </Form>
                     </Modal>
                 </div>

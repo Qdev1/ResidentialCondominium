@@ -210,6 +210,11 @@ const MaintenanceFunds = () => {
             title: 'Số tiền',
             dataIndex: 'amount',
             key: 'amount',
+            render: (text, record) => {
+                // Định dạng số theo format tiền Việt Nam
+                const formattedCost = Number(record.amount).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                return formattedCost;
+            },
         },
         {
             title: 'Ngày phân bổ',
@@ -498,9 +503,9 @@ const MaintenanceFunds = () => {
                             style={{ marginBottom: 10 }}
                         >
                             <Select placeholder="Chọn trạng thái">
-                                <Option value="pending">Pending</Option>
-                                <Option value="accept">Accept</Option>
-                                <Option value="reject">Reject</Option>
+                                <Option value="Đang chờ">Đang chờ</Option>
+                                <Option value="Chấp nhận">Chấp nhận</Option>
+                                <Option value="Từ chối">Từ chối</Option>
                             </Select>
                         </Form.Item>
 

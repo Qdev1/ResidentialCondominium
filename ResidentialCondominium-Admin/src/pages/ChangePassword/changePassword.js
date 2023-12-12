@@ -1,9 +1,10 @@
-import { Alert, Button, Divider, Form, Input, notification } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from "react-router-dom";
-import axiosClient from '../../apis/axiosClient';
-import backgroundLogin from "../../assets/image/background-login.png";
+import React, { useState, useEffect } from 'react';
 import "./changePassword.css";
+import { useHistory } from "react-router-dom";
+import { Form, Input, Button, Divider, Alert,notification } from 'antd';
+import backgroundLogin from "../../assets/image/background-login.png";
+import { useParams } from "react-router-dom";
+import axiosClient from '../../apis/axiosClient';
 
 const ChangePassWord = () => {
 

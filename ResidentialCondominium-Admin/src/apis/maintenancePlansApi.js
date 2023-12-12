@@ -1,8 +1,17 @@
 import axiosClient from "./axiosClient";
 
 const maintenancePlansApi = {
-    async listMaintenancePlans() {
+    async getAllMaintenancePlans() {
         const url = 'maintenance-plans';
+        try {
+            const response = await axiosClient.get(url);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+    async listMaintenancePlans() {
+        const url = 'maintenance-plans/2';
         try {
             const response = await axiosClient.get(url);
             return response;

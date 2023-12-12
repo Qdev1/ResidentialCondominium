@@ -34,8 +34,8 @@ const FamilyManagement = () => {
     const columns = [
         {
             title: 'ID',
-            key: 'id',
-            dataIndex: 'id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
         },
         {
             title: 'Họ và tên',

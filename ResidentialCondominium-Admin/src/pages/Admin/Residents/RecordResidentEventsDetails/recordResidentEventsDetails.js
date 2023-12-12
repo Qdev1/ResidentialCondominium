@@ -23,6 +23,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import meetingResidentsApi from "../../../../apis/meetingResidentsApi";
 import "./recordResidentEventsDetails.css";
+import uploadFileApi from '../../../../apis/uploadFileApi';
 
 const RecordResidentEventsDetails = () => {
 
@@ -31,6 +32,7 @@ const RecordResidentEventsDetails = () => {
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [form] = Form.useForm();
+    const [file, setUploadFile] = useState();
 
     const { id } = useParams();
 
@@ -46,6 +48,7 @@ const RecordResidentEventsDetails = () => {
                 "eventDate": values.eventDate.format("YYYY-MM-DD"),
                 "description": values.description,
                 "meetingId": id,
+                "fileUrl": file
             };
             return meetingResidentsApi.recordEvent(categoryList).then(response => {
                 if (response === undefined) {
@@ -124,9 +127,26 @@ const RecordResidentEventsDetails = () => {
             key: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
+        {
+            title: 'File đính kèm',
+            dataIndex: 'file_url',
+            key: 'file_url',
+            render: (attachment) => (
+                <a href={attachment} target="_blank" rel="noopener noreferrer">
+                    {"Xem file"}
+                </a>
+            ),
+        },
     ];
 
-
+    const handleChangeImage = async (e) => {
+        setLoading(true);
+        const response = await uploadFileApi.uploadFile(e);
+        if (response) {
+            setUploadFile(response);
+        }
+        setLoading(false);
+    }
 
 
     useEffect(() => {
@@ -257,6 +277,23 @@ const RecordResidentEventsDetails = () => {
                         >
                             <Input.TextArea placeholder="Mô tả sự kiện" />
                         </Form.Item>
+                        <Form.Item
+                                name="image"
+                                label="Đính kèm"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng đính kèm!',
+                                    },
+                                ]}
+                            >
+                                <input
+                                    type="file"
+                                    onChange={handleChangeImage}
+                                    id="avatar"
+                                    name="file"
+                                />
+                            </Form.Item>
                     </Form>
                 </Modal>
 

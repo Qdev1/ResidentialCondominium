@@ -214,11 +214,13 @@ const AssetCards = () => {
             title: 'Ngày cấp thẻ',
             dataIndex: 'issue_date',
             key: 'issue_date',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Ngày hết hạn',
             dataIndex: 'expiration_date',
             key: 'expiration_date',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Action',

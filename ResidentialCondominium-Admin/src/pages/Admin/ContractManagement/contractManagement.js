@@ -19,13 +19,16 @@ import {
     Table,
     notification,
     Select,
-    DatePicker
+    DatePicker,
+    InputNumber
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import contractManagementApi from "../../../apis/contractManagementApi";
 import "./contractManagement.css";
 import dayjs from 'dayjs';
 import moment from 'moment';
+import VendorManagementApi from '../../../apis/vendorManagementApi';
+import uploadFileApi from '../../../apis/uploadFileApi';
 
 const { Option } = Select;
 
@@ -39,6 +42,7 @@ const ContractManagement = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [file, setUploadFile] = useState();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -54,6 +58,7 @@ const ContractManagement = () => {
                 endDate: values.end_date.format("YYYY-MM-DD"),
                 description: values.description,
                 value: values.value,
+                fileUrl: file
             };
             return contractManagementApi.createContract(categoryList).then(response => {
                 if (response === undefined) {
@@ -89,6 +94,7 @@ const ContractManagement = () => {
                 endDate: values.end_date.format("YYYY-MM-DD"),
                 description: values.description,
                 value: values.value,
+                fileUrl: file
             }
             return contractManagementApi.updateContract(categoryList, id).then(response => {
                 if (response === undefined) {
@@ -205,9 +211,9 @@ const ContractManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: 'Vendor ID',
-            dataIndex: 'vendor_id',
-            key: 'vendor_id',
+            title: 'Nhà cung cấp',
+            dataIndex: 'vendor_name',
+            key: 'vendor_name',
             render: (text) => <a>{text}</a>,
         },
         {
@@ -235,9 +241,24 @@ const ContractManagement = () => {
             key: 'description',
         },
         {
+            title: 'File đính kèm',
+            dataIndex: 'file_url',
+            key: 'file_url',
+            render: (attachment) => (
+                <a href={attachment} target="_blank" rel="noopener noreferrer">
+                    {"Xem file"}
+                </a>
+            ),
+        },
+        {
             title: 'Giá trị',
             dataIndex: 'value',
             key: 'value',
+            render: (text, record) => {
+                // Định dạng số theo format tiền Việt Nam
+                const formattedCost = Number(record.value).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                return formattedCost;
+            },
         },
         {
             title: 'Action',
@@ -274,8 +295,15 @@ const ContractManagement = () => {
             ),
         },
     ];
-    
 
+    const handleChangeImage = async (e) => {
+        setLoading(true);
+        const response = await uploadFileApi.uploadFile(e);
+        if (response) {
+            setUploadFile(response);
+        }
+        setLoading(false);
+    }
 
 
     useEffect(() => {
@@ -284,6 +312,12 @@ const ContractManagement = () => {
                 await contractManagementApi.listContract().then((res) => {
                     console.log(res);
                     setCategory(res.data);
+                    setLoading(false);
+                });
+
+                await VendorManagementApi.listVendors().then((res) => {
+                    console.log(res);
+                    setCategoryList(res.data);
                     setLoading(false);
                 });
 
@@ -371,84 +405,115 @@ const ContractManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="vendor_id"
-                            label="Vendor ID"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập Vendor ID!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Vendor ID" />
-                        </Form.Item>
-                        <Form.Item
-                            name="title"
-                            label="Tiêu đề"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập tiêu đề!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Tiêu đề" />
-                        </Form.Item>
-                        <Form.Item
-                            name="start_date"
-                            label="Ngày bắt đầu"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ngày bắt đầu!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày bắt đầu" />
-                        </Form.Item>
-                        <Form.Item
-                            name="end_date"
-                            label="Ngày kết thúc"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ngày kết thúc!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày kết thúc" />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="value"
-                            label="Giá trị"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập giá trị!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Giá trị" />
-                        </Form.Item>
+                        <Spin spinning={loading}>
+                            <Form.Item
+                                name="vendor_id"
+                                label="Nhà cung cấp"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn nhà cung cấp!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn nhà cung cấp">
+                                    {categoryList.map(category => (
+                                        <Option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                name="title"
+                                label="Tiêu đề"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập tiêu đề!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Tiêu đề" />
+                            </Form.Item>
+                            <Form.Item
+                                name="start_date"
+                                label="Ngày bắt đầu"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập ngày bắt đầu!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày bắt đầu" />
+                            </Form.Item>
+                            <Form.Item
+                                name="end_date"
+                                label="Ngày kết thúc"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập ngày kết thúc!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày kết thúc" />
+                            </Form.Item>
+                            <Form.Item
+                                name="description"
+                                label="Mô tả"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Mô tả" />
+                            </Form.Item>
+                            <Form.Item
+                                name="value"
+                                label="Giá trị"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập giá trị!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <InputNumber
+                                    placeholder="Giá trị"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} // Use dot as a thousand separator
+                                    parser={(value) => value.replace(/\./g, '')} // Remove dots for parsing
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="image"
+                                label="Đính kèm"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng đính kèm!',
+                                    },
+                                ]}
+                            >
+                                <input
+                                    type="file"
+                                    onChange={handleChangeImage}
+                                    id="avatar"
+                                    name="file"
+                                />
+                            </Form.Item>
+                        </Spin>
                     </Form>
 
                 </Modal>
@@ -483,84 +548,114 @@ const ContractManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="vendor_id"
-                            label="Vendor ID"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập Vendor ID!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Vendor ID" />
-                        </Form.Item>
-                        <Form.Item
-                            name="title"
-                            label="Tiêu đề"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập tiêu đề!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Tiêu đề" />
-                        </Form.Item>
-                        <Form.Item
-                            name="start_date"
-                            label="Ngày bắt đầu"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ngày bắt đầu!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày bắt đầu" />
-                        </Form.Item>
-                        <Form.Item
-                            name="end_date"
-                            label="Ngày kết thúc"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ngày kết thúc!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày kết thúc" />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="value"
-                            label="Giá trị"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập giá trị!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Giá trị" />
-                        </Form.Item>
+                        <Spin spinning={loading}>
+                            <Form.Item
+                                name="vendor_id"
+                                label="Nhà cung cấp"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn nhà cung cấp!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn nhà cung cấp">
+                                    {categoryList.map(category => (
+                                        <Option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                name="title"
+                                label="Tiêu đề"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập tiêu đề!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Tiêu đề" />
+                            </Form.Item>
+                            <Form.Item
+                                name="start_date"
+                                label="Ngày bắt đầu"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập ngày bắt đầu!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày bắt đầu" />
+                            </Form.Item>
+                            <Form.Item
+                                name="end_date"
+                                label="Ngày kết thúc"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập ngày kết thúc!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <DatePicker style={{ width: '100%' }} placeholder="Chọn ngày kết thúc" />
+                            </Form.Item>
+                            <Form.Item
+                                name="description"
+                                label="Mô tả"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Mô tả" />
+                            </Form.Item>
+                            <Form.Item
+                                name="value"
+                                label="Giá trị"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập giá trị!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <InputNumber
+                                    placeholder="Giá trị"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} // Use dot as a thousand separator
+                                    parser={(value) => value.replace(/\./g, '')} // Remove dots for parsing
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="image"
+                                label="Đính kèm"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng đính kèm!',
+                                    },
+                                ]}
+                            >
+                                <input
+                                    type="file"
+                                    onChange={handleChangeImage}
+                                    id="avatar"
+                                    name="file"
+                                />
+                            </Form.Item>
+                        </Spin>
                     </Form>
                 </Modal>
 

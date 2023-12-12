@@ -18,13 +18,18 @@ import {
     Spin,
     Table,
     notification,
-    DatePicker
+    DatePicker,
+    Select
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import maintenancePlanningApi from "../../../apis/maintenancePlansApi";
 import "./maintenancePlanning.css";
+import assetManagementApi from '../../../apis/assetManagementApi';
+
+const { Option } = Select;
+
 
 const MaintenancePlanning = () => {
 
@@ -51,7 +56,7 @@ const MaintenancePlanning = () => {
                 "start_date": values.start_date.format("YYYY-MM-DD"),
                 "end_date": values.end_date.format("YYYY-MM-DD"),
             };
-            
+
             return maintenancePlanningApi.createMaintenancePlan(categoryList).then(response => {
                 if (response === undefined) {
                     notification["error"]({
@@ -173,7 +178,7 @@ const MaintenancePlanning = () => {
                     start_date: moment(response.data.start_date),
                     end_date: moment(response.data.end_date),
                 });
-                
+
                 console.log(form2);
                 setLoading(false);
             } catch (error) {
@@ -194,13 +199,13 @@ const MaintenancePlanning = () => {
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
         },
         {
-            title: 'ID Tài sản',
-            dataIndex: 'asset_id',
-            key: 'asset_id',
+            title: 'Tên tài sản',
+            dataIndex: 'asset_name',
+            key: 'asset_name',
         },
         {
             title: 'Mô tả kế hoạch',
@@ -267,17 +272,23 @@ const MaintenancePlanning = () => {
         },
     ];
 
+    const [categoryList, setCategoryList] = useState([]);
 
 
     useEffect(() => {
         (async () => {
             try {
-                await maintenancePlanningApi.listMaintenancePlans().then((res) => {
+                await maintenancePlanningApi.getAllMaintenancePlans().then((res) => {
                     console.log(res);
                     setCategory(res.data);
                     setLoading(false);
                 });
-                ;
+
+                await assetManagementApi.listAssetManagement().then((res) => {
+                    console.log(res);
+                    setCategoryList(res.data);
+                    setLoading(false);
+                });
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }
@@ -364,16 +375,22 @@ const MaintenancePlanning = () => {
                     >
                         <Form.Item
                             name="asset_id"
-                            label="ID Tài sản"
+                            label="Tài sản"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập ID Tài sản!',
+                                    message: 'Vui lòng chọn tài sản!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="ID Tài sản" />
+                            <Select placeholder="Chọn tài sản">
+                                {categoryList.map(category => (
+                                    <Option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name="plan_description"
@@ -450,16 +467,22 @@ const MaintenancePlanning = () => {
                     >
                         <Form.Item
                             name="asset_id"
-                            label="ID Tài sản"
+                            label="Tài sản"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập ID Tài sản!',
+                                    message: 'Vui lòng chọn tài sản!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="ID Tài sản" />
+                            <Select placeholder="Chọn tài sản">
+                                {categoryList.map(category => (
+                                    <Option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name="plan_description"

@@ -18,15 +18,19 @@ import {
     Spin,
     Table,
     notification,
-    Select
+    Select,
+    DatePicker
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import roomManagementApi from "../../../apis/roomManagementApi";
-import "./roomManagement.css";
+import complaintApi from "../../../apis/complaintApi";
+import "./residentManagement.css";
+import dayjs from 'dayjs';
+import moment from 'moment';
+import userApi from '../../../apis/userApi';
 
 const { Option } = Select;
 
-const RoomManagement = () => {
+const ResidentManagement = () => {
 
     const [category, setCategory] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
@@ -36,6 +40,7 @@ const RoomManagement = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [userList, setUserList] = useState();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -45,26 +50,26 @@ const RoomManagement = () => {
         setLoading(true);
         try {
             const categoryList = {
-                name: values.name,
-                type: values.type,
-                area: values.area,
-                capacity: values.capacity,
-                status: values.status,
+                user_id: values.user_id,
+                subject: values.subject,
                 description: values.description,
+                status: values.status,
+                progress: values.progress,
+                assigned_to: values.assigned_to,
             };
-            return roomManagementApi.createRoomManagement(categoryList).then(response => {
+            return complaintApi.createComplaint(categoryList).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo phòng thất bại',
+                            'Tạo khiếu nại thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo phòng thành công',
+                            'Tạo khiếu nại thành công',
                     });
                     setOpenModalCreate(false);
                     handleCategoryList();
@@ -80,26 +85,26 @@ const RoomManagement = () => {
         setLoading(true);
         try {
             const categoryList = {
-                name: values.name,
-                type: values.type,
-                area: values.area,
-                capacity: values.capacity,
-                status: values.status,
+                user_id: values.user_id,
+                subject: values.subject,
                 description: values.description,
+                status: values.status,
+                progress: values.progress,
+                assigned_to: values.assigned_to,
             }
-            return roomManagementApi.updateRoomManagement(categoryList, id).then(response => {
+            return complaintApi.updateComplaint(categoryList, id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Chỉnh sửa phòng thất bại',
+                            'Chỉnh sửa khiếu nại thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Chỉnh sửa phòng thành công',
+                            'Chỉnh sửa khiếu nại thành công',
                     });
                     handleCategoryList();
                     setOpenModalUpdate(false);
@@ -122,8 +127,8 @@ const RoomManagement = () => {
 
     const handleCategoryList = async () => {
         try {
-            await roomManagementApi.listRoomManagement().then((res) => {
-                setCategory(res.data);
+            await complaintApi.listComplaints().then((res) => {
+                setCategory(res);
                 setLoading(false);
             });
             ;
@@ -135,12 +140,12 @@ const RoomManagement = () => {
     const handleDeleteCategory = async (id) => {
         setLoading(true);
         try {
-            await roomManagementApi.deleteRoomManagement(id).then(response => {
+            await complaintApi.deleteComplaint(id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Xóa phòng thất bại',
+                            'Xóa khiếu nại thất bại',
 
                     });
                     setLoading(false);
@@ -149,7 +154,7 @@ const RoomManagement = () => {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Xóa phòng thành công',
+                            'Xóa khiếu nại thành công',
 
                     });
                     handleCategoryList();
@@ -167,15 +172,15 @@ const RoomManagement = () => {
         setOpenModalUpdate(true);
         (async () => {
             try {
-                const response = await roomManagementApi.getDetailRoomManagement(id);
+                const response = await complaintApi.getDetailComplaint(id);
                 setId(id);
                 form2.setFieldsValue({
-                    name: response.data.name,
-                    type: response.data.type,
-                    area: response.data.area,
-                    capacity: response.data.capacity,
-                    status: response.data.status,
-                    description: response.data.description,
+                    user_id: response.user_id,
+                    subject: response.subject,
+                    description: response.description,
+                    status: response.status,
+                    progress: response.progress,
+                    assigned_to: response.assigned_to,
                 });
 
                 console.log(form2);
@@ -188,8 +193,8 @@ const RoomManagement = () => {
 
     const handleFilter = async (name) => {
         try {
-            const res = await roomManagementApi.searchRoomManagement(name);
-            setCategory(res.data);
+            const res = await complaintApi.searchComplaint(name);
+            setCategory(res);
         } catch (error) {
             console.log('search to fetch category list:' + error);
         }
@@ -202,25 +207,20 @@ const RoomManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
-            title: 'Tên',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Người khiếu nại',
+            dataIndex: 'user_name',
+            key: 'user_name',
             render: (text) => <a>{text}</a>,
         },
         {
-            title: 'Loại',
-            dataIndex: 'type',
-            key: 'type',
+            title: 'Chủ đề',
+            dataIndex: 'subject',
+            key: 'subject',
         },
         {
-            title: 'Diện tích',
-            dataIndex: 'area',
-            key: 'area',
-        },
-        {
-            title: 'Sức chứa',
-            dataIndex: 'capacity',
-            key: 'capacity',
+            title: 'Mô tả',
+            dataIndex: 'description',
+            key: 'description',
         },
         {
             title: 'Trạng thái',
@@ -228,9 +228,14 @@ const RoomManagement = () => {
             key: 'status',
         },
         {
-            title: 'Mô tả',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Quá trình',
+            dataIndex: 'progress',
+            key: 'progress',
+        },
+        {
+            title: 'Đảm nhiệm bởi',
+            dataIndex: 'assigned_to_name',
+            key: 'assigned_to_name',
         },
         {
             title: 'Action',
@@ -244,11 +249,11 @@ const RoomManagement = () => {
                             style={{ width: 150, borderRadius: 15, height: 30 }}
                             onClick={() => handleEditCategory(record.id)}
                         >
-                            {"Chỉnh sửa"}
+                            {"Edit"}
                         </Button>
                         <div style={{ marginLeft: 10 }}>
                             <Popconfirm
-                                title="Bạn có chắc chắn xóa phòng này?"
+                                title="Are you sure to delete this complaint?"
                                 onConfirm={() => handleDeleteCategory(record.id)}
                                 okText="Yes"
                                 cancelText="No"
@@ -258,26 +263,35 @@ const RoomManagement = () => {
                                     icon={<DeleteOutlined />}
                                     style={{ width: 150, borderRadius: 15, height: 30 }}
                                 >
-                                    {"Xóa"}
+                                    {"Delete"}
                                 </Button>
                             </Popconfirm>
                         </div>
                     </Row>
-                </div >
+                </div>
             ),
         },
     ];
 
 
 
+
+
     useEffect(() => {
         (async () => {
             try {
-                await roomManagementApi.listRoomManagement().then((res) => {
+                await complaintApi.listComplaints().then((res) => {
                     console.log(res);
-                    setCategory(res.data);
+                    setCategory(res);
                     setLoading(false);
                 });
+
+                await userApi.listUserByAdmin().then((res) => {
+                    console.log(res);
+                    setUserList(res.data);
+                    setLoading(false);
+                });
+
 
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
@@ -295,7 +309,7 @@ const RoomManagement = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Quản lý phòng</span>
+                                <span>Quản lý khiếu nại</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
@@ -318,7 +332,7 @@ const RoomManagement = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
-                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo phòng</Button>
+                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo khiếu nại</Button>
                                             </Space>
                                         </Row>
                                     </Col>
@@ -334,7 +348,7 @@ const RoomManagement = () => {
                 </div>
 
                 <Modal
-                    title="Tạo phòng mới"
+                    title="Tạo khiếu nại mới"
                     visible={openModalCreate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -363,74 +377,39 @@ const RoomManagement = () => {
                         }}
                         scrollToFirstError
                     >
+
                         <Form.Item
-                            name="name"
-                            label="Tên"
+                            name="user_id"
+                            label="Người khiếu nại"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập tên!',
+                                    message: 'Vui lòng chọn người khiếu nại!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Tên" />
-                        </Form.Item>
-                        <Form.Item
-                            name="type"
-                            label="Loại"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập loại!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Loại" />
-                        </Form.Item>
-                        <Form.Item
-                            name="area"
-                            label="Diện tích"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập diện tích!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Diện tích" />
-                        </Form.Item>
-                        <Form.Item
-                            name="capacity"
-                            label="Sức chứa"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập sức chứa!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Sức chứa" />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
-                                <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Mới tạo">Mới tạo</Select.Option>
+                            <Select placeholder="Chọn người khiếu nại">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
                             </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="subject"
+                            label="Subject"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập subject!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Subject" />
                         </Form.Item>
                         <Form.Item
                             name="description"
@@ -445,12 +424,59 @@ const RoomManagement = () => {
                         >
                             <Input placeholder="Mô tả" />
                         </Form.Item>
+                        <Form.Item
+                            name="status"
+                            label="Status"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập trạng thái!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Status" />
+                        </Form.Item>
+                        <Form.Item
+                            name="progress"
+                            label="Progress"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập tiến độ!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Progress" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="assigned_to"
+                            label="Người đảm nhiệm!"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn người đảm nhiệm!!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn người đảm nhiệm!">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
 
                     </Form>
+
                 </Modal>
 
                 <Modal
-                    title="Chỉnh sửa phòng"
+                    title="Chỉnh sửa khiếu nại"
                     visible={openModalUpdate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -479,74 +505,38 @@ const RoomManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="name"
-                            label="Tên"
+                       <Form.Item
+                            name="user_id"
+                            label="Người khiếu nại"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập tên!',
+                                    message: 'Vui lòng chọn người khiếu nại!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Tên" />
-                        </Form.Item>
-                        <Form.Item
-                            name="type"
-                            label="Loại"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập loại!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Loại" />
-                        </Form.Item>
-                        <Form.Item
-                            name="area"
-                            label="Diện tích"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập diện tích!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Diện tích" />
-                        </Form.Item>
-                        <Form.Item
-                            name="capacity"
-                            label="Sức chứa"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập sức chứa!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Sức chứa" />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
-                                <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Mới tạo">Mới tạo</Select.Option>
+                            <Select placeholder="Chọn người khiếu nại">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
                             </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name="subject"
+                            label="Subject"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập subject!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Subject" />
                         </Form.Item>
                         <Form.Item
                             name="description"
@@ -561,8 +551,52 @@ const RoomManagement = () => {
                         >
                             <Input placeholder="Mô tả" />
                         </Form.Item>
+                        <Form.Item
+                            name="status"
+                            label="Status"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập trạng thái!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Status" />
+                        </Form.Item>
+                        <Form.Item
+                            name="progress"
+                            label="Progress"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập tiến độ!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Progress" />
+                        </Form.Item>
 
-
+                        <Form.Item
+                            name="assigned_to"
+                            label="Người đảm nhiệm!"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn người đảm nhiệm!!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn người đảm nhiệm!">
+                                {userList?.map(user => (
+                                    <Option key={user.id} value={user.id}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
                     </Form>
                 </Modal>
 
@@ -572,4 +606,4 @@ const RoomManagement = () => {
     )
 }
 
-export default RoomManagement;
+export default ResidentManagement;

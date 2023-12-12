@@ -18,13 +18,17 @@ import {
     Spin,
     Table,
     notification,
-    DatePicker
+    DatePicker,
+    Select
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import assetManagementApi from "../../../apis/assetManagementApi";
 import "./assetReport.css";
+import uploadFileApi from '../../../apis/uploadFileApi';
+
+const { Option } = Select;
 
 const AssetReport = () => {
 
@@ -35,6 +39,7 @@ const AssetReport = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [file, setUploadFile] = useState();
 
     const history = useHistory();
 
@@ -46,9 +51,10 @@ const AssetReport = () => {
         setLoading(true);
         try {
             const categoryList = {
-                "assetId": 1,
+                "assetId": values.assetId,
                 "reportDate": values.report_date.format("YYYY-MM-DD"),
                 "reportDescription": values.report_description,
+                "fileUrl": file
             }
             return assetManagementApi.createAssetReports(categoryList).then(response => {
                 if (response === undefined) {
@@ -177,23 +183,47 @@ const AssetReport = () => {
 
     const handleFilter = async (name) => {
         try {
-            const res = await assetManagementApi.searchAssetCategory(name);
+            const res = await assetManagementApi.searchAssetsByName(name);
             setCategory(res.data);
         } catch (error) {
             console.log('search to fetch category list:' + error);
         }
     }
 
+    const handleChangeImage = async (e) => {
+        setLoading(true);
+        const response = await uploadFileApi.uploadFile(e);
+        if (response) {
+            setUploadFile(response);
+        }
+        setLoading(false);
+    }
+
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'asset_id',
-            key: 'asset_id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
+        },
+        {
+            title: 'Tên tài sản',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Mô tả',
             dataIndex: 'report_description',
             key: 'report_description',
+        },
+        {
+            title: 'File đính kèm',
+            dataIndex: 'file_url',
+            key: 'file_url',
+            render: (attachment) => (
+                <a href={attachment} target="_blank" rel="noopener noreferrer">
+                    {"Xem file"}
+                </a>
+            ),
         },
         {
             title: 'Ngày tạo',
@@ -236,6 +266,7 @@ const AssetReport = () => {
         // },
     ];
 
+    const [categoryList, setCategoryList] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -243,6 +274,12 @@ const AssetReport = () => {
                 await assetManagementApi.listAssetReports(1).then((res) => {
                     console.log(res);
                     setCategory(res.data);
+                    setLoading(false);
+                });
+
+                await assetManagementApi.listAssetManagement().then((res) => {
+                    console.log(res);
+                    setCategoryList(res.data);
                     setLoading(false);
                 });
                 ;
@@ -330,32 +367,72 @@ const AssetReport = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="report_date"
-                            label="Ngày báo cáo"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ngày báo cáo!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <DatePicker placeholder="Chọn ngày báo cáo" />
-                        </Form.Item>
-                        <Form.Item
-                            name="report_description"
-                            label="Mô tả báo cáo"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả báo cáo!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input.TextArea placeholder="Mô tả báo cáo" />
-                        </Form.Item>
+                        <Spin spinning={loading}>
+                            <Form.Item
+                                name="assetId"
+                                label="Tài sản"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn tài sản!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn tài sản">
+                                    {categoryList.map(category => (
+                                        <Option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                name="report_date"
+                                label="Ngày báo cáo"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập ngày báo cáo!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <DatePicker placeholder="Chọn ngày báo cáo" />
+                            </Form.Item>
+                            <Form.Item
+                                name="report_description"
+                                label="Mô tả báo cáo"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả báo cáo!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input.TextArea placeholder="Mô tả báo cáo" />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="image"
+                                label="Đính kèm"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng đính kèm!',
+                                    },
+                                ]}
+                            >
+                                <input
+                                    type="file"
+                                    onChange={handleChangeImage}
+                                    id="avatar"
+                                    name="file"
+                                />
+                            </Form.Item>
+                        </Spin>
+
                     </Form>
                 </Modal>
 

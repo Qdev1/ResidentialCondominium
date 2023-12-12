@@ -82,6 +82,15 @@ const assetManagementApi = {
             throw error;
         }
     },  
+    async searchAssetsByName(name) {
+        const url = 'assets/searchAssetReport?name=' + name.target.value;
+        try {
+            const response = await axiosClient.get(url);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },  
 }
 
 export default assetManagementApi;

@@ -13,7 +13,6 @@ function DropdownAvatar() {
   const Logout = async () => {
     localStorage.clear();
     history.push("/");
-    await userApi.logout();
   }
 
   useEffect(() => {

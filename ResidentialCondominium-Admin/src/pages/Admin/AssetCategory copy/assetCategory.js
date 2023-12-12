@@ -17,25 +17,25 @@ import {
     Space,
     Spin,
     Table,
-    notification,
-    Select
+    notification
 } from 'antd';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import roomManagementApi from "../../../apis/roomManagementApi";
-import "./roomManagement.css";
+import { useHistory } from 'react-router-dom';
+import assetCategoryApi from "../../../apis/assetCategoryApi";
+import "./assetCategory.css";
 
-const { Option } = Select;
-
-const RoomManagement = () => {
+const AssetCategory = () => {
 
     const [category, setCategory] = useState([]);
-    const [categoryList, setCategoryList] = useState([]);
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+
+    const history = useHistory();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -45,26 +45,22 @@ const RoomManagement = () => {
         setLoading(true);
         try {
             const categoryList = {
-                name: values.name,
-                type: values.type,
-                area: values.area,
-                capacity: values.capacity,
-                status: values.status,
-                description: values.description,
-            };
-            return roomManagementApi.createRoomManagement(categoryList).then(response => {
+                "name": values.name,
+                "description": values.description,
+            }
+            return assetCategoryApi.createAssetCategory(categoryList).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo phòng thất bại',
+                            'Tạo danh mục tài sản thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo phòng thành công',
+                            'Tạo danh mục tài sản thành công',
                     });
                     setOpenModalCreate(false);
                     handleCategoryList();
@@ -80,26 +76,22 @@ const RoomManagement = () => {
         setLoading(true);
         try {
             const categoryList = {
-                name: values.name,
-                type: values.type,
-                area: values.area,
-                capacity: values.capacity,
-                status: values.status,
-                description: values.description,
+                "name": values.name,
+                "description": values.description,
             }
-            return roomManagementApi.updateRoomManagement(categoryList, id).then(response => {
+            return assetCategoryApi.updateAssetCategory(categoryList, id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Chỉnh sửa phòng thất bại',
+                            'Chỉnh sửa danh mục tài sản thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Chỉnh sửa phòng thành công',
+                            'Chỉnh sửa danh mục tài sản thành công',
                     });
                     handleCategoryList();
                     setOpenModalUpdate(false);
@@ -122,7 +114,7 @@ const RoomManagement = () => {
 
     const handleCategoryList = async () => {
         try {
-            await roomManagementApi.listRoomManagement().then((res) => {
+            await assetCategoryApi.listAssetCategories().then((res) => {
                 setCategory(res.data);
                 setLoading(false);
             });
@@ -135,12 +127,12 @@ const RoomManagement = () => {
     const handleDeleteCategory = async (id) => {
         setLoading(true);
         try {
-            await roomManagementApi.deleteRoomManagement(id).then(response => {
+            await assetCategoryApi.deleteAssetCategory(id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Xóa phòng thất bại',
+                            'Xóa danh mục tài sản thất bại',
 
                     });
                     setLoading(false);
@@ -149,7 +141,7 @@ const RoomManagement = () => {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Xóa phòng thành công',
+                            'Xóa danh mục tài sản thành công',
 
                     });
                     handleCategoryList();
@@ -167,17 +159,12 @@ const RoomManagement = () => {
         setOpenModalUpdate(true);
         (async () => {
             try {
-                const response = await roomManagementApi.getDetailRoomManagement(id);
+                const response = await assetCategoryApi.getDetailAssetCategory(id);
                 setId(id);
                 form2.setFieldsValue({
                     name: response.data.name,
-                    type: response.data.type,
-                    area: response.data.area,
-                    capacity: response.data.capacity,
-                    status: response.data.status,
                     description: response.data.description,
                 });
-
                 console.log(form2);
                 setLoading(false);
             } catch (error) {
@@ -188,7 +175,7 @@ const RoomManagement = () => {
 
     const handleFilter = async (name) => {
         try {
-            const res = await roomManagementApi.searchRoomManagement(name);
+            const res = await assetCategoryApi.searchAssetCategory(name);
             setCategory(res.data);
         } catch (error) {
             console.log('search to fetch category list:' + error);
@@ -208,29 +195,15 @@ const RoomManagement = () => {
             render: (text) => <a>{text}</a>,
         },
         {
-            title: 'Loại',
-            dataIndex: 'type',
-            key: 'type',
-        },
-        {
-            title: 'Diện tích',
-            dataIndex: 'area',
-            key: 'area',
-        },
-        {
-            title: 'Sức chứa',
-            dataIndex: 'capacity',
-            key: 'capacity',
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-        },
-        {
             title: 'Mô tả',
             dataIndex: 'description',
             key: 'description',
+        },
+        {
+            title: 'Ngày tạo',
+            key: 'created_at',
+            dataIndex: 'created_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Action',
@@ -243,12 +216,12 @@ const RoomManagement = () => {
                             icon={<EditOutlined />}
                             style={{ width: 150, borderRadius: 15, height: 30 }}
                             onClick={() => handleEditCategory(record.id)}
-                        >
-                            {"Chỉnh sửa"}
+                        >{"Chỉnh sửa"}
                         </Button>
-                        <div style={{ marginLeft: 10 }}>
+                        <div
+                            style={{ marginLeft: 10 }}>
                             <Popconfirm
-                                title="Bạn có chắc chắn xóa phòng này?"
+                                title="Bạn có chắc chắn xóa danh mục tài sản này?"
                                 onConfirm={() => handleDeleteCategory(record.id)}
                                 okText="Yes"
                                 cancelText="No"
@@ -257,8 +230,7 @@ const RoomManagement = () => {
                                     size="small"
                                     icon={<DeleteOutlined />}
                                     style={{ width: 150, borderRadius: 15, height: 30 }}
-                                >
-                                    {"Xóa"}
+                                >{"Xóa"}
                                 </Button>
                             </Popconfirm>
                         </div>
@@ -269,16 +241,15 @@ const RoomManagement = () => {
     ];
 
 
-
     useEffect(() => {
         (async () => {
             try {
-                await roomManagementApi.listRoomManagement().then((res) => {
+                await assetCategoryApi.listAssetCategories().then((res) => {
                     console.log(res);
                     setCategory(res.data);
                     setLoading(false);
                 });
-
+                ;
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }
@@ -295,7 +266,7 @@ const RoomManagement = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Quản lý phòng</span>
+                                <span>Danh mục tài sản</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
@@ -318,7 +289,7 @@ const RoomManagement = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
-                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo phòng</Button>
+                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo danh mục tài sản</Button>
                                             </Space>
                                         </Row>
                                     </Col>
@@ -334,7 +305,7 @@ const RoomManagement = () => {
                 </div>
 
                 <Modal
-                    title="Tạo phòng mới"
+                    title="Tạo danh mục tài sản mới"
                     visible={openModalCreate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -377,62 +348,6 @@ const RoomManagement = () => {
                             <Input placeholder="Tên" />
                         </Form.Item>
                         <Form.Item
-                            name="type"
-                            label="Loại"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập loại!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Loại" />
-                        </Form.Item>
-                        <Form.Item
-                            name="area"
-                            label="Diện tích"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập diện tích!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Diện tích" />
-                        </Form.Item>
-                        <Form.Item
-                            name="capacity"
-                            label="Sức chứa"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập sức chứa!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Sức chứa" />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
-                                <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Mới tạo">Mới tạo</Select.Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
                             name="description"
                             label="Mô tả"
                             rules={[
@@ -450,7 +365,7 @@ const RoomManagement = () => {
                 </Modal>
 
                 <Modal
-                    title="Chỉnh sửa phòng"
+                    title="Chỉnh sửa danh mục tài sản"
                     visible={openModalUpdate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -485,7 +400,7 @@ const RoomManagement = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập tên!',
+                                    message: 'Please input your sender name!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
@@ -493,75 +408,18 @@ const RoomManagement = () => {
                             <Input placeholder="Tên" />
                         </Form.Item>
                         <Form.Item
-                            name="type"
-                            label="Loại"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập loại!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Loại" />
-                        </Form.Item>
-                        <Form.Item
-                            name="area"
-                            label="Diện tích"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập diện tích!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Diện tích" />
-                        </Form.Item>
-                        <Form.Item
-                            name="capacity"
-                            label="Sức chứa"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập sức chứa!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Sức chứa" />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
-                                <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Mới tạo">Mới tạo</Select.Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
                             name="description"
                             label="Mô tả"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập mô tả!',
+                                    message: 'Please input your subject!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
                             <Input placeholder="Mô tả" />
                         </Form.Item>
-
 
                     </Form>
                 </Modal>
@@ -572,4 +430,4 @@ const RoomManagement = () => {
     )
 }
 
-export default RoomManagement;
+export default AssetCategory;

@@ -28,6 +28,7 @@ import "./unauthorizedEntry.css";
 import userApi from '../../../apis/userApi';
 import assetManagementApi from '../../../apis/assetManagementApi';
 import dayjs from 'dayjs';
+import moment from 'moment/moment';
 
 const { Option } = Select;
 
@@ -217,11 +218,13 @@ const UnauthorizedEntry = () => {
             title: 'Thời gian vào',
             dataIndex: 'entry_time',
             key: 'entry_time',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Thời gian ra',
             dataIndex: 'exit_time',
             key: 'exit_time',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Tòa nhà',
@@ -245,6 +248,7 @@ const UnauthorizedEntry = () => {
             title: 'Ngày tạo',
             dataIndex: 'created_at',
             key: 'created_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Action',

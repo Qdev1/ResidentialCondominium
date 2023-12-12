@@ -57,4 +57,4 @@ const accessCardApi = {
     },  
 }
 
-export default accessCardApi.js;
+export default accessCardApi;

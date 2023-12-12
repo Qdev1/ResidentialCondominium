@@ -1,6 +1,6 @@
 import axiosClient from "./axiosClient";
 
-const vendorManagementApi = {
+const VendorManagementApi = {
     async listVendors() {
         const url = 'vendors';
         try {
@@ -84,4 +84,4 @@ const vendorManagementApi = {
     },  
 }
 
-export default vendorManagementApi;
+export default VendorManagementApi;

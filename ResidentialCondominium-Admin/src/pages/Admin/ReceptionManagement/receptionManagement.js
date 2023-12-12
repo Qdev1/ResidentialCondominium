@@ -218,6 +218,7 @@ const ReceptionManagement = () => {
             title: 'Entry Date',
             dataIndex: 'entry_date',
             key: 'entry_date',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
             title: 'Purpose',

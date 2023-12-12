@@ -24,7 +24,7 @@ const Login = () => {
           (async () => {
             try {
               console.log(response);
-              if (response.user.role === "isAdmin" && response.user.status !== "noactive") {
+              if (response.user.status !== "noactive") {
                 history.push("/dash-board");
               } else {
                 notification["error"]({
@@ -121,14 +121,14 @@ const Login = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please input your Username!',
+                  message: 'Vui lòng nhập email!',
                 },
               ]}
             >
               <Input
                 style={{ height: 34, borderRadius: 5 }}
                 prefix={<UserOutlined className="siteformitemicon" />}
-                placeholder="Username" />
+                placeholder="Email" />
             </Form.Item >
             <Form.Item
               style={{ marginBottom: 8 }}
@@ -136,14 +136,14 @@ const Login = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please input your Password!',
+                  message: 'Vui lòng nhập mật khẩu!',
                 },
               ]}
             >
               <Input.Password
                 prefix={<LockOutlined className="siteformitemicon" />}
                 type="password"
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 style={{ height: 34, borderRadius: 5 }}
               />
             </Form.Item>

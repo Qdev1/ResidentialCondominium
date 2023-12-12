@@ -1,8 +1,17 @@
 import axiosClient from "./axiosClient";
 
 const maintenanceHistoryApi = {
-    async listMaintenanceHistory() {
-        const url = 'maintenance-history/plan/2';
+    async getAllMaintenanceRecords() {
+        const url = 'maintenance-history';
+        try {
+            const response = await axiosClient.get(url);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+    async listMaintenanceHistory(id) {
+        const url = 'maintenance-history/plan/'+id;
         try {
             const response = await axiosClient.get(url);
             return response;
@@ -82,6 +91,6 @@ const maintenanceHistoryApi = {
             throw error;
         }
     },  
-} 
+}
 
 export default maintenanceHistoryApi;

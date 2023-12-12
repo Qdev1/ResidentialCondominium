@@ -19,13 +19,18 @@ import {
     Table,
     notification,
     DatePicker,
-    InputNumber
+    InputNumber,
+    Select
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import maintenanceHistoryApi from "../../../apis/maintenanceHistoryApi";
 import "./maintenanceHistory.css";
+import assetManagementApi from '../../../apis/assetManagementApi';
+import maintenancePlansApi from '../../../apis/maintenancePlansApi';
+
+const { Option } = Select;
 
 const MaintenanceHistory = () => {
 
@@ -47,13 +52,13 @@ const MaintenanceHistory = () => {
         setLoading(true);
         try {
             const categoryList = {
-                "asset_id": values.asset_id || 1,
-                "plan_id": values.plan_id || 2,
+                "asset_id": values.assetId || 1,
+                "plan_id": values.plan_id,
                 "description": values.description,
                 "date": values.date.format("YYYY-MM-DD"),
                 "cost": values.cost,
             };
-            
+
 
             return maintenanceHistoryApi.createMaintenanceHistory(categoryList).then(response => {
                 if (response === undefined) {
@@ -84,7 +89,7 @@ const MaintenanceHistory = () => {
         try {
             const categoryList = {
                 "asset_id": values.asset_id || 1,
-                "plan_id": values.plan_id || 2,
+                "plan_id": values.plan_id,
                 "description": values.description,
                 "date": values.date.format("YYYY-MM-DD"),
                 "cost": values.cost,
@@ -175,6 +180,7 @@ const MaintenanceHistory = () => {
                     description: response.description,
                     date: moment(response.date),
                     cost: response.cost,
+                    plan_id: response.plan_id
                 });
 
                 console.log(form2);
@@ -197,13 +203,23 @@ const MaintenanceHistory = () => {
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'asset_id',
-            key: 'asset_id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
+        },
+        {
+            title: 'Tên kế hoạch bảo trì',
+            dataIndex: 'plan_description',
+            key: 'plan_description',
         },
         {
             title: 'Chi phí',
             dataIndex: 'cost',
             key: 'cost',
+            render: (text, record) => {
+                // Định dạng số theo format tiền Việt Nam
+                const formattedCost = Number(record.cost).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                return formattedCost;
+            },
         },
         {
             title: 'Mô tả',
@@ -226,12 +242,6 @@ const MaintenanceHistory = () => {
             title: 'Ngày tạo',
             dataIndex: 'created_at',
             key: 'created_at',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
-        },
-        {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updated_at',
-            key: 'updated_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
@@ -270,17 +280,23 @@ const MaintenanceHistory = () => {
         },
     ];
 
+    const [categoryList, setCategoryList] = useState([]);
 
 
     useEffect(() => {
         (async () => {
             try {
-                await maintenanceHistoryApi.listMaintenanceHistory().then((res) => {
+                await maintenanceHistoryApi.getAllMaintenanceRecords().then((res) => {
                     console.log(res);
                     setCategory(res.data);
                     setLoading(false);
                 });
-                ;
+
+                await maintenancePlansApi.getAllMaintenancePlans().then((res) => {
+                    console.log(res);
+                    setCategoryList(res.data);
+                    setLoading(false);
+                });
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }
@@ -366,6 +382,25 @@ const MaintenanceHistory = () => {
                         scrollToFirstError
                     >
                         <Form.Item
+                            name="plan_id"
+                            label="Kế hoạch bảo trì"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn kế hoạch bảo trì!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn kế hoạch bảo trì">
+                                {categoryList.map(category => (
+                                    <Option key={category.id} value={category.id}>
+                                        {category.plan_description}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
                             name="description"
                             label="Mô tả"
                             rules={[
@@ -402,7 +437,12 @@ const MaintenanceHistory = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <InputNumber placeholder="Chi phí" style={{ width: '100%' }} />
+                            <InputNumber
+                                placeholder="Chi phí"
+                                style={{ width: '100%' }}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} // Use dot as a thousand separator
+                                parser={(value) => value.replace(/\./g, '')} // Remove dots for parsing
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -439,7 +479,26 @@ const MaintenanceHistory = () => {
                         }}
                         scrollToFirstError
                     >
-                         <Form.Item
+                        <Form.Item
+                            name="plan_id"
+                            label="Kế hoạch bảo trì"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn kế hoạch bảo trì!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn kế hoạch bảo trì">
+                                {categoryList.map(category => (
+                                    <Option key={category.id} value={category.id}>
+                                        {category.plan_description}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
                             name="description"
                             label="Mô tả"
                             rules={[
@@ -476,7 +535,12 @@ const MaintenanceHistory = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <InputNumber placeholder="Chi phí" style={{ width: '100%' }} />
+                            <InputNumber
+                                placeholder="Chi phí"
+                                style={{ width: '100%' }}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} // Use dot as a thousand separator
+                                parser={(value) => value.replace(/\./g, '')} // Remove dots for parsing
+                            />
                         </Form.Item>
 
                     </Form>

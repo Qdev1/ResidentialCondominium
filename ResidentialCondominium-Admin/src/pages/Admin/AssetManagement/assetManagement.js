@@ -18,13 +18,15 @@ import {
     Spin,
     Table,
     notification,
-    Select
+    Select,
+    InputNumber
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import assetManagementApi from "../../../apis/assetManagementApi";
 import "./assetManagement.css";
 import assetCategoryApi from '../../../apis/assetCategoryApi';
+import uploadFileApi from '../../../apis/uploadFileApi';
 
 const { Option } = Select;
 
@@ -38,6 +40,7 @@ const AssetManagement = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [file, setUploadFile] = useState();
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -54,7 +57,7 @@ const AssetManagement = () => {
                 "status": values.status,
                 "categoryId": values.categoryId,
                 "quantity": values.quantity,
-
+                "image": file
             }
             return assetManagementApi.createAssetManagement(categoryList).then(response => {
                 if (response === undefined) {
@@ -91,6 +94,7 @@ const AssetManagement = () => {
                 "status": values.status,
                 "categoryId": values.categoryId,
                 "quantity": values.quantity,
+                "image": file
             }
             return assetManagementApi.updateAssetManagement(categoryList, id).then(response => {
                 if (response === undefined) {
@@ -182,6 +186,7 @@ const AssetManagement = () => {
                     status: response.data.status,
                     categoryId: response.data.category_id,
                     quantity: response.data.quantity,
+                    image: response.data.image
                 });
                 console.log(form2);
                 setLoading(false);
@@ -207,6 +212,13 @@ const AssetManagement = () => {
             render: (text, record, index) => index + 1,
         },
         {
+            title: 'Ảnh',
+            dataIndex: 'image',
+            key: 'image',
+            render: (image) => <img src={image} style={{ height: 80 }} />,
+            width: '10%'
+        },
+        {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
@@ -221,6 +233,11 @@ const AssetManagement = () => {
             title: 'Giá trị',
             dataIndex: 'value',
             key: 'value',
+            render: (text, record) => {
+                // Định dạng số theo format tiền Việt Nam
+                const formattedCost = Number(record.value).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                return formattedCost;
+            },
         },
         {
             title: 'Vị trí',
@@ -289,6 +306,14 @@ const AssetManagement = () => {
         },
     ];
 
+    const handleChangeImage = async (e) => {
+        setLoading(true);
+        const response = await uploadFileApi.uploadFile(e);
+        if (response) {
+            setUploadFile(response);
+        }
+        setLoading(false);
+    }
 
     useEffect(() => {
         (async () => {
@@ -389,109 +414,138 @@ const AssetManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="name"
-                            label="Tên"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập tên!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Tên" />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="value"
-                            label="Giá trị"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập giá trị!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Giá trị" />
-                        </Form.Item>
+                        <Spin spinning={loading}>
 
-                        <Form.Item
-                            name="location"
-                            label="Vị trí"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập vị trí!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Vị trí" />
-                        </Form.Item>
+                            <Form.Item
+                                name="name"
+                                label="Tên"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập tên!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Tên" />
+                            </Form.Item>
+                            <Form.Item
+                                name="description"
+                                label="Mô tả"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Mô tả" />
+                            </Form.Item>
 
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Trạng thái" />
-                        </Form.Item>
+                            <Form.Item
+                                name="value"
+                                label="Giá trị"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập giá trị!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <InputNumber
+                                    placeholder="Giá trị"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} // Use dot as a thousand separator
+                                    parser={(value) => value.replace(/\./g, '')} // Remove dots for parsing
+                                />
+                            </Form.Item>
 
-                        <Form.Item
-                            name="categoryId"
-                            label="Danh mục"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn danh mục!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn danh mục">
-                                {categoryList.map(category => (
-                                    <Option key={category.id} value={category.id}>
-                                        {category.name}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
+                            <Form.Item
+                                name="location"
+                                label="Vị trí"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập vị trí!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Vị trí" />
+                            </Form.Item>
 
-                        <Form.Item
-                            name="quantity"
-                            label="Số lượng"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập số lượng!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Số lượng" />
-                        </Form.Item>
+                            <Form.Item
+                                name="status"
+                                label="Trạng thái"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn trạng thái!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn trạng thái">
+                                    <Select.Option value="Đang sử dụng">Đang sử dụng</Select.Option>
+                                    <Select.Option value="Chưa sử dụng">Chưa sử dụng</Select.Option>
+                                    <Select.Option value="Bảo trì">Bảo trì</Select.Option>
+                                </Select>
+                            </Form.Item>
 
+                            <Form.Item
+                                name="categoryId"
+                                label="Danh mục"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn danh mục!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn danh mục">
+                                    {categoryList.map(category => (
+                                        <Option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
 
+                            <Form.Item
+                                name="quantity"
+                                label="Số lượng"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số lượng!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <InputNumber placeholder="Số lượng" />
+                            </Form.Item>
+                            <Form.Item
+                                name="image"
+                                label="Chọn ảnh"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn ảnh!',
+                                    },
+                                ]}
+                            >
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleChangeImage}
+                                    id="avatar"
+                                    name="file"
+                                />
+                            </Form.Item>
+                        </Spin>
                     </Form>
                 </Modal>
 
@@ -525,103 +579,136 @@ const AssetManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="name"
-                            label="Tên"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your sender name!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Tên" />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your subject!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="value"
-                            label="Giá trị"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập giá trị!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Giá trị" />
-                        </Form.Item>
+                        <Spin spinning={loading}>
+                            <Form.Item
+                                name="name"
+                                label="Tên"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your sender name!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Tên" />
+                            </Form.Item>
+                            <Form.Item
+                                name="description"
+                                label="Mô tả"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your subject!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Mô tả" />
+                            </Form.Item>
 
-                        <Form.Item
-                            name="location"
-                            label="Vị trí"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập vị trí!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Vị trí" />
-                        </Form.Item>
+                            <Form.Item
+                                name="value"
+                                label="Giá trị"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập giá trị!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <InputNumber
+                                    placeholder="Giá trị"
+                                    style={{ width: '100%' }}
+                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} // Use dot as a thousand separator
+                                    parser={(value) => value.replace(/\./g, '')} // Remove dots for parsing
+                                />
+                            </Form.Item>
 
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Trạng thái" />
-                        </Form.Item>
+                            <Form.Item
+                                name="location"
+                                label="Vị trí"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập vị trí!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Vị trí" />
+                            </Form.Item>
 
-                        <Form.Item
-                            name="categoryId"
-                            label="ID Danh mục"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ID danh mục!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="ID Danh mục" />
-                        </Form.Item>
+                            <Form.Item
+                                name="status"
+                                label="Trạng thái"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn trạng thái!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn trạng thái">
+                                    <Select.Option value="Đang sử dụng">Đang sử dụng</Select.Option>
+                                    <Select.Option value="Chưa sử dụng">Chưa sử dụng</Select.Option>
+                                    <Select.Option value="Bảo trì">Bảo trì</Select.Option>
+                                </Select>
+                            </Form.Item>
 
-                        <Form.Item
-                            name="quantity"
-                            label="Số lượng"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập số lượng!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Số lượng" />
-                        </Form.Item>
+                            <Form.Item
+                                name="categoryId"
+                                label="Danh mục"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng chọn danh mục!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Select placeholder="Chọn danh mục">
+                                    {categoryList.map(category => (
+                                        <Option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
 
+                            <Form.Item
+                                name="quantity"
+                                label="Số lượng"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số lượng!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <InputNumber placeholder="Số lượng" />
+                            </Form.Item>
 
+                            <Form.Item name="image" label="Ảnh hiện tại">
+                                <Input disabled value={form2.getFieldValue('image')} />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="attachment"
+                                label="Chọn ảnh"
+                            >
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleChangeImage}
+                                    id="avatar"
+                                    name="file"
+                                />
+                            </Form.Item>
+                        </Spin>
                     </Form>
                 </Modal>
 

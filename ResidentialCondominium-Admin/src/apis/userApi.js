@@ -23,6 +23,7 @@ const userApi = {
                 console.log(response);
                 if (response.status) {
                     localStorage.setItem("token", response.token);
+                    localStorage.setItem("user", JSON.stringify(response.user));
                 }
                 return response;
             });

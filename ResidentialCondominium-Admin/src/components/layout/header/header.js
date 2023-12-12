@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import "./header.css";
-import MenuDropdown from "../../DropdownMenu/dropdownMenu";
-import { Layout,  Row, Col, Modal, List} from 'antd';
 import { NotificationTwoTone } from '@ant-design/icons';
+import { Col, List, Modal, Row } from 'antd';
+import React, { useEffect, useState } from 'react';
 import userApi from "../../../apis/userApi";
-
-const { Header } = Layout;
+import MenuDropdown from "../../DropdownMenu/dropdownMenu";
+import "./header.css";
 
 function Topbar() {
 

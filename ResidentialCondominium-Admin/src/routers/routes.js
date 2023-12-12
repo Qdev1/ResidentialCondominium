@@ -441,8 +441,6 @@ const RouterURL = withRouter(({ location }) => {
                                 <FamilyManagement />
                             </Suspense>
                         </PrivateRoute>
-
-                        
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />

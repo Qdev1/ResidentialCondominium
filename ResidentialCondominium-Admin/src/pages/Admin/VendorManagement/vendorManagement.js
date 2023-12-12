@@ -194,8 +194,8 @@ const VendorManagement = () => {
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
         },
         {
             title: 'Tên',

@@ -279,7 +279,7 @@ const ComplaintManagement = () => {
             console.log(name)
             // Fetch all complaints
             const allComplaints = await complaintApi.listComplaints();
-    
+
             // Perform filtering based on the selected role
             if (name === "resident") {
                 res = allComplaints.filter(complaint => complaint.user_role === name);
@@ -287,13 +287,13 @@ const ComplaintManagement = () => {
                 // If the role is not 'resident', filter only by subject
                 res = allComplaints;
             }
-    
+
             setCategory(res);
         } catch (error) {
             console.log('Filtering complaints error:', error);
         }
     }
-    
+
 
 
 
@@ -455,17 +455,22 @@ const ComplaintManagement = () => {
                         </Form.Item>
                         <Form.Item
                             name="status"
-                            label="Status"
+                            label="Trạng thái"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập trạng thái!',
+                                    message: 'Vui lòng chọn trạng thái!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Status" />
+                            <Select placeholder="Chọn trạng thái">
+                                <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
+                                <Select.Option value="Đang xử lý">Đang xử lý</Select.Option>
+                                <Select.Option value="Đã xong">Đã xong</Select.Option>
+                            </Select>
                         </Form.Item>
+
                         <Form.Item
                             name="progress"
                             label="Progress"
@@ -582,17 +587,22 @@ const ComplaintManagement = () => {
                         </Form.Item>
                         <Form.Item
                             name="status"
-                            label="Status"
+                            label="Trạng thái"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập trạng thái!',
+                                    message: 'Vui lòng chọn trạng thái!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Status" />
+                            <Select placeholder="Chọn trạng thái">
+                                <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
+                                <Select.Option value="Đang xử lý">Đang xử lý</Select.Option>
+                                <Select.Option value="Đã xong">Đã xong</Select.Option>
+                            </Select>
                         </Form.Item>
+
                         <Form.Item
                             name="progress"
                             label="Progress"
