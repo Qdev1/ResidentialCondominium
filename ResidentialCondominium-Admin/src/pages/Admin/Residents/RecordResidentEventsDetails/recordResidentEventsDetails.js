@@ -238,46 +238,47 @@ const RecordResidentEventsDetails = () => {
                         layout="vertical"
                         scrollToFirstError
                     >
-                        <Form.Item
-                            name="eventName"
-                            label="Tên sự kiện"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập tên sự kiện!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Tên sự kiện" />
-                        </Form.Item>
-                        <Form.Item
-                            name="eventDate"
-                            label="Ngày viết báo cáo"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập ngày sự kiện!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <DatePicker format="YYYY-MM-DD" />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả sự kiện!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input.TextArea placeholder="Mô tả sự kiện" />
-                        </Form.Item>
-                        <Form.Item
+                        <Spin spinning={loading}>
+                            <Form.Item
+                                name="eventName"
+                                label="Tên sự kiện"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập tên sự kiện!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input placeholder="Tên sự kiện" />
+                            </Form.Item>
+                            <Form.Item
+                                name="eventDate"
+                                label="Ngày viết báo cáo"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập ngày sự kiện!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <DatePicker format="YYYY-MM-DD" />
+                            </Form.Item>
+                            <Form.Item
+                                name="description"
+                                label="Mô tả"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập mô tả sự kiện!',
+                                    },
+                                ]}
+                                style={{ marginBottom: 10 }}
+                            >
+                                <Input.TextArea placeholder="Mô tả sự kiện" />
+                            </Form.Item>
+                            <Form.Item
                                 name="image"
                                 label="Đính kèm"
                                 rules={[
@@ -294,6 +295,7 @@ const RecordResidentEventsDetails = () => {
                                     name="file"
                                 />
                             </Form.Item>
+                        </Spin>
                     </Form>
                 </Modal>
 

@@ -95,7 +95,7 @@ const AssetHistory = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Lịch sử tài sản</span>
+                                <span>Lịch sử mua bán</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>

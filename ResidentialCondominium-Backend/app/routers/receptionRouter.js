@@ -6,6 +6,10 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+
+// Route để tìm kiếm lịch tiếp đón
+router.get('/search', verifyToken.checkLogin, receptionController.searchReceptions);
+
 // Route để tạo lịch tiếp đón mới
 router.post('/', verifyToken.checkLogin, receptionController.createReception);
 
@@ -21,7 +25,5 @@ router.get('/', verifyToken.checkLogin, receptionController.getAllReceptions);
 // Route để lấy thông tin lịch tiếp đón theo ID
 router.get('/:id', verifyToken.checkLogin, receptionController.getReceptionById);
 
-// Route để tìm kiếm lịch tiếp đón
-router.get('/search/:query', verifyToken.checkLogin, receptionController.searchReceptions);
 
 module.exports = router;

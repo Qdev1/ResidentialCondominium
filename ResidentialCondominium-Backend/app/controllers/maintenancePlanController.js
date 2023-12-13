@@ -74,6 +74,22 @@ const maintenancePlanController = {
             res.status(500).json(err);
         }
     },
+
+    searchMaintenancePlans: async (req, res) => {
+        try {
+            const { keyword } = req.query;
+            const query = `
+                SELECT mp.*, a.name AS asset_name
+                FROM maintenance_plans mp
+                JOIN assets a ON mp.asset_id = a.id
+                WHERE mp.plan_description LIKE ?
+            `;
+            const [maintenancePlans] = await db.execute(query, [`%${keyword}%`]);
+            res.status(200).json({ data: maintenancePlans });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 };
 
 module.exports = maintenancePlanController;

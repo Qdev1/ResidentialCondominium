@@ -4,6 +4,9 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+// Route để tìm kiếm hợp đồng dựa trên các điều kiện
+router.get('/search', verifyToken.checkLogin, contractController.searchContracts);
+
 // Route để tạo hợp đồng mới
 router.post('/', verifyToken.checkLogin, contractController.createContract);
 
@@ -19,7 +22,5 @@ router.get('/', verifyToken.checkLogin, contractController.getAllContracts);
 // Route để lấy thông tin hợp đồng theo ID
 router.get('/:id', verifyToken.checkLogin, contractController.getContractById);
 
-// Route để tìm kiếm hợp đồng dựa trên các điều kiện
-router.get('/search', verifyToken.checkLogin, contractController.searchContracts);
 
 module.exports = router;

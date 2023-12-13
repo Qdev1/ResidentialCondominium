@@ -4,6 +4,9 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+// Route để tìm kiếm thông tin ra vào
+router.get('/search', verifyToken.checkLogin, entryController.searchEntryRecords);
+
 // Route để lấy tất cả thông tin ra vào
 router.get('/', verifyToken.checkLogin, entryController.getAllEntryRecords);
 
@@ -15,9 +18,6 @@ router.delete('/:id', verifyToken.checkLogin, entryController.deleteEntryRecord)
 
 // Route để tạo thông tin ra vào mới
 router.post('/', verifyToken.checkLogin, entryController.createEntryRecord);
-
-// Route để tìm kiếm thông tin ra vào
-router.get('/search/:queryParam', verifyToken.checkLogin, entryController.searchEntryRecords);
 
 // Route để cập nhật thông tin ra vào theo ID
 router.put('/:id', verifyToken.checkLogin, entryController.updateEntryRecord);

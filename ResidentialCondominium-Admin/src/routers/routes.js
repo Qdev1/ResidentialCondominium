@@ -25,14 +25,6 @@ const Login = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
-const DashBoard = lazy(() => {
-    return Promise.all([
-        import('../pages/DashBoard/dashBoard'),
-        new Promise(resolve => setTimeout(resolve, 0))
-    ])
-        .then(([moduleExports]) => moduleExports);
-});
-
 const AccountManagement = lazy(() => {
     return Promise.all([
         import('../pages/AccountManagement/accountManagement'),
@@ -252,6 +244,15 @@ const FamilyManagement = lazy(() => {
         .then(([moduleExports]) => moduleExports);
 });
 
+
+const DashBoard = lazy(() => {
+    return Promise.all([
+        import('../pages/DashBoard/dashBoard'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
+
 const RouterURL = withRouter(({ location }) => {
 
 
@@ -279,12 +280,6 @@ const RouterURL = withRouter(({ location }) => {
                 <Layout >
                     <Header />
                     <Content style={{ marginLeft: 230, width: 'calc(100% - 230px)', marginTop: 55 }}>
-                        <PrivateRoute exact path="/dash-board">
-                            <Suspense fallback={<LoadingScreen />}>
-                                <DashBoard />
-                            </Suspense>
-                        </PrivateRoute>
-
                         <PrivateRoute exact path="/account-management">
                             <Suspense fallback={<LoadingScreen />}>
                                 <AccountManagement />
@@ -441,6 +436,12 @@ const RouterURL = withRouter(({ location }) => {
                                 <FamilyManagement />
                             </Suspense>
                         </PrivateRoute>
+
+                        <PrivateRoute exact path="/dash-board">
+                            <Suspense fallback={<LoadingScreen />}>
+                                <DashBoard />
+                            </Suspense>
+                        </PrivateRoute>
                         
                         <PrivateRoute exact path="/notfound">
                             <NotFound />
@@ -573,6 +574,10 @@ const RouterURL = withRouter(({ location }) => {
                     </Route>
 
                     <Route exact path="/family-management">
+                        <DefaultContainer />
+                    </Route>
+
+                    <Route exact path="/dash-board">
                         <DefaultContainer />
                     </Route>
                     

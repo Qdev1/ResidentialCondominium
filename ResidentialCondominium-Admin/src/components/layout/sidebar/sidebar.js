@@ -238,7 +238,8 @@ function Sidebar() {
       zIndex: 1,
       marginTop: 0,
       boxShadow: " 0 1px 4px -1px rgb(0 0 0 / 15%)",
-      overflowY: 'auto'
+      overflowY: 'auto',
+      background: '#FFFFFF'
     }}
   >
     <Menu

@@ -4,6 +4,9 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+// Route để tìm kiếm sự kiện tài sản theo mô tả
+router.get('/search', verifyToken.checkLogin, assetEventController.searchAssetEvents);
+
 // Route để ghi lịch sử mua tài sản
 router.post('/purchase', verifyToken.checkLogin, assetEventController.purchaseAsset);
 
@@ -21,9 +24,6 @@ router.get('/:id', verifyToken.checkLogin, assetEventController.getAssetEventByI
 
 // Route để xóa sự kiện tài sản theo ID
 router.delete('/:id', verifyToken.checkLogin, assetEventController.deleteAssetEvent);
-
-// Route để tìm kiếm sự kiện tài sản theo mô tả
-router.get('/search', verifyToken.checkLogin, assetEventController.searchAssetEvents);
 
 
 module.exports = router;

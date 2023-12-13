@@ -74,19 +74,11 @@ const residenceRulesController = {
     try {
       const { query } = req.query;
 
-      if (!query) {
-        return res.status(400).json({ message: 'Query is required', status: false });
-      }
-
       const searchQuery = `%${query}%`;
       const queryStr = 'SELECT * FROM residence_rules WHERE title LIKE ? OR content LIKE ?';
       const [rules] = await db.execute(queryStr, [searchQuery, searchQuery]);
 
-      if (rules.length === 0) {
-        res.status(404).json({ message: 'No residence rules found with the specified query', status: false });
-      } else {
-        res.status(200).json(rules);
-      }
+      res.status(200).json(rules);
     } catch (err) {
       console.error(err);
       res.status(500).json(err);

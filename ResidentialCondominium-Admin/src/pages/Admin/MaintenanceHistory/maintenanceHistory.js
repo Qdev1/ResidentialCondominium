@@ -129,7 +129,7 @@ const MaintenanceHistory = () => {
 
     const handleCategoryList = async () => {
         try {
-            await maintenanceHistoryApi.listMaintenanceHistory(1).then((res) => {
+            await maintenanceHistoryApi.getAllMaintenanceRecords().then((res) => {
                 setCategory(res.data);
                 setLoading(false);
             });

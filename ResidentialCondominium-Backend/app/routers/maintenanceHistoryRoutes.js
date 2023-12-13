@@ -4,6 +4,11 @@ const verifyToken = require('../utils/middleware');
 
 const router = express.Router();
 
+router.get('/', verifyToken.checkLogin, maintenanceHistoryController.getAllMaintenanceRecords);
+
+// Route để lấy tất cả bản ghi lịch sử bảo trì cho một kế hoạch bảo trì cụ thể
+router.get('/plan/:planId', verifyToken.checkLogin, maintenanceHistoryController.getMaintenanceRecordsForPlan);
+
 // Route để tạo bản ghi lịch sử bảo trì
 router.post('/', verifyToken.checkLogin, maintenanceHistoryController.createMaintenanceRecord);
 
@@ -19,7 +24,6 @@ router.get('/search', verifyToken.checkLogin, maintenanceHistoryController.searc
 // Route để lấy thông tin chi tiết bản ghi lịch sử bảo trì theo ID
 router.get('/:id', verifyToken.checkLogin, maintenanceHistoryController.getMaintenanceRecordById);
 
-// Route để lấy tất cả bản ghi lịch sử bảo trì cho một kế hoạch bảo trì cụ thể
-router.get('/:planId', verifyToken.checkLogin, maintenanceHistoryController.getMaintenanceRecordsForPlan);
+
 
 module.exports = router;

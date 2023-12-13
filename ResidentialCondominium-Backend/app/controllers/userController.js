@@ -108,26 +108,19 @@ const userController = {
     },
 
     searchUserByEmail: async (req, res) => {
-        const page = req.query.page || 1;
-        const limit = req.query.limit || 10;
         const email = req.query.email;
-
-        const options = {
-            page: page,
-            limit: limit,
-        };
-
+    
         try {
-            const query = 'SELECT * FROM users WHERE email LIKE ? LIMIT ?, ?';
-            const offset = (page - 1) * limit;
+            const query = 'SELECT * FROM users WHERE email LIKE ?';
             const searchTerm = `%${email}%`;
-
-            const [userList] = await db.execute(query, [searchTerm, offset, limit]);
+    
+            const [userList] = await db.execute(query, [searchTerm]);
             res.status(200).json({ data: userList });
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
     },
+    
 
     getProfile: async (req, res) => {
         jwt.verify(req.headers.authorization, _const.JWT_ACCESS_KEY, async (err, decodedToken) => {

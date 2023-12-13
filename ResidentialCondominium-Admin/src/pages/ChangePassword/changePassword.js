@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./changePassword.css";
 import { useHistory } from "react-router-dom";
-import { Form, Input, Button, Divider, Alert,notification } from 'antd';
+import { Form, Input, Button, Divider, Alert, notification } from 'antd';
 import backgroundLogin from "../../assets/image/background-login.png";
 import { useParams } from "react-router-dom";
 import axiosClient from '../../apis/axiosClient';
@@ -15,12 +15,11 @@ const ChangePassWord = () => {
 
     const onFinish = async (values) => {
         const resetPassWord = {
-            "change_password": {
-                token: id,
-                password: values.password 
-          }
+            currentPassword: values.currentPassword,
+            newPassword: values.password
         }
-        axiosClient.post("/user/change_password", resetPassWord)
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+        axiosClient.put("/user/changePassword/" + currentUser.id, resetPassWord)
             .then(function (response) {
                 if (response === undefined) {
                     setLogin(true);
@@ -64,7 +63,7 @@ const ChangePassWord = () => {
                             <Divider style={{ marginBottom: 5, fontSize: 19 }} orientation="center">Residential Condominium!</Divider>
                         </Form.Item>
                         <Form.Item style={{ marginBottom: 16, textAlign: "center" }}>
-                            <p className="text"> Change Password</p>
+                            <p className="text">Thay đổi mật khẩu</p>
                         </Form.Item>
                         <>
                             {isLogin === true ?
@@ -79,16 +78,29 @@ const ChangePassWord = () => {
                                 : ""}
                         </>
                         <Form.Item
-                            name="password"
+                            name="currentPassword"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your password!',
+                                    message: 'Nhập mật khẩu cũ!',
                                 },
                             ]}
                             hasFeedback
                         >
-                            <Input.Password placeholder="Password" />
+                            <Input.Password placeholder="Mật khẩu cũ" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Nhập mật khẩu!',
+                                },
+                            ]}
+                            hasFeedback
+                        >
+                            <Input.Password placeholder="Mật khẩu" />
                         </Form.Item>
 
                         <Form.Item
@@ -98,7 +110,7 @@ const ChangePassWord = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please confirm your password!',
+                                    message: 'Vui lòng nhập lại mật khẩu!',
                                 },
                                 ({ getFieldValue }) => ({
                                     validator(_, value) {
@@ -106,18 +118,18 @@ const ChangePassWord = () => {
                                             return Promise.resolve();
                                         }
 
-                                        return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                        return Promise.reject(new Error('Hai mật khẩu bạn nhập không khớp!'));
                                     },
                                 }),
                             ]}
                         >
-                            <Input.Password placeholder="Confirm Password" />
+                            <Input.Password placeholder="Nhập lại mật khẩu" />
                         </Form.Item>
 
                         <Form.Item style={{ width: '100%', marginTop: 20 }}>
                             <Button className="button" type="primary" htmlType="submit"  >
-                                SUBMIT
-                        </Button>
+                                Hoàn thành
+                            </Button>
                         </Form.Item>
                     </Form>
                 </div>

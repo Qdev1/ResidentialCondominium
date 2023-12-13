@@ -39,7 +39,12 @@ const maintenanceHistoryController = {
     searchMaintenanceRecords: async (req, res) => {
         try {
             const { keyword } = req.query;
-            const query = 'SELECT * FROM maintenance_history WHERE description LIKE ?';
+            const query = `
+                SELECT mh.*, mp.plan_description
+                FROM maintenance_history mh
+                JOIN maintenance_plans mp ON mh.plan_id = mp.id
+                WHERE mh.description LIKE ?
+            `;
             const [maintenanceRecords] = await db.execute(query, [`%${keyword}%`]);
             res.status(200).json({ data: maintenanceRecords });
         } catch (err) {

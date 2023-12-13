@@ -260,7 +260,7 @@ const ResidenceRules = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Quy định cư dân</span>
+                                <span>Nội quy tòa nhà</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>

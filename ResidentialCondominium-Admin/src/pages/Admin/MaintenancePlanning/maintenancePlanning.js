@@ -125,7 +125,7 @@ const MaintenancePlanning = () => {
 
     const handleCategoryList = async () => {
         try {
-            await maintenancePlanningApi.listMaintenancePlans().then((res) => {
+            await maintenancePlanningApi.getAllMaintenancePlans().then((res) => {
                 setCategory(res.data);
                 setLoading(false);
             });

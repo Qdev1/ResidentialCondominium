@@ -67,7 +67,7 @@ const ResetPassword = () => {
                             <Divider style={{ marginBottom: 5, fontSize: 19 }} orientation="center">Residential Condominium!</Divider>
                         </Form.Item>
                         <Form.Item style={{ marginBottom: 16, textAlign: "center" }}>
-                            <p className="text"> Change Password</p>
+                            <p className="text">Thay đổi mật khẩu</p>
                         </Form.Item>
                         <>
                             {isLogin === true ?
@@ -86,12 +86,12 @@ const ResetPassword = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your password!',
+                                    message: 'Vui lòng nhập mật khẩu!',
                                 },
                             ]}
                             hasFeedback
                         >
-                            <Input.Password placeholder="Password" />
+                            <Input.Password placeholder="Mật khẩu" />
                         </Form.Item>
 
                         <Form.Item
@@ -101,7 +101,7 @@ const ResetPassword = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please confirm your password!',
+                                    message: 'Vui lòng nhập lại mật khẩu!',
                                 },
                                 ({ getFieldValue }) => ({
                                     validator(_, value) {
@@ -109,12 +109,12 @@ const ResetPassword = () => {
                                             return Promise.resolve();
                                         }
 
-                                        return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                        return Promise.reject(new Error('Hai mật khẩu bạn nhập không khớp!'));
                                     },
                                 }),
                             ]}
                         >
-                            <Input.Password placeholder="Confirm Password" />
+                            <Input.Password placeholder="Nhập lại mật khẩu" />
                         </Form.Item>
 
                         <Form.Item style={{ width: '100%', marginTop: 20 }}>

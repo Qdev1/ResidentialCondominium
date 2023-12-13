@@ -337,7 +337,7 @@ const ContractManagement = () => {
                             </Breadcrumb.Item>
                             <Breadcrumb.Item href="">
                                 <ShoppingOutlined />
-                                <span>Quản lý hợp đồng</span>
+                                <span>Quản lý giấy tờ</span>
                             </Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
@@ -641,12 +641,6 @@ const ContractManagement = () => {
                             <Form.Item
                                 name="image"
                                 label="Đính kèm"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng đính kèm!',
-                                    },
-                                ]}
                             >
                                 <input
                                     type="file"

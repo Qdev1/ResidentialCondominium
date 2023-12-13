@@ -69,28 +69,31 @@ const visitorsController = {
         }
     },
 
-      // Tìm kiếm khách hàng dựa trên số căn cước công dân
-      searchVisitorsByCitizenId: async (req, res) => {
-        try {
-            const { citizenId } = req.query;
+    // Tìm kiếm khách hàng dựa trên số căn cước công dân
+    searchVisitorsByCitizenId: async (req, res) => {
+    try {
+        const { citizenId } = req.query;
 
-            if (!citizenId) {
-                return res.status(400).json({ message: 'CitizenId is required', status: false });
-            }
+        let query;
+        let params;
 
-            const query = 'SELECT * FROM visitors WHERE citizen_id = ?';
-            const [visitors] = await db.execute(query, [citizenId]);
-
-            if (visitors.length === 0) {
-                res.status(404).json({ message: 'No visitors found with the specified CitizenId', status: false });
-            } else {
-                res.status(200).json(visitors);
-            }
-        } catch (err) {
-            console.error(err);
-            res.status(500).json(err);
+        if (citizenId) {
+            query = 'SELECT * FROM visitors WHERE citizenId LIKE ?';
+            params = [citizenId];
+        } else {
+            query = 'SELECT * FROM visitors';
+            params = [];
         }
+
+        const [visitors] = await db.execute(query, params);
+
+        res.status(200).json(visitors);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json(err);
     }
+}
+
 
 
 };

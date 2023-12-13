@@ -95,9 +95,11 @@ const createTables = async () => {
             image VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (category_id) REFERENCES asset_categories(id)
+            FOREIGN KEY (category_id) REFERENCES asset_categories(id) ON DELETE CASCADE
         )
           `);
+
+
 
         console.log('Table "assets" created or already exists.');
 
@@ -449,7 +451,7 @@ const createTables = async () => {
         //  ADD FOREIGN KEY (plan_id) REFERENCES maintenance_plans(id);
         //     `);
 
-        // //Thêm trường "role" vào bảng "notifications"
+        // Thêm trường "role" vào bảng "notifications"
         // await db.execute(`
         //     ALTER TABLE notifications
         //     ADD role VARCHAR(255) AFTER content;
@@ -468,13 +470,13 @@ const createTables = async () => {
         //     ADD COLUMN image VARCHAR(255) AFTER quantity
         // `);
 
-        // //Sử dụng ALTER TABLE để thêm trường "file_url"
+        // Sử dụng ALTER TABLE để thêm trường "file_url"
         // await db.execute(`
         // ALTER TABLE asset_reports
         // ADD COLUMN file_url VARCHAR(255);
         // `);
 
-        // //Bổ sung trường mới "file_url" vào bảng "events" nếu chưa tồn tại
+        // Bổ sung trường mới "file_url" vào bảng "events" nếu chưa tồn tại
         // await db.execute(`
         // ALTER TABLE events
         // ADD COLUMN file_url VARCHAR(255);
@@ -482,7 +484,7 @@ const createTables = async () => {
 
         // console.log('Column "file_url" added to the table "events".');
 
-        // //Alter contracts table to add file_url column
+        // Alter contracts table to add file_url column
         // await db.execute(`
         // ALTER TABLE contracts
         // ADD COLUMN file_url VARCHAR(255) AFTER value

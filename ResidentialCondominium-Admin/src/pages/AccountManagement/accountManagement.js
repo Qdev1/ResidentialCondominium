@@ -1,10 +1,11 @@
 import { CheckCircleOutlined, CopyOutlined, HomeOutlined, PlusOutlined, StopOutlined, UserOutlined } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
-import { BackTop, Breadcrumb, Button, Card, Col, Input, Popconfirm, Row, Space, Spin, Table, Tag, notification } from 'antd';
+import { BackTop, Breadcrumb, Button, Modal, Form, Card, Col, Input, Popconfirm, Row, Space, Spin, Table, Tag, notification, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import userApi from "../../apis/userApi";
 import "./accountManagement.css";
+import axiosClient from '../../apis/axiosClient';
 
 const AccountManagement = () => {
 
@@ -12,6 +13,7 @@ const AccountManagement = () => {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [selectedInput, setSelectedInput] = useState();
+    const [form] = Form.useForm();
 
     const history = useHistory();
 
@@ -229,7 +231,72 @@ const AccountManagement = () => {
         }
     }
 
-    useEffect(() => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+
+    const accountCreate = async (values) => {
+        try {
+            const formatData = {
+                "username": values.name,
+                "email": values.email,
+                "phone": values.phone,
+                "password": values.password,
+                "role": "isAdmin",
+                "status": "actived"
+            }
+            await axiosClient.post("/user", formatData)
+                .then(response => {
+                    console.log(response)
+                    if (response.message == "Validation failed: Phone has already been taken, Email has already been taken") {
+                        message.error('Phone Number and Email has already been taken');
+                    } else
+                        if (response.message == "Validation failed: Email has already been taken") {
+                            message.error('Email has already been taken');
+                        } else
+                            if (response.message == "Validation failed: Phone has already been taken") {
+                                message.error('Validation failed: Phone has already been taken');
+                            } else
+                                if (response == undefined) {
+                                    notification["error"]({
+                                        message: `Thông báo`,
+                                        description:
+                                            'Tạo tài khoản thất bại',
+
+                                    });
+                                }
+                                else {
+                                    notification["success"]({
+                                        message: `Thông báo`,
+                                        description:
+                                            'Tạo tài khoản thành công',
+                                    });
+                                    form.resetFields();
+                                    handleList();
+                                    history.push("/account-management");
+                                }
+                }
+                );
+        } catch (error) {
+            throw error;
+        }
+        setTimeout(function () {
+            setLoading(false);
+        }, 1000);
+    }
+
+    const CancelCreateRecruitment = () => {
+        form.resetFields();
+        history.push("/account-management");
+    }
+
+    const handleList = () => {
         (async () => {
             try {
                 const response = await userApi.listUserByAdmin({ page: 1, limit: 1000 });
@@ -240,6 +307,10 @@ const AccountManagement = () => {
                 console.log('Failed to fetch user list:' + error);
             }
         })();
+    }
+
+    useEffect(() => {
+        handleList();
         window.scrollTo(0, 0);
 
     }, [])
@@ -275,7 +346,7 @@ const AccountManagement = () => {
                                 </Col>
                                 <Col span="12">
                                     <Row justify="end">
-                                        <Button style={{ marginLeft: 10 }} icon={<PlusOutlined />} size="middle" onClick={() => handleCreateAccount()}>{"Tạo tài khoản"}</Button>
+                                        <Button style={{ marginLeft: 10 }} icon={<PlusOutlined />} size="middle" onClick={showModal}>{"Tạo tài khoản"}</Button>
                                     </Row>
                                 </Col>
                             </Row>
@@ -293,6 +364,108 @@ const AccountManagement = () => {
                         </div>
                     </div>
                 </div>
+                <Modal
+                    title="Thêm tài khoản"
+                    visible={isModalVisible}
+                    onCancel={handleCancel}
+                    footer={null}
+                >
+                    <Form
+                        form={form}
+                        onFinish={accountCreate}
+                        name="accountCreate"
+                        layout="vertical"
+                        initialValues={{
+                            residence: ['zhejiang', 'hangzhou', 'xihu'],
+                            prefix: '86',
+                        }}
+                        scrollToFirstError
+                    >
+                        <Form.Item
+                            name="name"
+                            label="Tên"
+                            hasFeedback
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập tên!',
+                                },
+                                { max: 100, message: 'Tên tối đa 100 ký tự' },
+                                { min: 5, message: 'Tên ít nhất 5 ký tự' },
+                            ]
+                            }
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Tên" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                            hasFeedback
+                            rules={[
+                                {
+                                    type: 'email',
+                                    message: 'Email không hợp lệ!',
+                                },
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập email!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input placeholder="Email" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            label="Mật khẩu"
+                            hasFeedback
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập password!',
+                                },
+                                { max: 20, message: 'Mật khẩu tối đa 20 ký tự' },
+                                { min: 6, message: 'Mật khẩu ít nhất 5 ký tự' },
+                            ]
+                            }
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Input.Password placeholder="Mật khẩu" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="phone"
+                            label="Số điện thoại"
+                            hasFeedback
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập số điện thoại!',
+                                },
+                                {
+                                    pattern: /^[0-9]{10}$/,
+                                    message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+
+                            <Input placeholder="Số điện thoại" />
+                        </Form.Item>
+
+                        <Form.Item >
+                            <Button style={{ background: "#FF8000", color: '#FFFFFF', float: 'right', marginTop: 20, marginLeft: 8 }} htmlType="submit">
+                                Hoàn thành
+                            </Button>
+                            <Button style={{ background: "#FF8000", color: '#FFFFFF', float: 'right', marginTop: 20 }} onClick={CancelCreateRecruitment}>
+                                Hủy
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>
         </div>

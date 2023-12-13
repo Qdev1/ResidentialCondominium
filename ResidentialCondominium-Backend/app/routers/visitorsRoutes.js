@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const visitorsController = require('../controllers/visitorsController');
 
+// Tìm kiếm khách hàng bằng Citizen ID
+router.get('/search', visitorsController.searchVisitorsByCitizenId);
+
 // Tìm kiếm danh sách khách hàng
-router.get('', visitorsController.searchVisitorsByCitizenId);
+router.get('/', visitorsController.getAllVisitors);
 
 // Thêm một khách hàng mới
 router.post('', visitorsController.addVisitor);
@@ -17,7 +20,5 @@ router.delete('/:visitorId', visitorsController.deleteVisitor);
 // Tìm kiếm khách hàng theo ID
 router.get('/:visitorId', visitorsController.getVisitorById);
 
-// Tìm kiếm khách hàng bằng Citizen ID
-router.get('/search', visitorsController.searchVisitorsByCitizenId);
 
 module.exports = router;
