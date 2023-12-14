@@ -3,7 +3,7 @@ const router = express.Router();
 const visitorsController = require('../controllers/visitorsController');
 
 // Tìm kiếm khách hàng bằng Citizen ID
-router.get('/search', visitorsController.searchVisitorsByCitizenId);
+router.get('/search', visitorsController.searchVisitorsByKeyword);
 
 // Tìm kiếm danh sách khách hàng
 router.get('/', visitorsController.getAllVisitors);

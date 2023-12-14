@@ -111,10 +111,9 @@ const RecordResidentEventsDetails = () => {
             key: 'id',
         },
         {
-            title: 'Tên sự kiện',
+            title: 'Báo cáo cuộc họp',
             dataIndex: 'event_name',
             key: 'event_name',
-            render: (text, record) => <a>{text}</a>,
         },
         {
             title: 'Mô tả',
@@ -241,16 +240,16 @@ const RecordResidentEventsDetails = () => {
                         <Spin spinning={loading}>
                             <Form.Item
                                 name="eventName"
-                                label="Tên sự kiện"
+                                label="Báo cáo cuộc họp"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Vui lòng nhập tên sự kiện!',
+                                        message: 'Vui lòng chọn cuộc họp!',
                                     },
                                 ]}
                                 style={{ marginBottom: 10 }}
                             >
-                                <Input placeholder="Tên sự kiện" />
+                                <Input placeholder="Báo cáo cuộc họp" />
                             </Form.Item>
                             <Form.Item
                                 name="eventDate"

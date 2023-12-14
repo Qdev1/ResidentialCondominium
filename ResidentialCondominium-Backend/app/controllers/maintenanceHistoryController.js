@@ -43,9 +43,9 @@ const maintenanceHistoryController = {
                 SELECT mh.*, mp.plan_description
                 FROM maintenance_history mh
                 JOIN maintenance_plans mp ON mh.plan_id = mp.id
-                WHERE mh.description LIKE ?
+                WHERE mh.description LIKE ? OR mp.plan_description LIKE ?
             `;
-            const [maintenanceRecords] = await db.execute(query, [`%${keyword}%`]);
+            const [maintenanceRecords] = await db.execute(query, [`%${keyword}%`, `%${keyword}%`]);
             res.status(200).json({ data: maintenanceRecords });
         } catch (err) {
             res.status(500).json(err);

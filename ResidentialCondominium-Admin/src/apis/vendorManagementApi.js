@@ -56,7 +56,7 @@ const VendorManagementApi = {
         }
     },
     async searchVendors(name) {
-        const url = 'vendors/search?keyword=' + name.target.value;
+        const url = 'vendors/search?searchTerm=' + name.target.value;
         try {
             const response = await axiosClient.get(url);
             return response;

@@ -63,6 +63,23 @@ const vendorController = {
             res.status(500).json(err);
         }
     },
+
+    searchVendors: async (req, res) => {
+        try {
+            const { searchTerm } = req.query;
+
+            // You can customize the query based on your search requirements
+            const query = `
+                SELECT * FROM vendors 
+                WHERE name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ?
+            `;
+            const [vendors] = await db.execute(query, [`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`]);
+
+            res.status(200).json({ data: vendors });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 };
 
 module.exports = vendorController;

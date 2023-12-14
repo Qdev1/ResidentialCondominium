@@ -203,7 +203,6 @@ const CustomerEnrollment = () => {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Email',
@@ -381,6 +380,10 @@ const CustomerEnrollment = () => {
                                     required: true,
                                     message: 'Vui lòng nhập email!',
                                 },
+                                {
+                                    type: 'email',
+                                    message: 'Email không hợp lệ!',
+                                },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
@@ -393,6 +396,10 @@ const CustomerEnrollment = () => {
                                 {
                                     required: true,
                                     message: 'Vui lòng nhập số điện thoại!',
+                                },
+                                {
+                                    pattern: /^[0-9]{10}$/,
+                                    message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
@@ -479,6 +486,10 @@ const CustomerEnrollment = () => {
                                     required: true,
                                     message: 'Vui lòng nhập email!',
                                 },
+                                {
+                                    type: 'email',
+                                    message: 'Email không hợp lệ!',
+                                },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
@@ -491,6 +502,10 @@ const CustomerEnrollment = () => {
                                 {
                                     required: true,
                                     message: 'Vui lòng nhập số điện thoại!',
+                                },
+                                {
+                                    pattern: /^[0-9]{10}$/,
+                                    message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
                                 },
                             ]}
                             style={{ marginBottom: 10 }}

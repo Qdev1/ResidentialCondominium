@@ -22,7 +22,7 @@ const ResetPassword = () => {
             .then(function (response) {
                 if (response === undefined) {
                     notification["success"]({
-                        message: `Notification`,
+                        message: `Thông báo`,
                         description:
                             'Cập nhật mật khẩu thất bại',
 
@@ -30,7 +30,7 @@ const ResetPassword = () => {
                 }
                 else {
                     notification["success"]({
-                        message: `Notification`,
+                        message: `Thông báo`,
                         description:
                             'Cập nhật mật khẩu thành công',
 

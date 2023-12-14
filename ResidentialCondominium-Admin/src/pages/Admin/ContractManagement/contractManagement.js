@@ -214,7 +214,6 @@ const ContractManagement = () => {
             title: 'Nhà cung cấp',
             dataIndex: 'vendor_name',
             key: 'vendor_name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Tiêu đề',

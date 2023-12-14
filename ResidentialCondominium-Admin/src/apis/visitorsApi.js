@@ -29,7 +29,7 @@ const visitorsApi = {
         }
     },
     async searchVisitors(name) {
-        const url = 'visitors/search?citizenId=' + name.target.value;
+        const url = 'visitors/search?keyword=' + name.target.value;
         try {
             const response = await axiosClient.get(url);
             return response;

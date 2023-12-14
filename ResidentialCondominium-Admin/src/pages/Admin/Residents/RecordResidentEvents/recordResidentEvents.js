@@ -99,7 +99,7 @@ const RecordResidentEvents = () => {
     const handleFilter = async (name) => {
         try {
             const res = await meetingResidentsApi.searchMeetingsByTitle(name);
-            setCategory(res.data);
+            setCategory(res);
         } catch (error) {
             console.log('search to fetch category list:' + error);
         }
@@ -120,7 +120,6 @@ const RecordResidentEvents = () => {
             title: 'Tên',
             dataIndex: 'title',
             key: 'title',
-            render: (text, record) => <a>{text}</a>,
         },
         {
             title: 'Mô tả',
@@ -128,7 +127,7 @@ const RecordResidentEvents = () => {
             key: 'description',
         },
         {
-            title: 'Ngày tạo',
+            title: 'Ngày tổ chức',
             dataIndex: 'created_at',
             key: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
@@ -263,7 +262,7 @@ const RecordResidentEvents = () => {
                         </Form.Item>
                         <Form.Item
                             name="date"
-                            label="Ngày"
+                            label="Ngày tổ chức"
                             rules={[
                                 {
                                     required: true,

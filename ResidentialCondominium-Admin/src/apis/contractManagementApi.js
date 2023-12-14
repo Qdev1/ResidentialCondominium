@@ -29,7 +29,7 @@ const contractManagementApi = {
         }
     },
     async searchContract(name) {
-        const url = 'contracts/search?title=' + name.target.value;
+        const url = 'contracts/search?keyword=' + name.target.value;
         try {
             const response = await axiosClient.get(url);
             return response;

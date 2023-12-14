@@ -144,12 +144,6 @@ function Sidebar() {
       icon: <CalendarOutlined />
     },
     {
-      key: "unauthorized-entry",
-      title: "Kiểm tra ra vào",
-      link: "/unauthorized-entry",
-      icon: <FileTextOutlined />
-    },
-    {
       key: "emergency",
       title: "Vấn đề khẩn cấp",
       link: "/emergency",
@@ -159,9 +153,9 @@ function Sidebar() {
 
   const menuSidebarReceptionist = [
     {
-      key: "dash-board-staff",
+      key: "dash-board",
       title: "Dashboards",
-      link: "/dash-board-staff",
+      link: "/dash-board",
       icon: <DashboardOutlined />
     },
     {

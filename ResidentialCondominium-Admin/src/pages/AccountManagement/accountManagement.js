@@ -1,11 +1,13 @@
 import { CheckCircleOutlined, CopyOutlined, HomeOutlined, PlusOutlined, StopOutlined, UserOutlined } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
-import { BackTop, Breadcrumb, Button, Modal, Form, Card, Col, Input, Popconfirm, Row, Space, Spin, Table, Tag, notification, message } from 'antd';
+import { BackTop, Breadcrumb, Button, Modal, Form, Card, Col, Input, Popconfirm, Row, Space, Spin, Table, Tag, notification, message, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import userApi from "../../apis/userApi";
 import "./accountManagement.css";
 import axiosClient from '../../apis/axiosClient';
+
+const { Option } = Select;
 
 const AccountManagement = () => {
 
@@ -157,10 +159,15 @@ const AccountManagement = () => {
 
     const handleUnBanAccount = async (data) => {
         const params = {
-            status: "actived"
+            "username": data.username,
+            "email": data.email,
+            "phone": data.phone,
+            "password": data.password,
+            "role": data.role,
+            "status": "actived"
         }
         try {
-            await userApi.unBanAccount(params, data._id).then(response => {
+            await userApi.unBanAccount(params, data.id).then(response => {
                 if (response.message === "Email already exists") {
                     notification["error"]({
                         message: `Thông báo`,
@@ -189,10 +196,15 @@ const AccountManagement = () => {
     const handleBanAccount = async (data) => {
         console.log(data);
         const params = {
-            status: "noactive"
+            "username": data.username,
+            "email": data.email,
+            "phone": data.phone,
+            "password": data.password,
+            "role": data.role,
+            "status": "noactive"
         }
         try {
-            await userApi.banAccount(params, data._id).then(response => {
+            await userApi.banAccount(params, data.id).then(response => {
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -216,10 +228,6 @@ const AccountManagement = () => {
         } catch (error) {
             console.log('Failed to fetch event list:' + error);
         }
-    }
-
-    const handleCreateAccount = () => {
-        history.push("/account-create")
     }
 
     const handleFilterEmail = async (email) => {
@@ -248,14 +256,14 @@ const AccountManagement = () => {
                 "email": values.email,
                 "phone": values.phone,
                 "password": values.password,
-                "role": "isAdmin",
+                "role": values.role,
                 "status": "actived"
             }
             await axiosClient.post("/user", formatData)
                 .then(response => {
                     console.log(response)
-                    if (response.message == "Validation failed: Phone has already been taken, Email has already been taken") {
-                        message.error('Phone Number and Email has already been taken');
+                    if (response == "User already exists") {
+                       return message.error('Tài khoản đã tổn tại');
                     } else
                         if (response.message == "Validation failed: Email has already been taken") {
                             message.error('Email has already been taken');
@@ -283,6 +291,9 @@ const AccountManagement = () => {
                                 }
                 }
                 );
+
+            setIsModalVisible(false);
+
         } catch (error) {
             throw error;
         }
@@ -454,6 +465,25 @@ const AccountManagement = () => {
                         >
 
                             <Input placeholder="Số điện thoại" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="role"
+                            label="Phân quyền"
+                            hasFeedback
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn phân quyền!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn phân quyền">
+                                <Option value="isAdmin">Admin</Option>
+                                <Option value="isSecurity">Bảo vệ</Option>
+                                <Option value="isReceptionist">Lễ tân</Option>
+                            </Select>
                         </Form.Item>
 
                         <Form.Item >

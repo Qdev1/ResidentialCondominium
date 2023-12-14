@@ -27,7 +27,7 @@ const userController = {
             const [checkEmailExist] = await db.execute('SELECT * FROM users WHERE email = ?', [inputEmail]);
 
             if (checkEmailExist.length > 0) {
-                return res.status(400).json("User already exists");
+                return res.status(200).json("User already exists");
             }
 
             const salt = await bcrypt.genSalt(10);
@@ -202,13 +202,13 @@ const userController = {
             const [user] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
 
             if (user.length === 0) {
-                return res.status(404).json({ message: 'User not found' });
+                return res.status(200).json({ message: 'User not found' });
             }
 
             const isPasswordValid = await bcrypt.compare(currentPassword, user[0].password);
 
             if (!isPasswordValid) {
-                return res.status(400).json({ message: 'Current password is incorrect' });
+                return res.status(200).json({ message: 'Current password is incorrect' });
             }
 
             const salt = await bcrypt.genSalt(10);

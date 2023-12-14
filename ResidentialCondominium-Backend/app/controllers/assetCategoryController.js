@@ -15,14 +15,27 @@ const assetCategoryController = {
     createAssetCategory: async (req, res) => {
         try {
             const { name, description } = req.body;
-            const query = 'INSERT INTO asset_categories (name, description) VALUES (?, ?)';
-            const [result] = await db.execute(query, [name, description]);
+    
+            // Kiểm tra xem tên loại tài sản đã tồn tại chưa
+            const checkQuery = 'SELECT * FROM asset_categories WHERE name = ?';
+            const [checkResult] = await db.execute(checkQuery, [name]);
+    
+            if (checkResult.length > 0) {
+                // Nếu tên đã tồn tại, trả về lỗi
+                return res.status(200).json({ error: 'Tên loại tài sản đã tồn tại.' });
+            }
+    
+            // Nếu tên chưa tồn tại, thêm vào cơ sở dữ liệu
+            const insertQuery = 'INSERT INTO asset_categories (name, description) VALUES (?, ?)';
+            const [result] = await db.execute(insertQuery, [name, description]);
             const assetCategoryId = result.insertId;
             res.status(201).json({ id: assetCategoryId, name, description });
         } catch (err) {
-            res.status(500).json(err);
+            console.error(err);
+            res.status(500).json({ error: 'Đã xảy ra lỗi server.' });
         }
     },
+    
 
     deleteAssetCategory: async (req, res) => {
         try {
@@ -39,6 +52,17 @@ const assetCategoryController = {
         try {
             const assetCategoryId = req.params.id;
             const { name, description } = req.body;
+            
+             // Kiểm tra xem tên loại tài sản đã tồn tại chưa
+             const checkQuery = 'SELECT * FROM asset_categories WHERE name = ?';
+             const [checkResult] = await db.execute(checkQuery, [name]);
+     
+             if (checkResult.length > 0) {
+                 // Nếu tên đã tồn tại, trả về lỗi
+                 return res.status(200).json({ error: 'Tên loại tài sản đã tồn tại.' });
+             }
+    
+             
             const query = 'UPDATE asset_categories SET name = ?, description = ? WHERE id = ?';
             await db.execute(query, [name, description, assetCategoryId]);
             res.status(200).json({ message: 'Asset category updated successfully' });

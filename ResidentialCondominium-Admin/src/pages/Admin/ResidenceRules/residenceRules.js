@@ -192,7 +192,6 @@ const ResidenceRules = () => {
             title: 'Tên',
             dataIndex: 'title',
             key: 'title',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Nội dung',

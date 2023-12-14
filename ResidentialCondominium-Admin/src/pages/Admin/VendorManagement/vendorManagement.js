@@ -201,7 +201,6 @@ const VendorManagement = () => {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Email',
@@ -301,7 +300,7 @@ const VendorManagement = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm tên"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
@@ -376,6 +375,10 @@ const VendorManagement = () => {
                                     required: true,
                                     message: 'Vui lòng nhập email!',
                                 },
+                                {
+                                    type: 'email',
+                                    message: 'Email không hợp lệ!',
+                                },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
@@ -388,6 +391,10 @@ const VendorManagement = () => {
                                 {
                                     required: true,
                                     message: 'Vui lòng nhập số điện thoại!',
+                                },
+                                {
+                                    pattern: /^[0-9]{10}$/,
+                                    message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
@@ -462,6 +469,10 @@ const VendorManagement = () => {
                                     required: true,
                                     message: 'Vui lòng nhập email!',
                                 },
+                                {
+                                    type: 'email',
+                                    message: 'Email không hợp lệ!',
+                                },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
@@ -474,6 +485,10 @@ const VendorManagement = () => {
                                 {
                                     required: true,
                                     message: 'Vui lòng nhập số điện thoại!',
+                                },
+                                {
+                                    pattern: /^[0-9]{10}$/,
+                                    message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
                                 },
                             ]}
                             style={{ marginBottom: 10 }}

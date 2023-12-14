@@ -207,7 +207,6 @@ const ReceptionManagement = () => {
             title: 'Tên cư dân',
             dataIndex: 'resident_username',
             key: 'resident_username',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Tên Khách',

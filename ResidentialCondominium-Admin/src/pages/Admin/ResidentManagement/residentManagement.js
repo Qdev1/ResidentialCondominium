@@ -210,7 +210,6 @@ const ResidentManagement = () => {
             title: 'Người khiếu nại',
             dataIndex: 'user_name',
             key: 'user_name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Chủ đề',

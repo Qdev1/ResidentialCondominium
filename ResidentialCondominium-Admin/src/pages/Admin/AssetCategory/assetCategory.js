@@ -49,6 +49,16 @@ const AssetCategory = () => {
                 "description": values.description,
             }
             return assetCategoryApi.createAssetCategory(categoryList).then(response => {
+                if (response.error == "Tên loại tài sản đã tồn tại.") {
+                    setLoading(false);
+                    return notification["error"]({
+                         message: `Thông báo`,
+                         description:
+                             'Tên loại tài sản đã tồn tại.',
+ 
+                     });
+                 }
+
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -80,6 +90,15 @@ const AssetCategory = () => {
                 "description": values.description,
             }
             return assetCategoryApi.updateAssetCategory(categoryList, id).then(response => {
+                if (response.error == "Tên loại tài sản đã tồn tại.") {
+                    setLoading(false);
+                    return notification["error"]({
+                         message: `Thông báo`,
+                         description:
+                             'Tên loại tài sản đã tồn tại.',
+ 
+                     });
+                 }
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -128,6 +147,7 @@ const AssetCategory = () => {
         setLoading(true);
         try {
             await assetCategoryApi.deleteAssetCategory(id).then(response => {
+              
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -192,7 +212,6 @@ const AssetCategory = () => {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Mô tả',

@@ -240,19 +240,22 @@ const residentEventsController = {
             res.status(500).json(err);
         }
     },
-
     searchMeetingsByTitle: async (req, res) => {
         try {
             const { title } = req.query;
-
-            const [meetings] = await db.execute('SELECT * FROM meetings WHERE title LIKE ?', [`%${title}%`]);
-
+    
+            const [meetings] = await db.execute(
+                'SELECT * FROM meetings WHERE title LIKE ? OR description LIKE ?',
+                [`%${title}%`, `%${title}%`]
+            );
+    
             res.status(200).json(meetings);
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
         }
     }
+    
 
 };
 

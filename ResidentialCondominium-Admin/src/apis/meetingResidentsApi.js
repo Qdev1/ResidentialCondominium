@@ -56,7 +56,7 @@ const meetingResidentsApi = {
         }
     },
     async searchMeetingsByTitle(name) {
-        const url = `meetings/search?keyword=${name.target.value}`;
+        const url = `meetings/search?title=${name.target.value}`;
         try {
             const response = await axiosClient.get(url);
             return response;

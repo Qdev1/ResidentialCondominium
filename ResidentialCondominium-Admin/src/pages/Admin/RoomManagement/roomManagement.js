@@ -205,7 +205,6 @@ const RoomManagement = () => {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Loại',

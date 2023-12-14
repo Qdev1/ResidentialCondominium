@@ -86,7 +86,7 @@ const MaintenanceFunds = () => {
                 "amount": values.amount,
                 "allocation_date": values.allocation_date.format("YYYY-MM-DD"),
                 "utilization_date": values.utilization_date.format("YYYY-MM-DD"),
-                "status": values.status,
+                "status": "Chấp nhận",
 
             };
             return maintenanceFundsApi.updateMaintenanceFunds(categoryList, id).then(response => {
@@ -227,11 +227,6 @@ const MaintenanceFunds = () => {
             dataIndex: 'utilization_date',
             key: 'utilization_date',
             render: (text) => (text ? moment(text).format('YYYY-MM-DD') : 'N/A'),
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
         },
         {
             title: 'Action',
@@ -490,23 +485,6 @@ const MaintenanceFunds = () => {
                             style={{ marginBottom: 10 }}
                         >
                             <DatePicker placeholder="Ngày sử dụng" />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Option value="Đang chờ">Đang chờ</Option>
-                                <Option value="Chấp nhận">Chấp nhận</Option>
-                                <Option value="Từ chối">Từ chối</Option>
-                            </Select>
                         </Form.Item>
 
                     </Form>

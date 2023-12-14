@@ -82,10 +82,34 @@ const maintenancePlanController = {
                 SELECT mp.*, a.name AS asset_name
                 FROM maintenance_plans mp
                 JOIN assets a ON mp.asset_id = a.id
-                WHERE mp.plan_description LIKE ?
+                WHERE mp.plan_description LIKE ? OR a.name LIKE ?
             `;
-            const [maintenancePlans] = await db.execute(query, [`%${keyword}%`]);
+            const [maintenancePlans] = await db.execute(query, [`%${keyword}%`, `%${keyword}%`]);
             res.status(200).json({ data: maintenancePlans });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+    
+
+    getMaintenancePlanById: async (req, res) => {
+        try {
+            const planId = req.params.id;
+
+            // Truy vấn để lấy thông tin kế hoạch bảo trì
+            const query = `
+                SELECT mp.*, a.name AS asset_name
+                FROM maintenance_plans mp
+                JOIN assets a ON mp.asset_id = a.id
+                WHERE mp.id = ?
+            `;
+            const [maintenancePlan] = await db.execute(query, [planId]);
+
+            if (maintenancePlan.length === 0) {
+                return res.status(404).json({ message: 'Maintenance plan not found' });
+            }
+
+            res.status(200).json({ data: maintenancePlan[0] });
         } catch (err) {
             res.status(500).json(err);
         }

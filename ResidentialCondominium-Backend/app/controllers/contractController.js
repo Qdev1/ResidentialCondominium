@@ -70,36 +70,17 @@ const contractController = {
 
     searchContracts: async (req, res) => {
         try {
-            const { vendorId, contractorId, startDate, endDate, title } = req.query;
-
+            const { keyword } = req.query;
+    
             let conditions = [];
             let params = [];
-
-            if (vendorId) {
-                conditions.push('contracts.vendor_id = ?');
-                params.push(vendorId);
+    
+            if (keyword) {
+                conditions.push('(contracts.title LIKE ? OR vendors.name LIKE ?)');
+                params.push(`%${keyword}%`);
+                params.push(`%${keyword}%`);
             }
-
-            if (contractorId) {
-                conditions.push('contractor_id = ?');
-                params.push(contractorId);
-            }
-
-            if (startDate) {
-                conditions.push('start_date >= ?');
-                params.push(startDate);
-            }
-
-            if (endDate) {
-                conditions.push('end_date <= ?');
-                params.push(endDate);
-            }
-
-            if (title) {
-                conditions.push('title LIKE ?');
-                params.push(`%${title}%`);
-            }
-
+    
             let conditionStr = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
             const query = `
                 SELECT contracts.*, vendors.name AS vendor_name
@@ -108,12 +89,14 @@ const contractController = {
                 ${conditionStr}
             `;
             const [contracts] = await db.execute(query, params);
-
+    
             res.status(200).json({ data: contracts });
         } catch (err) {
             res.status(500).json(err);
         }
     },
+    
+    
 };
 
 module.exports = contractController;

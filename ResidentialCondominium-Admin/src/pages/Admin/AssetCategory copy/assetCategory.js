@@ -192,7 +192,6 @@ const AssetCategory = () => {
             title: 'Tên',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a>{text}</a>,
         },
         {
             title: 'Mô tả',

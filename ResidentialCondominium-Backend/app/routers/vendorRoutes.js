@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const vendorController = require('../controllers/vendorController');
 
+router.get('/search', vendorController.searchVendors);
+
 router.post('/', vendorController.createVendor);
 
 router.get('/', vendorController.getAllVendors);

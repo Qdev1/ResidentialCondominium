@@ -50,12 +50,12 @@ const userApi = {
     },
 
     banAccount(data, id) {
-        const url = '/user/' + id;
+        const url = '/user/updateProfile/' + id;
         return axiosClient.put(url, data);
     },
 
     unBanAccount(data, id) {
-        const url = '/user/' + id;
+        const url = '/user/updateProfile/' + id;
         return axiosClient.put(url, data);
     },
 

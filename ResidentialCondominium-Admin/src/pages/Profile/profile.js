@@ -136,31 +136,14 @@ const Profile = () => {
                                                 <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.email}</p>
                                             </Row>
                                             <Row justify="center">
-                                                <p>{userData?.birthday}</p>
+                                                <p style={{ padding: 0, margin: 0, marginBottom: 0 }}>{userData?.birthday}</p>
+                                            </Row>
+                                            <Row justify="center">
+                                                <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.phone}</p>
                                             </Row>
                                             <Divider style={{ padding: 0, margin: 0 }} ></Divider>
-                                            <Row justify="center" style={{ marginTop: 10 }}>
-                                                <Col span="4">
-                                                    <Row justify="center">
-                                                        <p>{<UserOutlined />}</p>
-                                                        <p style={{ marginLeft: 5 }}>{userData?.role}</p>
-                                                    </Row>
-                                                </Col>
-                                                <Col span="8">
-                                                    <Row justify="center">
-                                                        <p>{<SafetyOutlined />}</p>
-                                                        <p style={{ marginLeft: 5 }}>{userData?.status ? "Đang hoạt động" : "Đã chặn"}</p>
-                                                    </Row>
-                                                </Col>
-                                                <Col span="8">
-                                                    <Row justify="center">
-                                                        <p>{<PhoneOutlined />}</p>
-                                                        <p style={{ marginLeft: 5 }}>{userData?.phone}</p>
-                                                    </Row>
-                                                </Col>
-                                            </Row>
                                         </Col>
-                                        <Button type="primary" style={{ marginRight: 10 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
+                                        <Button type="primary" style={{ marginTop: 15 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
 
                                     </Row>
 
@@ -215,6 +198,10 @@ const Profile = () => {
                                         required: true,
                                         message: 'Vui lòng nhập email!',
                                     },
+                                    {
+                                        type: 'email',
+                                        message: 'Email không hợp lệ!',
+                                    },
                                 ]}>
                                     <Input />
                                 </Form.Item>
@@ -223,18 +210,16 @@ const Profile = () => {
                                         required: true,
                                         message: 'Vui lòng nhập số điện thoại!',
                                     },
+                                    {
+                                        pattern: /^[0-9]{10}$/,
+                                        message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
+                                    },
                                 ]}>
                                     <Input />
                                 </Form.Item>
                                 <Form.Item
                                     name="image"
                                     label="Chọn ảnh"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Vui lòng chọn ảnh!',
-                                        },
-                                    ]}
                                 >
                                     <input
                                         type="file"

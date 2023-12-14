@@ -27,6 +27,7 @@ import { useHistory } from 'react-router-dom';
 import maintenancePlanningApi from "../../../apis/maintenancePlansApi";
 import "./maintenancePlanning.css";
 import assetManagementApi from '../../../apis/assetManagementApi';
+import dayjs from 'dayjs';
 
 const { Option } = Select;
 
@@ -50,6 +51,19 @@ const MaintenancePlanning = () => {
     const handleOkUser = async (values) => {
         setLoading(true);
         try {
+            const startDate = values.start_date;
+            const endDate = values.end_date;
+
+            if (startDate && endDate && endDate.isBefore(startDate, 'day')) {
+                notification["error"]({
+                    message: 'Lỗi',
+                    description: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!',
+                });
+                setLoading(false);
+
+                return;
+            }
+
             const categoryList = {
                 "asset_id": values.asset_id,
                 "plan_description": values.plan_description,
@@ -84,6 +98,19 @@ const MaintenancePlanning = () => {
     const handleUpdateCategory = async (values) => {
         setLoading(true);
         try {
+            const startDate = values.start_date;
+            const endDate = values.end_date;
+
+            if (startDate && endDate && endDate.isBefore(startDate, 'day')) {
+                notification["error"]({
+                    message: 'Lỗi',
+                    description: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!',
+                });
+                setLoading(false);
+
+                return;
+            }
+            
             const categoryList = {
                 "asset_id": values.asset_id,
                 "plan_description": values.plan_description,
@@ -175,8 +202,8 @@ const MaintenancePlanning = () => {
                 form2.setFieldsValue({
                     asset_id: response.data.asset_id,
                     plan_description: response.data.plan_description,
-                    start_date: moment(response.data.start_date),
-                    end_date: moment(response.data.end_date),
+                    start_date: dayjs(response.data.start_date),
+                    end_date: dayjs(response.data.end_date),
                 });
 
                 console.log(form2);
@@ -416,7 +443,7 @@ const MaintenancePlanning = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                            <DatePicker format="YYYY-MM-DD" />
                         </Form.Item>
                         <Form.Item
                             name="end_date"
@@ -429,7 +456,7 @@ const MaintenancePlanning = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                            <DatePicker format="YYYY-MM-DD" />
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -508,7 +535,10 @@ const MaintenancePlanning = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                            <DatePicker
+                                format="YYYY-MM-DD"
+                                disabledDate={(current) => current && current < moment().startOf('day')}
+                            />
                         </Form.Item>
                         <Form.Item
                             name="end_date"
@@ -518,10 +548,22 @@ const MaintenancePlanning = () => {
                                     required: true,
                                     message: 'Vui lòng nhập ngày kết thúc!',
                                 },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        const startDate = getFieldValue('start_date');
+                                        if (!startDate || !value || moment(value).isSameOrAfter(startDate, 'day')) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject('Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!');
+                                    },
+                                }),
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                            <DatePicker
+                                format="YYYY-MM-DD"
+                                disabledDate={(current) => current && current < moment().startOf('day')}
+                            />
                         </Form.Item>
 
                     </Form>

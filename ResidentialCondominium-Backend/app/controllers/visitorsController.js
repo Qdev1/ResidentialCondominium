@@ -69,30 +69,40 @@ const visitorsController = {
         }
     },
 
-    // Tìm kiếm khách hàng dựa trên số căn cước công dân
-    searchVisitorsByCitizenId: async (req, res) => {
-    try {
-        const { citizenId } = req.query;
+    // Tìm kiếm khách hàng dựa trên từ khóa
+    searchVisitorsByKeyword: async (req, res) => {
+        try {
+            const { keyword } = req.query;
 
-        let query;
-        let params;
+            let query;
+            let params;
 
-        if (citizenId) {
-            query = 'SELECT * FROM visitors WHERE citizenId LIKE ?';
-            params = [citizenId];
-        } else {
-            query = 'SELECT * FROM visitors';
-            params = [];
+            if (keyword) {
+                // Use OR to search across multiple columns (name, email, phone, entryDate, reasonToVisit, citizenId)
+                query = `
+                SELECT * FROM visitors
+                WHERE name LIKE ? OR
+                      email LIKE ? OR
+                      phone LIKE ? OR
+                      entryDate LIKE ? OR
+                      reasonToVisit LIKE ? OR
+                      citizenId LIKE ?
+            `;
+                params = Array(6).fill(`%${keyword}%`);
+            } else {
+                query = 'SELECT * FROM visitors';
+                params = [];
+            }
+
+            const [visitors] = await db.execute(query, params);
+
+            res.status(200).json(visitors);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
         }
-
-        const [visitors] = await db.execute(query, params);
-
-        res.status(200).json(visitors);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json(err);
     }
-}
+
 
 
 

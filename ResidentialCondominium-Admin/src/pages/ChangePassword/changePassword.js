@@ -21,14 +21,23 @@ const ChangePassWord = () => {
         const currentUser = JSON.parse(localStorage.getItem("user"));
         axiosClient.put("/user/changePassword/" + currentUser.id, resetPassWord)
             .then(function (response) {
+                console.log(response);
+                if (response.message == "Current password is incorrect") {
+                    return notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Mật khẩu hiện tại không đúng!',
+
+                    });
+                }
                 if (response === undefined) {
                     setLogin(true);
                 }
                 else {
                     notification["success"]({
-                        message: `Notification`,
+                        message: `Thông báo`,
                         description:
-                            'Successfully Change PassWord',
+                            'Thay đổi mật khẩu thành công',
 
                     });
                     history.push("/login");
@@ -97,6 +106,8 @@ const ChangePassWord = () => {
                                     required: true,
                                     message: 'Nhập mật khẩu!',
                                 },
+                                { max: 100, message: 'Tên tối đa 100 ký tự' },
+                                { min: 5, message: 'Tên ít nhất 5 ký tự' },
                             ]}
                             hasFeedback
                         >

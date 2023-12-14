@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/search', verifyToken.checkLogin, maintenancePlanController.searchMaintenancePlans);
 
+router.get('/:id', verifyToken.checkLogin, maintenancePlanController.getMaintenancePlanById);
+
 // Route để lấy tất cả kế hoạch bảo trì
 router.get('/', verifyToken.checkLogin, maintenancePlanController.getAllMaintenancePlans);
 
