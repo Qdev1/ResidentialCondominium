@@ -132,54 +132,6 @@ const AssetReport = () => {
         };
     }
 
-    const handleDeleteCategory = async (id) => {
-        setLoading(true);
-        try {
-            await assetManagementApi.deleteAssetCategory(id).then(response => {
-                if (response === undefined) {
-                    notification["error"]({
-                        message: `Thông báo`,
-                        description:
-                            'Xóa báo cáo tài sản thất bại',
-
-                    });
-                    setLoading(false);
-                }
-                else {
-                    notification["success"]({
-                        message: `Thông báo`,
-                        description:
-                            'Xóa báo cáo tài sản thành công',
-
-                    });
-                    handleCategoryList();
-                    setLoading(false);
-                }
-            }
-            );
-
-        } catch (error) {
-            console.log('Failed to fetch event list:' + error);
-        }
-    }
-
-    const handleEditCategory = (id) => {
-        setOpenModalUpdate(true);
-        (async () => {
-            try {
-                const response = await assetManagementApi.getDetailAssetCategory(id);
-                setId(id);
-                form2.setFieldsValue({
-                    name: response.data.name,
-                    description: response.data.description,
-                });
-                console.log(form2);
-                setLoading(false);
-            } catch (error) {
-                throw error;
-            }
-        })();
-    }
 
     const handleFilter = async (name) => {
         try {
@@ -231,39 +183,6 @@ const AssetReport = () => {
             dataIndex: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
-        // {
-        //     title: 'Action',
-        //     key: 'action',
-        //     render: (text, record) => (
-        //         <div>
-        //             <Row>
-        //                 <Button
-        //                     size="small"
-        //                     icon={<EditOutlined />}
-        //                     style={{ width: 150, borderRadius: 15, height: 30 }}
-        //                     onClick={() => handleEditCategory(record.id)}
-        //                 >{"Chỉnh sửa"}
-        //                 </Button>
-        //                 <div
-        //                     style={{ marginLeft: 10 }}>
-        //                     <Popconfirm
-        //                         title="Bạn có chắc chắn xóa báo cáo tài sản này?"
-        //                         onConfirm={() => handleDeleteCategory(record.id)}
-        //                         okText="Yes"
-        //                         cancelText="No"
-        //                     >
-        //                         <Button
-        //                             size="small"
-        //                             icon={<DeleteOutlined />}
-        //                             style={{ width: 150, borderRadius: 15, height: 30 }}
-        //                         >{"Xóa"}
-        //                         </Button>
-        //                     </Popconfirm>
-        //                 </div>
-        //             </Row>
-        //         </div >
-        //     ),
-        // },
     ];
 
     const [categoryList, setCategoryList] = useState([]);
@@ -313,7 +232,7 @@ const AssetReport = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên tài sản"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}

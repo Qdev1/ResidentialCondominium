@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const residentEventsController = require('../controllers/residentEventsController');
 
+router.get('/meeting/:meetingId/search', residentEventsController.searchEventsByMeeting);
+
 // Định nghĩa tuyến đường cho API tìm kiếm cuộc họp theo tiêu đề
 router.get('/getAllMeetingAndComplaint', residentEventsController.getAllMeetingAndComplaint);
 

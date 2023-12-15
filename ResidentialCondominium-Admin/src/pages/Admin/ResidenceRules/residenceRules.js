@@ -273,7 +273,7 @@ const ResidenceRules = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
@@ -351,7 +351,7 @@ const ResidenceRules = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Nội dung" />
+                            <Input.TextArea placeholder="Nội dung" autoSize={{ minRows: 5, maxRows: 5 }} />
                         </Form.Item>
 
                     </Form>
@@ -377,8 +377,8 @@ const ResidenceRules = () => {
                     cancelText="Hủy"
                     width={600}
                 >
-                   
-                       <Form
+
+                    <Form
                         form={form}
                         name="eventCreate"
                         layout="vertical"
@@ -412,7 +412,7 @@ const ResidenceRules = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Nội dung" />
+                            <Input.TextArea placeholder="Nội dung"  autoSize={{ minRows: 5, maxRows: 5 }} />
                         </Form.Item>
 
                     </Form>

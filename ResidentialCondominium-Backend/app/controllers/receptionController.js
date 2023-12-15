@@ -74,10 +74,10 @@ const receptionController = {
     searchReceptions: async (req, res) => {
         try {
             const { query } = req.query;
-
+    
             let searchQuery;
             let searchSql;
-
+    
             if (query) {
                 searchQuery = `%${query}%`;
                 searchSql = `
@@ -89,16 +89,17 @@ const receptionController = {
             } else {
                 // Trường hợp không có query, trả về toàn bộ data
                 searchQuery = '%';
-                searchSql = 'SELECT * FROM receptions';
+                searchSql = 'SELECT receptions.*, users.username AS resident_username FROM receptions INNER JOIN users ON receptions.resident_id = users.id';
             }
-
+    
             const [receptions] = await db.execute(searchSql, [searchQuery, searchQuery, searchQuery]);
-
+    
             res.status(200).json({ data: receptions });
         } catch (err) {
             res.status(500).json(err);
         }
     }
+    
     
 };
 

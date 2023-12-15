@@ -1,33 +1,26 @@
 import {
-    ScheduleOutlined,
+    FormOutlined,
     HomeOutlined, PhoneOutlined,
     SafetyOutlined,
-    UserOutlined,
-    FileOutlined,
-    LogoutOutlined
+    UserOutlined
 } from '@ant-design/icons';
 import {
     Breadcrumb,
-    Button,
     Card,
     Col,
     Divider,
-    Form, Input,
-    Modal,
     Row,
     Spin,
     notification,
-    Layout,
-    Menu,
-    BackTop
+    Form, Input,
+    Button, Modal
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ReactWeather, { useOpenWeather } from 'react-open-weather';
+import { useHistory } from 'react-router-dom';
 import userApi from "../../apis/userApi";
 import "./profile.css";
-import { useHistory } from 'react-router-dom';
-
-const { Header, Content, Footer } = Layout;
+import uploadFileApi from '../../apis/uploadFileApi';
 
 
 const Profile = () => {
@@ -35,7 +28,7 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState([]);
     const [isVisibleModal, setVisibleModal] = useState(false);
-    const history = useHistory();
+    const [file, setUploadFile] = useState();
 
     const { data, isLoading, errorMessage } = useOpenWeather({
         key: '03b81b9c18944e6495d890b189357388',
@@ -70,6 +63,7 @@ const Profile = () => {
                 "email": values.email,
                 "phone": values.phone,
                 "username": values.username,
+                "image": file,
             };
             console.log(userData);
             await userApi.updateProfile(formatData, userData.id)
@@ -94,131 +88,82 @@ const Profile = () => {
         }
     };
 
-    const handleMenuClick = (key) => {
-        switch (key) {
-            case 'home':
-                history.push('/');
-                break;
-            case 'maintenance':
-                history.push('/maintenance-planning');
-                break;
-            case 'residence-event':
-                history.push('/residence-event');
-                break;
-            case 'profile':
-                history.push('/profile');
-                break;
-            case 'logout':
-                localStorage.clear();
-                history.push("/");
-                window.location.reload(false);
-                break;
-            default:
-                break;
+    const handleChangeImage = async (e) => {
+        setLoading(true);
+        const response = await uploadFileApi.uploadFile(e);
+        if (response) {
+            setUploadFile(response);
         }
-    };
+        setLoading(false);
+    }
 
     return (
         <div>
             <Spin spinning={loading}>
-                <Spin spinning={loading}>
-                    <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Header style={{ display: 'flex', alignItems: 'center' }}>
-                            <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
-                                <Menu.Item key="home" icon={<HomeOutlined />}>
-                                    Home
-                                </Menu.Item>
-                                <Menu.Item key="maintenance" icon={<FileOutlined />}>
-                                    Maintenance
-                                </Menu.Item>
-                                <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
-                                    Residence Event
-                                </Menu.Item>
-                                <Menu.Item key="profile" icon={<UserOutlined />}>
-                                    Profile
-                                </Menu.Item>
-                                <Menu.Item key="logout" icon={<LogoutOutlined />}>
-                                    Logout
-                                </Menu.Item>
-                            </Menu>
-                        </Header>
-                        <Content style={{ padding: '0 50px' }}>
-                            <Breadcrumb style={{ margin: '16px 0' }}>
-                                <Breadcrumb.Item>Home</Breadcrumb.Item>
-                                <Breadcrumb.Item>Kế hoạch bảo trì</Breadcrumb.Item>
-                            </Breadcrumb>
-                            <div className="site-layout-content" >
-                                <div style={{ marginTop: 30 }}>
-                                    <div>
-                                        <div>
+                <div style={{ marginTop: 20, marginLeft: 24 }}>
+                    <Breadcrumb>
+                        <Breadcrumb.Item href="">
+                            <HomeOutlined />
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item href="">
+                            <FormOutlined />
+                            <span>Trang cá nhân</span>
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+
+                <div>
+                    <div>
+                        <Row justify="center">
+                            <Col span="9" style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+                                <Card hoverable={true} className="profile-card" style={{ padding: 0, margin: 0 }}>
+                                    <Row justify="center">
+                                        <img
+                                            src={userData?.image}
+                                            style={{
+                                                width: 150,
+                                                height: 150,
+                                                borderRadius: '50%', 
+                                            }}
+                                        />
+                                    </Row>
+                                    <Row justify="center">
+                                        <Col span="24">
                                             <Row justify="center">
-                                                <Col span="9" style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
-                                                    <Card hoverable={true} className="profile-card" style={{ padding: 0, margin: 0 }}>
-                                                        <Row justify="center">
-                                                            <img src={userData?.image} style={{ width: 150, height: 150 }}></img>
-                                                        </Row>
-                                                        <Row justify="center">
-                                                            <Col span="24">
-                                                                <Row justify="center">
-                                                                    <strong style={{ fontSize: 18 }}>{userData?.username}</strong>
-                                                                </Row>
-                                                                <Row justify="center">
-                                                                    <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.email}</p>
-                                                                </Row>
-                                                                <Row justify="center">
-                                                                    <p>{userData?.birthday}</p>
-                                                                </Row>
-                                                                <Divider style={{ padding: 0, margin: 0 }} ></Divider>
-                                                                <Row justify="center" style={{ marginTop: 10 }}>
-                                                                    <Col span="4">
-                                                                        <Row justify="center">
-                                                                            <p>{<UserOutlined />}</p>
-                                                                            <p style={{ marginLeft: 5 }}>{userData?.role}</p>
-                                                                        </Row>
-                                                                    </Col>
-                                                                    <Col span="8">
-                                                                        <Row justify="center">
-                                                                            <p>{<SafetyOutlined />}</p>
-                                                                            <p style={{ marginLeft: 5 }}>{userData?.status ? "Đang hoạt động" : "Đã chặn"}</p>
-                                                                        </Row>
-                                                                    </Col>
-                                                                    <Col span="8">
-                                                                        <Row justify="center">
-                                                                            <p>{<PhoneOutlined />}</p>
-                                                                            <p style={{ marginLeft: 5 }}>{userData?.phone}</p>
-                                                                        </Row>
-                                                                    </Col>
-                                                                </Row>
-                                                            </Col>
-                                                            <Button type="primary" style={{ marginRight: 10 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
-
-                                                        </Row>
-
-                                                    </Card>
-                                                </Col>
-
-                                                <Col span="6" style={{ marginTop: 20 }}>
-                                                    <ReactWeather
-                                                        isLoading={isLoading}
-                                                        errorMessage={errorMessage}
-                                                        data={data}
-                                                        lang="en"
-                                                        locationLabel="Hà Nội"
-                                                        unitsLabels={{ temperature: 'C', windSpeed: 'Km/h' }}
-                                                        showForecast
-                                                    />
-                                                </Col>
+                                                <strong style={{ fontSize: 18 }}>{userData?.username}</strong>
                                             </Row>
-                                        </div>
-                                    </div>                                </div>
-                            </div>
-                        </Content>
-                        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by CondoOperationsManagement</Footer>
-                    </Layout>
-                    <BackTop style={{ textAlign: 'right' }} />
-                </Spin>
+                                            <Row justify="center">
+                                                <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.email}</p>
+                                            </Row>
+                                            <Row justify="center">
+                                                <p style={{ padding: 0, margin: 0, marginBottom: 0 }}>{userData?.birthday}</p>
+                                            </Row>
+                                            <Row justify="center">
+                                                <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.phone}</p>
+                                            </Row>
+                                            <Divider style={{ padding: 0, margin: 0 }} ></Divider>
+                                        </Col>
+                                        <Button type="primary" style={{ marginTop: 15 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
 
+                                    </Row>
 
+                                </Card>
+                            </Col>
+
+                            <Col span="6" style={{ marginTop: 20 }}>
+                                <ReactWeather
+                                    isLoading={isLoading}
+                                    errorMessage={errorMessage}
+                                    data={data}
+                                    lang="en"
+                                    locationLabel="Hà Nội"
+                                    unitsLabels={{ temperature: 'C', windSpeed: 'Km/h' }}
+                                    showForecast
+                                />
+                            </Col>
+                        </Row>
+                    </div>
+                </div>
 
                 <div>
                     <Modal
@@ -235,39 +180,61 @@ const Profile = () => {
                             }}
                             onFinish={handleFormSubmit}
                         >
-                            <Form.Item
-                                label="Tên"
-                                name="username"
-                                rules={[
+                            <Spin spinning={loading}>
+                                <Form.Item
+                                    label="Tên"
+                                    name="username"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập username!',
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Email" name="email" rules={[
                                     {
                                         required: true,
-                                        message: 'Vui lòng nhập username!',
+                                        message: 'Vui lòng nhập email!',
                                     },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Email" name="email" rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập email!',
-                                },
-                            ]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item label="Số điện thoại" name="phone" rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập số điện thoại!',
-                                },
-                            ]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Cập nhật
-                                </Button>
-                            </Form.Item>
+                                    {
+                                        type: 'email',
+                                        message: 'Email không hợp lệ!',
+                                    },
+                                ]}>
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item label="Số điện thoại" name="phone" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập số điện thoại!',
+                                    },
+                                    {
+                                        pattern: /^[0-9]{10}$/,
+                                        message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
+                                    },
+                                ]}>
+                                    <Input />
+                                </Form.Item>
+                                <Form.Item
+                                    name="image"
+                                    label="Chọn ảnh"
+                                >
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleChangeImage}
+                                        id="avatar"
+                                        name="file"
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">
+                                        Cập nhật
+                                    </Button>
+                                </Form.Item>
+                            </Spin>
                         </Form>
                     </Modal>
                 </div>

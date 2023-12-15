@@ -44,7 +44,15 @@ const assetCategoryController = {
             await db.execute(query, [assetCategoryId]);
             res.status(200).json({ message: 'Asset category deleted successfully' });
         } catch (err) {
-            res.status(500).json(err);
+            if (err.code && err.code === 'ER_ROW_IS_REFERENCED_2') {
+                // Nếu lỗi là do ràng buộc khóa ngoại
+                res.status(200).json({
+                    message: 'Cannot delete the asset because it is referenced in another process or event.',
+                });
+            } else {
+                // Nếu lỗi khác
+                res.status(500).json({ message: 'Internal Server Error' });
+            }
         }
     },
 

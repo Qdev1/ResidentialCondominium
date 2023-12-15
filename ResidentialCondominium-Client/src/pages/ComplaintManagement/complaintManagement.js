@@ -3,7 +3,11 @@ import {
     EditOutlined,
     HomeOutlined,
     PlusOutlined,
-    ShoppingOutlined
+    ShoppingOutlined,
+    FileOutlined,
+    ScheduleOutlined,
+    TeamOutlined,
+    CalendarOutlined
 } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
@@ -19,15 +23,16 @@ import {
     Table,
     notification,
     Select,
-    DatePicker
+    Layout,
+    Menu
 } from 'antd';
+import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import complaintApi from "../../../apis/complaintApi";
+import complaintApi from "../../apis/complaintApi";
 import "./complaintManagement.css";
-import dayjs from 'dayjs';
-import moment from 'moment';
-import userApi from '../../../apis/userApi';
+import userApi from '../../apis/userApi';
 
+const { Header, Content, Footer } = Layout;
 const { Option } = Select;
 
 const ComplaintManagement = () => {
@@ -52,12 +57,12 @@ const ComplaintManagement = () => {
         try {
             const categoryList = {
                 created_by: userData.id,
-                user_id: values.user_id,
+                user_id: userData.id,
                 subject: values.subject,
                 description: values.description,
-                status: values.status,
+                status: values.status || "pending",
                 progress: values.progress || 0,
-                assigned_to: values.assigned_to,
+                assigned_to: values.assigned_to || "",
             };
             return complaintApi.createComplaint(categoryList).then(response => {
                 if (response === undefined) {
@@ -87,7 +92,7 @@ const ComplaintManagement = () => {
         setLoading(true);
         try {
             const categoryList = {
-                user_id: values.user_id,
+                user_id: userData.id,
                 subject: values.subject,
                 description: values.description,
                 status: values.status,
@@ -375,6 +380,34 @@ const ComplaintManagement = () => {
         },
     ];
 
+    const history = useHistory();
+
+
+    const handleMenuClick = (key) => {
+        switch (key) {
+            case 'home':
+                history.push('/');
+                break;
+            case 'maintenance':
+                history.push('/maintenance-planning');
+                break;
+            case 'residence-event':
+                history.push('/residence-event');
+                break;
+            case 'profile':
+                history.push('/profile');
+                break;
+            case 'emergency':
+                history.push('/emergency');
+                break;
+            case 'complaint-management':
+                history.push('/complaint-management');
+                break;
+            default:
+                break;
+        }
+    };
+
     const handleFilter2 = async (name) => {
         try {
             let res;
@@ -440,20 +473,35 @@ const ComplaintManagement = () => {
     return (
         <div>
             <Spin spinning={loading}>
-                <div className='container'>
-                    <div style={{ marginTop: 20 }}>
-                        <Breadcrumb>
-                            <Breadcrumb.Item href="">
-                                <HomeOutlined />
-                            </Breadcrumb.Item>
-                            <Breadcrumb.Item href="">
-                                <ShoppingOutlined />
-                                <span>Quản lý khiếu nại</span>
-                            </Breadcrumb.Item>
-                        </Breadcrumb>
-                    </div>
+                <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Header style={{ display: 'flex', alignItems: 'center' }}>
+                        <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
+                            <Menu.Item key="home" icon={<HomeOutlined />}>
+                                Home
+                            </Menu.Item>
+                            <Menu.Item key="maintenance" icon={<FileOutlined />}>
+                                Maintenance
+                            </Menu.Item>
+                            <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
+                                Residence Event
+                            </Menu.Item>
+                            <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
+                                Emergency
+                            </Menu.Item>
+                            <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
+                                Complaint
+                            </Menu.Item>
 
-                    <div style={{ marginTop: 20 }}>
+                            <Menu.Item key="profile" icon={<TeamOutlined />}>
+                                Profile
+                            </Menu.Item>
+                        </Menu>
+                    </Header>
+                    <Content style={{ padding: '0 50px' }}>
+                        <Breadcrumb style={{ margin: '16px 0' }}>
+                            <Breadcrumb.Item>Home</Breadcrumb.Item>
+                            <Breadcrumb.Item>Khiếu nại</Breadcrumb.Item>
+                        </Breadcrumb>
                         <div id="my__event_container__list">
                             <PageHeader
                                 subTitle=""
@@ -461,16 +509,19 @@ const ComplaintManagement = () => {
                             >
                                 <Row>
                                     <Col span="18">
-                                        <Input
+                                        {/* <Input
                                             placeholder="Tìm kiếm theo chủ đề"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
-                                        />
+                                        /> */}
                                     </Col>
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
+                                            {
+                                                    userData.role == "isAdmin" ?
+                                              
                                                 <Select
                                                     style={{ width: 120, marginRight: 10 }}
                                                     onChange={(value) => {
@@ -483,6 +534,7 @@ const ComplaintManagement = () => {
                                                     <Option value="isAdmin">Admin</Option>
 
                                                 </Select>
+                                                  : null}
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo khiếu nại</Button>
                                             </Space>
                                         </Row>
@@ -491,243 +543,139 @@ const ComplaintManagement = () => {
 
                             </PageHeader>
                         </div>
-                    </div>
-
-                    {userData.role === "isAdmin" ?
-                        <div style={{ marginTop: 30 }}>
-                            <Table columns={columns2} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
-                        </div> :
-                        <div style={{ marginTop: 30 }}>
-                            <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
+                        <div className="site-layout-content" >
+                            <div style={{ marginTop: 30 }}>
+                                <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
+                            </div>
                         </div>
-                    }
-                </div>
-
-                <Modal
-                    title="Tạo khiếu nại mới"
-                    visible={openModalCreate}
-                    style={{ top: 100 }}
-                    onOk={() => {
-                        form
-                            .validateFields()
-                            .then((values) => {
-                                form.resetFields();
-                                handleOkUser(values);
-                            })
-                            .catch((info) => {
-                                console.log('Validate Failed:', info);
-                            });
-                    }}
-                    onCancel={() => handleCancel("create")}
-                    okText="Hoàn thành"
-                    cancelText="Hủy"
-                    width={600}
-                >
-                    <Form
-                        form={form}
-                        name="eventCreate"
-                        layout="vertical"
-                        initialValues={{
-                            residence: ['zhejiang', 'hangzhou', 'xihu'],
-                            prefix: '86',
-                        }}
-                        scrollToFirstError
-                    >
-
-                        <Form.Item
-                            name="user_id"
-                            label="Người khiếu nại"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn người khiếu nại!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn người khiếu nại">
-                                {userList?.map(user => (
-                                    <Option key={user.id} value={user.id}>
-                                        {user.username}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            name="subject"
-                            label="Chủ đề"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập chủ đề!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Chủ đề" />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
-                                <Select.Option value="Đang xử lý">Đang xử lý</Select.Option>
-                                <Select.Option value="Đã xong">Đã xong</Select.Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="assigned_to"
-                            label="Người đảm nhiệm!"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn người đảm nhiệm!!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Người đảm nhiệm" />
-
-                        </Form.Item>
-
-                    </Form>
-
-                </Modal>
-
-                <Modal
-                    title="Chỉnh sửa khiếu nại"
-                    visible={openModalUpdate}
-                    style={{ top: 100 }}
-                    onOk={() => {
-                        form2
-                            .validateFields()
-                            .then((values) => {
-                                form2.resetFields();
-                                handleUpdateCategory(values);
-                            })
-                            .catch((info) => {
-                                console.log('Validate Failed:', info);
-                            });
-                    }}
-                    onCancel={handleCancel}
-                    okText="Hoàn thành"
-                    cancelText="Hủy"
-                    width={600}
-                >
-                    <Form
-                        form={form2}
-                        name="eventCreate"
-                        layout="vertical"
-                        initialValues={{
-                            residence: ['zhejiang', 'hangzhou', 'xihu'],
-                            prefix: '86',
-                        }}
-                        scrollToFirstError
-                    >
-                        <Form.Item
-                            name="user_id"
-                            label="Người khiếu nại"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn người khiếu nại!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn người khiếu nại" disabled={isDisabled}>
-                                {userList?.map(user => (
-                                    <Option key={user.id} value={user.id}>
-                                        {user.username}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            name="subject"
-                            label="Chủ đề"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập chủ đề!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Chủ đề" disabled={isDisabled} />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" disabled={isDisabled} />
-                        </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
-                                <Select.Option value="Đang xử lý">Đang xử lý</Select.Option>
-                                <Select.Option value="Đã xong">Đã xong</Select.Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="assigned_to"
-                            label="Người đảm nhiệm!"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn người đảm nhiệm!!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Người đảm nhiệm" />
-
-                        </Form.Item>
-                    </Form>
-                </Modal>
-
+                    </Content>
+                    <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by CondoOperationsManagement</Footer>
+                </Layout>
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>
+
+            <Modal
+                title="Tạo khiếu nại mới"
+                visible={openModalCreate}
+                style={{ top: 100 }}
+                onOk={() => {
+                    form
+                        .validateFields()
+                        .then((values) => {
+                            form.resetFields();
+                            handleOkUser(values);
+                        })
+                        .catch((info) => {
+                            console.log('Validate Failed:', info);
+                        });
+                }}
+                onCancel={() => handleCancel("create")}
+                okText="Hoàn thành"
+                cancelText="Hủy"
+                width={600}
+            >
+                <Form
+                    form={form}
+                    name="eventCreate"
+                    layout="vertical"
+                    initialValues={{
+                        residence: ['zhejiang', 'hangzhou', 'xihu'],
+                        prefix: '86',
+                    }}
+                    scrollToFirstError
+                >
+
+                    <Form.Item
+                        name="subject"
+                        label="Chủ đề"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập chủ đề!',
+                            },
+                        ]}
+                        style={{ marginBottom: 10 }}
+                    >
+                        <Input placeholder="Chủ đề" />
+                    </Form.Item>
+                    <Form.Item
+                        name="description"
+                        label="Mô tả"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập mô tả!',
+                            },
+                        ]}
+                        style={{ marginBottom: 10 }}
+                    >
+                        <Input placeholder="Mô tả" />
+                    </Form.Item>
+
+                </Form>
+
+            </Modal>
+
+            <Modal
+                title="Chỉnh sửa khiếu nại"
+                visible={openModalUpdate}
+                style={{ top: 100 }}
+                onOk={() => {
+                    form2
+                        .validateFields()
+                        .then((values) => {
+                            form2.resetFields();
+                            handleUpdateCategory(values);
+                        })
+                        .catch((info) => {
+                            console.log('Validate Failed:', info);
+                        });
+                }}
+                onCancel={handleCancel}
+                okText="Hoàn thành"
+                cancelText="Hủy"
+                width={600}
+            >
+                <Form
+                    form={form2}
+                    name="eventCreate"
+                    layout="vertical"
+                    initialValues={{
+                        residence: ['zhejiang', 'hangzhou', 'xihu'],
+                        prefix: '86',
+                    }}
+                    scrollToFirstError
+                >
+                    <Form.Item
+                        name="subject"
+                        label="Chủ đề"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập chủ đề!',
+                            },
+                        ]}
+                        style={{ marginBottom: 10 }}
+                    >
+                        <Input placeholder="Chủ đề" disabled={isDisabled} />
+                    </Form.Item>
+                    <Form.Item
+                        name="description"
+                        label="Mô tả"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập mô tả!',
+                            },
+                        ]}
+                        style={{ marginBottom: 10 }}
+                    >
+                        <Input placeholder="Mô tả" disabled={isDisabled} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <BackTop style={{ textAlign: 'right' }} />
         </div >
     )
 }

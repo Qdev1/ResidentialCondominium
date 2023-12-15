@@ -18,7 +18,8 @@ import {
     Spin,
     Table,
     notification,
-    Select
+    Select,
+    InputNumber
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import roomManagementApi from "../../../apis/roomManagementApi";
@@ -53,6 +54,16 @@ const RoomManagement = () => {
                 description: values.description,
             };
             return roomManagementApi.createRoomManagement(categoryList).then(response => {
+                if (response.message === "Room name already exists") {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Tên phòng đã tồn tại.',
+                    });
+                    setLoading(false);
+                    return;
+                }
+
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -79,6 +90,7 @@ const RoomManagement = () => {
     const handleUpdateCategory = async (values) => {
         setLoading(true);
         try {
+
             const categoryList = {
                 name: values.name,
                 type: values.type,
@@ -88,6 +100,16 @@ const RoomManagement = () => {
                 description: values.description,
             }
             return roomManagementApi.updateRoomManagement(categoryList, id).then(response => {
+                if (response.message === "Room name already exists") {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Tên phòng đã tồn tại.',
+                    });
+                    setLoading(false);
+                    return;
+                }
+
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -267,7 +289,36 @@ const RoomManagement = () => {
         },
     ];
 
+    const roomTypes = ['Căn hộ thông thường', 'Căn hộ studio', 'Shophouse', 'Căn hộ Duplex', ' Căn hộ Sky Villa'];
 
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const handleFilter2 = async (status) => {
+        try {
+            console.log(status);
+
+            if (status) {
+                await roomManagementApi.listRoomManagement().then((res) => {
+                    // Tiến hành lọc theo category_name
+                    const filteredByCategoryName = res.data.filter(item => item.status
+                        .toLowerCase() === status.toLowerCase());
+
+                    // Cập nhật danh sách tài sản
+                    setCategory(filteredByCategoryName);
+                });
+            } else {
+                await roomManagementApi.listRoomManagement().then((res) => {
+                    console.log(res);
+                    setCategory(res.data);
+                    setLoading(false);
+                });
+            }
+
+
+        } catch (error) {
+            console.log('search to fetch category list:' + error);
+        }
+    }
 
     useEffect(() => {
         (async () => {
@@ -308,7 +359,7 @@ const RoomManagement = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
@@ -317,6 +368,20 @@ const RoomManagement = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
+                                                <Select
+                                                    placeholder="Lọc theo danh mục"
+                                                    style={{ width: 150, marginRight: 10 }}
+                                                    onChange={(value) => {
+                                                        setSelectedCategory(value);
+                                                        handleFilter2(value);
+                                                    }}
+                                                    value={selectedCategory}
+                                                >
+                                                    <Option value="">Tất cả danh mục</Option>
+                                                    <Option value="Đã sử dụng">Đã sử dụng</Option>
+                                                    <Option value="Phòng trống">Phòng trống</Option>
+                                                    <Option value="Phòng khác">Phòng khác</Option>
+                                                </Select>
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo phòng</Button>
                                             </Space>
                                         </Row>
@@ -381,12 +446,18 @@ const RoomManagement = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập loại!',
+                                    message: 'Vui lòng chọn loại phòng!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Loại" />
+                            <Select placeholder="Chọn loại phòng">
+                                {roomTypes.map((type, index) => (
+                                    <Select.Option key={index} value={type}>
+                                        {type}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name="area"
@@ -399,7 +470,12 @@ const RoomManagement = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Diện tích" />
+                            <InputNumber
+                                placeholder="Diện tích"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value} m²`}
+                                parser={value => value.replace(' m²', '')}
+                            />
                         </Form.Item>
                         <Form.Item
                             name="capacity"
@@ -412,7 +488,7 @@ const RoomManagement = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Sức chứa" />
+                            <InputNumber placeholder="Sức chứa" />
                         </Form.Item>
                         <Form.Item
                             name="status"
@@ -428,7 +504,7 @@ const RoomManagement = () => {
                             <Select placeholder="Chọn trạng thái">
                                 <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
                                 <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Mới tạo">Mới tạo</Select.Option>
+                                <Select.Option value="Phòng khác">Phòng khác</Select.Option>
                             </Select>
                         </Form.Item>
                         <Form.Item
@@ -515,7 +591,12 @@ const RoomManagement = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Diện tích" />
+                            <InputNumber
+                                placeholder="Diện tích"
+                                style={{ width: '100%' }}
+                                formatter={value => `${value} m²`}
+                                parser={value => value.replace(' m²', '')}
+                            />
                         </Form.Item>
                         <Form.Item
                             name="capacity"
@@ -528,7 +609,7 @@ const RoomManagement = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Sức chứa" />
+                            <InputNumber placeholder="Sức chứa" />
                         </Form.Item>
                         <Form.Item
                             name="status"
@@ -544,7 +625,7 @@ const RoomManagement = () => {
                             <Select placeholder="Chọn trạng thái">
                                 <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
                                 <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Mới tạo">Mới tạo</Select.Option>
+                                <Select.Option value="Phòng khác">Phòng khác</Select.Option>
                             </Select>
                         </Form.Item>
                         <Form.Item

@@ -1,9 +1,29 @@
 const db = require('../config/db');
 
+const isRoomNameExist = async (roomName, excludeRoomId = null) => {
+  const params = [roomName];
+  let query = 'SELECT * FROM rooms WHERE name = ?';
+  
+  if (excludeRoomId) {
+    query += ' AND id <> ?';
+    params.push(excludeRoomId);
+  }
+
+  const [result] = await db.execute(query, params);
+  return result.length > 0;
+};
+
 const roomController = {
+  
   createRoom: async (req, res) => {
     try {
       const { name, type, area, capacity, status, description, residents } = req.body;
+
+       // Kiểm tra xem tên phòng đã tồn tại chưa
+       const roomNameExist = await isRoomNameExist(name);
+       if (roomNameExist) {
+         return res.status(200).json({ message: 'Room name already exists' });
+       }
 
       const query = 'INSERT INTO rooms (name, type, area, capacity, status, description) VALUES (?, ?, ?, ?, ?, ?)';
       const [result] = await db.execute(query, [name, type, area, capacity, status, description]);
@@ -59,6 +79,12 @@ const roomController = {
     try {
       const roomId = req.params.id;
       const { name, type, area, capacity, status, description } = req.body;
+
+      // Kiểm tra xem tên phòng đã tồn tại chưa (trừ phòng hiện tại)
+      const roomNameExist = await isRoomNameExist(name, roomId);
+      if (roomNameExist) {
+        return res.status(200).json({ message: 'Room name already exists' });
+      }
 
       const updateQuery = 'UPDATE rooms SET name = ?, type = ?, area = ?, capacity = ?, status = ?, description = ? WHERE id = ?';
       const updatedValues = [name || null, type || null, area || null, capacity || null, status || null, description || null, roomId];

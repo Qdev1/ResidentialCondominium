@@ -64,6 +64,16 @@ const meetingResidentsApi = {
             throw error;
         }
     },
+    async searchEventsByMeeting(name, id) {
+        console.log("tên id" + id);
+        const url = `meetings/meeting/` + id +`/search?eventName=${name.target.value}`;
+        try {
+            const response = await axiosClient.get(url);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
     async getMeetingById(id) {
         const url = `meetings/${id}`;
         try {

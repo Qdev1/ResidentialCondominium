@@ -306,7 +306,7 @@ const MaintenanceFunds = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo mô tả"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}

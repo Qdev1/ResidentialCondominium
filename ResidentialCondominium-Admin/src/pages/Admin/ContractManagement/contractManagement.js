@@ -51,6 +51,19 @@ const ContractManagement = () => {
     const handleOkUser = async (values) => {
         setLoading(true);
         try {
+            const startDate = values.start_date;
+            const endDate = values.end_date;
+    
+            // Kiểm tra ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu
+            if (endDate.isBefore(startDate)) {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu',
+                });
+                setLoading(false);
+                return; 
+            }
+
             const categoryList = {
                 vendorId: values.vendor_id,
                 title: values.title,
@@ -87,6 +100,19 @@ const ContractManagement = () => {
     const handleUpdateCategory = async (values) => {
         setLoading(true);
         try {
+            const startDate = values.start_date;
+            const endDate = values.end_date;
+    
+            // Kiểm tra ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu
+            if (endDate.isBefore(startDate)) {
+                notification.error({
+                    message: 'Thông báo',
+                    description: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu',
+                });
+                setLoading(false);
+                return; 
+            }
+
             const categoryList = {
                 vendorId: values.vendor_id,
                 title: values.title,
@@ -350,7 +376,7 @@ const ContractManagement = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo nhà cung cấp"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}

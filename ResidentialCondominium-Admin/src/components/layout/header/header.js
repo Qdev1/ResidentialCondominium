@@ -71,7 +71,7 @@ function Topbar() {
               >
                 <Col style={{ paddingLeft: 20 }}>
                   <a href="#">
-                    <img style={{ height: 50 }} className="logo" alt="" src="https://visaho.vn/images/config/logo_1630723518.png.webp" />
+                    <img style={{ height: 60, width: 170 }} className="logo" alt="" src="https://i.ibb.co/k56rLRV/393165597-368988352388994-6454052415328874638-n.png" />
                   </a>
                 </Col>
               </Row>

@@ -82,13 +82,13 @@ const MaintenancePlanning = lazy(() => {
 });
 
 
-// const SalesManagement = lazy(() => {
-//     return Promise.all([
-//         import('../pages/Admin/SalesManagement/assetManagement'),
-//         new Promise(resolve => setTimeout(resolve, 0))
-//     ])
-//         .then(([moduleExports]) => moduleExports);
-// });
+const SalesManagement = lazy(() => {
+    return Promise.all([
+        import('../pages/Admin/SalesManagement/assetManagement'),
+        new Promise(resolve => setTimeout(resolve, 0))
+    ])
+        .then(([moduleExports]) => moduleExports);
+});
 
 const AssetHistory = lazy(() => {
     return Promise.all([
@@ -322,11 +322,11 @@ const RouterURL = withRouter(({ location }) => {
                             </Suspense>
                         </PrivateRoute>
 
-                        {/* <PrivateRoute exact path="/sales-management">
+                       <PrivateRoute exact path="/sales-management">
                             <Suspense fallback={<LoadingScreen />}>
                                 <SalesManagement />
                             </Suspense>
-                        </PrivateRoute> */}
+                        </PrivateRoute> 
 
                         <PrivateRoute exact path="/asset-history">
                             <Suspense fallback={<LoadingScreen />}>

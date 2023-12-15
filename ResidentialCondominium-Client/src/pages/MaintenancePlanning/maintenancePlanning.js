@@ -1,7 +1,9 @@
 import {
     HomeOutlined,
     FileOutlined,
-    ScheduleOutlined
+    ScheduleOutlined,
+    CalendarOutlined,
+    TeamOutlined
 } from '@ant-design/icons';
 import {
     BackTop, Breadcrumb,
@@ -27,13 +29,13 @@ const MaintenancePlanning = () => {
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
         },
         {
-            title: 'ID Tài sản',
-            dataIndex: 'asset_id',
-            key: 'asset_id',
+            title: 'Tên tài sản',
+            dataIndex: 'asset_name',
+            key: 'asset_name',
         },
         {
             title: 'Mô tả kế hoạch',
@@ -58,12 +60,6 @@ const MaintenancePlanning = () => {
             key: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
-        {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updated_at',
-            key: 'updated_at',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
-        },
     ];
 
     const handleMenuClick = (key) => {
@@ -80,6 +76,12 @@ const MaintenancePlanning = () => {
             case 'profile':
                 history.push('/profile');
                 break;
+            case 'emergency':
+                history.push('/emergency');
+                break;
+            case 'complaint-management':
+                history.push('/complaint-management');
+                break;
             default:
                 break;
         }
@@ -88,7 +90,7 @@ const MaintenancePlanning = () => {
     useEffect(() => {
         (async () => {
             try {
-                await maintenancePlanningApi.listMaintenancePlans().then((res) => {
+                await maintenancePlanningApi.getAllMaintenancePlans().then((res) => {
                     console.log(res);
                     setCategory(res.data);
                     setLoading(false);
@@ -104,7 +106,7 @@ const MaintenancePlanning = () => {
             <Spin spinning={loading}>
                 <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
                     <Header style={{ display: 'flex', alignItems: 'center' }}>
-                        <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
+                    <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
                             <Menu.Item key="home" icon={<HomeOutlined />}>
                                 Home
                             </Menu.Item>
@@ -114,9 +116,16 @@ const MaintenancePlanning = () => {
                             <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
                                 Residence Event
                             </Menu.Item>
-                            <Menu.Item key="profile" icon={<ScheduleOutlined />}>
-                                    Profile
-                                </Menu.Item>
+                            <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
+                                Emergency
+                            </Menu.Item>
+                            <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
+                                Complaint
+                            </Menu.Item>
+
+                            <Menu.Item key="profile" icon={<TeamOutlined />}>
+                                Profile
+                            </Menu.Item>
                         </Menu>
                     </Header>
                     <Content style={{ padding: '0 50px' }}>

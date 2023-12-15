@@ -71,20 +71,24 @@ const AccountManagement = () => {
             render: (text, record) => (
                 <Space size="middle">
                     {
-
                         text === "isAdmin" ?
                             <Tag color="blue" key={text} style={{ width: 100, textAlign: "center" }} icon={<CopyOutlined />}>
                                 Quản lý
-                            </Tag> : text === "isCompany" ? <Tag color="green" key={text} style={{ width: 100, textAlign: "center" }} icon={<CheckCircleOutlined />}>
-                                Công ty
-                            </Tag> : <Tag color="magenta" key={text} style={{ width: 100, textAlign: "center" }} icon={<CheckCircleOutlined />}>
-                                Khách hàng
-                            </Tag>
+                            </Tag> : text === "isSecurity" ?
+                                <Tag color="green" key={text} style={{ width: 100, textAlign: "center" }} icon={<CheckCircleOutlined />}>
+                                    Bảo vệ
+                                </Tag> : text === "isReceptionist" ?
+                                    <Tag color="purple" key={text} style={{ width: 100, textAlign: "center" }} icon={<CheckCircleOutlined />}>
+                                        Lễ tân
+                                    </Tag> : text === "resident" ?
+                                        <Tag color="geekblue" key={text} style={{ width: 100, textAlign: "center" }} icon={<UserOutlined />}>
+                                            Cư dân
+                                        </Tag> : null
                     }
-
                 </Space>
             ),
         },
+
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -263,7 +267,7 @@ const AccountManagement = () => {
                 .then(response => {
                     console.log(response)
                     if (response == "User already exists") {
-                       return message.error('Tài khoản đã tổn tại');
+                        return message.error('Tài khoản đã tổn tại');
                     } else
                         if (response.message == "Validation failed: Email has already been taken") {
                             message.error('Email has already been taken');
@@ -348,7 +352,7 @@ const AccountManagement = () => {
                             <Row>
                                 <Col span="12">
                                     <Input
-                                        placeholder="Tìm kiếm"
+                                        placeholder="Tìm kiếm theo email"
                                         allowClear
                                         style={{ width: 300 }}
                                         onChange={handleFilterEmail}

@@ -465,6 +465,16 @@ const createTables = async () => {
         //  ADD FOREIGN KEY (assigned_to) REFERENCES users(id)
         //    `);
 
+        //   await db.execute(`
+        //   ALTER TABLE complaints
+        //   ADD created_by INT,
+        //   ADD FOREIGN KEY (created_by) REFERENCES users(id);
+        //    `);
+
+           
+
+
+
         //     await db.execute(`
         //     ALTER TABLE assets
         //     ADD COLUMN image VARCHAR(255) AFTER quantity

@@ -26,6 +26,12 @@ function Sidebar() {
       icon: <UserOutlined />
     },
     {
+      key: "asset-list",
+      title: "Danh mục tài sản",
+      link: "/asset-list",
+      icon: <ShoppingOutlined />
+    },
+    {
       key: "asset-management",
       title: "Quản lý tài sản",
       link: "/asset-management",
@@ -36,24 +42,6 @@ function Sidebar() {
       title: "Quản lý mua bán tài sản",
       link: "/sales-management",
       icon: <BarcodeOutlined />
-    },
-    {
-      key: "asset-list",
-      title: "Danh mục tài sản",
-      link: "/asset-list",
-      icon: <ShoppingOutlined />
-    },
-    {
-      key: "maintenance-planning",
-      title: "Kế hoạch bảo trì",
-      link: "/maintenance-planning",
-      icon: <BorderLeftOutlined />
-    },
-    {
-      key: "vendor-management",
-      title: "Quản lý nhà cung cấp",
-      link: "/vendor-management",
-      icon: <PicLeftOutlined />
     },
     {
       key: "asset-history",
@@ -68,10 +56,34 @@ function Sidebar() {
       icon: <FileOutlined />
     },
     {
+      key: "maintenance-planning",
+      title: "Kế hoạch bảo trì",
+      link: "/maintenance-planning",
+      icon: <BorderLeftOutlined />
+    },
+    {
       key: "maintenance-history",
       title: "Lịch sử bảo trì",
       link: "/maintenance-history",
       icon: <CloudSyncOutlined />
+    },
+    {
+      key: "maintenance-funds",
+      title: "Quản lý chi phí bảo trì",
+      link: "/maintenance-funds",
+      icon: <AlertOutlined />
+    },
+    {
+      key: "vendor-management",
+      title: "Quản lý nhà cung cấp",
+      link: "/vendor-management",
+      icon: <PicLeftOutlined />
+    },
+    {
+      key: "contracts-management",
+      title: "Quản lý giấy tờ",
+      link: "/contracts-management",
+      icon: <CarryOutOutlined />
     },
     {
       key: "residence-event",
@@ -85,7 +97,6 @@ function Sidebar() {
       link: "/residence-rules",
       icon: <FileDoneOutlined />
     },
-   
     {
       key: "room-management",
       title: "Quản lý phòng",
@@ -93,16 +104,16 @@ function Sidebar() {
       icon: <AppstoreOutlined />
     },
     {
-      key: "contracts-management",
-      title: "Quản lý giấy tờ",
-      link: "/contracts-management",
-      icon: <CarryOutOutlined />
-    },
-    {
       key: "complaint-management",
       title: "Quản lý khiếu nại",
       link: "/complaint-management",
       icon: <CalendarOutlined />
+    },
+    {
+      key: "emergency",
+      title: "Vấn đề khẩn cấp",
+      link: "/emergency",
+      icon: <FolderOpenOutlined />
     },
     {
       key: "visitors",
@@ -115,12 +126,6 @@ function Sidebar() {
       title: "Gửi thông báo",
       link: "/notifications",
       icon: <AuditOutlined />
-    },
-    {
-      key: "maintenance-funds",
-      title: "Quản lý chi phí bảo trì",
-      link: "/maintenance-funds",
-      icon: <AlertOutlined />
     },
     {
       key: "family-management",
@@ -139,7 +144,7 @@ function Sidebar() {
     },
     {
       key: "complaint-management",
-      title: "Quản lý kiểu nại",
+      title: "Quản lý khiếu nại",
       link: "/complaint-management",
       icon: <CalendarOutlined />
     },
@@ -166,7 +171,7 @@ function Sidebar() {
     },
     {
       key: "complaint-management",
-      title: "Quản lý kiểu nại",
+      title: "Quản lý khiếu nại",
       link: "/complaint-management",
       icon: <CalendarOutlined />
     },
@@ -185,25 +190,6 @@ function Sidebar() {
   ];
 
   const menuSidebarAccountant = [
-    {
-      key: "dash-board",
-      title: "Dashboards",
-      link: "/dash-board",
-      icon: <DashboardOutlined />
-    },
-    {
-      key: "staff-management",
-      title: "Quản Lý nhân viên",
-      link: "/staff-management",
-      icon: <UserOutlined />
-    },
-   
-    {
-      key: "salary-management",
-      title: "Báo cáo lương",
-      link: "/salary-management",
-      icon: <ShoppingOutlined />
-    },
   ];
 
   useEffect(() => {
@@ -225,7 +211,7 @@ function Sidebar() {
     width={230}
     style={{
       position: "fixed",
-      top: 60,
+      top: 65,
       height: 'calc(100% - 60px)',
       left: 0,
       padding: 0,

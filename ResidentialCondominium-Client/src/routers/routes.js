@@ -12,6 +12,8 @@ import { Layout } from 'antd';
 import { withRouter } from "react-router";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import RecordResidentEvents from "../pages/RecordResidentEvents/recordResidentEvents";
+import ComplaintManagement from "../pages/ComplaintManagement/complaintManagement";
+import EmergencyMaintenance from "../pages/EmergencyMaintenance/emergencyMaintenance";
 
 
 const RouterURL = withRouter(({ location }) => {
@@ -34,6 +36,14 @@ const RouterURL = withRouter(({ location }) => {
 
                     <PrivateRoute exact path="/residence-event">
                         <RecordResidentEvents />
+                    </PrivateRoute>
+
+                    <PrivateRoute exact path="/complaint-management">
+                        <ComplaintManagement />
+                    </PrivateRoute>
+
+                    <PrivateRoute exact path="/emergency">
+                        <EmergencyMaintenance />
                     </PrivateRoute>
 
                 </Layout>
@@ -107,12 +117,13 @@ const RouterURL = withRouter(({ location }) => {
                         <PrivateContainer />
                     </Route>
 
-                    <Route exact path="/news">
-                        <PublicContainer />
+                    <Route exact path="/complaint-management">
+                        <PrivateContainer />
                     </Route>
 
-                    <Route exact path="/news/:id">
-                        <PublicContainer />
+                    
+                    <Route exact path="/emergency">
+                        <PrivateContainer />
                     </Route>
 
                     <Route>

@@ -4,24 +4,27 @@ const complaintController = {
 
     submitComplaint: async (req, res) => {
         try {
-            const { user_id, subject, description, assigned_to } = req.body;
-
-            // Kiểm tra xem user_id có tồn tại trong cơ sở dữ liệu không
+            const { user_id, subject, description, assigned_to, created_by } = req.body;
+    
+            // Check if user_id and created_by exist in the database
             const [userRows] = await db.execute('SELECT * FROM users WHERE id = ?', [user_id]);
+            const [creatorRows] = await db.execute('SELECT * FROM users WHERE id = ?', [created_by]);
+    
             const user = userRows[0];
-
-            if (!user) {
-                return res.status(400).json({ message: 'User not found', status: false });
+            const creator = creatorRows[0];
+    
+            if (!user || !creator) {
+                return res.status(400).json({ message: 'User or creator not found', status: false });
             }
-
-            // Lưu thông tin khiếu nại vào cơ sở dữ liệu
+    
+            // Submit the complaint without checking assigned_to
             const [complaintRows] = await db.execute(
-                'INSERT INTO complaints (user_id, subject, description, status, progress, assigned_to) VALUES (?, ?, ?, ?, ?, ?)',
-                [user_id, subject, description, 'pending', 0, assigned_to]
+                'INSERT INTO complaints (user_id, subject, description, status, progress, assigned_to, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [user_id, subject, description, 'pending', 0, assigned_to, created_by]
             );
-
+    
             const complaintId = complaintRows.insertId;
-
+    
             res.status(201).json({ message: 'Complaint submitted successfully', status: true });
         } catch (err) {
             console.error(err);
@@ -32,7 +35,7 @@ const complaintController = {
     // Lấy tất cả thông tin về khiếu nại
     getAllComplaints: async (req, res) => {
         try {
-            const query = 'SELECT complaints.*, users.username AS user_name, users.role AS user_role, assigned_users.username AS assigned_to_name, assigned_users.role AS assigned_to_role FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN users AS assigned_users ON complaints.assigned_to = assigned_users.id';
+            const query = 'SELECT complaints.*, users.username AS user_name, users.email AS user_email, users.role AS user_role, assigned_users.username AS assigned_to_name, assigned_users.email AS assigned_to_email, assigned_users.role AS assigned_to_role FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN (SELECT id, username, email, role FROM users) AS assigned_users ON complaints.assigned_to = assigned_users.id';
             const [complaints] = await db.execute(query);
             res.status(200).json(complaints);
         } catch (err) {
@@ -90,7 +93,7 @@ const complaintController = {
         try {
             const { subject } = req.query;
     
-            const query = 'SELECT complaints.*, users.username AS user_name, assigned_users.username AS assigned_to_name FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN users AS assigned_users ON complaints.assigned_to = assigned_users.id WHERE complaints.subject LIKE ?';
+            const query = 'SELECT complaints.*, users.username AS user_name, users.email AS user_email, assigned_to_name, assigned_to_email FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN (SELECT id, username AS assigned_to_name, email AS assigned_to_email FROM users) AS assigned_users ON complaints.assigned_to = assigned_users.id WHERE complaints.subject LIKE ?';
             const [complaints] = await db.execute(query, [`%${subject}%`]);
     
             res.status(200).json(complaints);
@@ -105,14 +108,6 @@ const complaintController = {
         try {
             const { complaintId } = req.params;
             const { assigned_to } = req.body;
-
-            // Kiểm tra xem người đảm nhiệm tồn tại trong cơ sở dữ liệu không
-            const [userRows] = await db.execute('SELECT * FROM users WHERE id = ?', [assigned_to]);
-            const user = userRows[0];
-
-            if (!user) {
-                return res.status(400).json({ message: 'Assigned user not found', status: false });
-            }
 
             // Cập nhật người đảm nhiệm nhiệm vụ cho khiếu nại
             const query = 'UPDATE complaints SET assigned_to = ? WHERE id = ?';

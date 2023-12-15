@@ -56,7 +56,7 @@ const AssetManagement = () => {
                 "location": values.location,
                 "status": values.status,
                 "categoryId": values.categoryId,
-                "quantity": values.quantity,
+                "quantity": values.quantity || 0,
                 "image": file
             }
             return assetManagementApi.createAssetManagement(categoryList).then(response => {
@@ -145,6 +145,16 @@ const AssetManagement = () => {
         setLoading(true);
         try {
             await assetManagementApi.deleteAssetManagement(id).then(response => {
+                if (response.message === "Cannot delete the asset because it is referenced in another process or event.") {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                        "Không thể xóa tài sản vì nó đã được sử dụng trong một sự kiện hoặc quá trình khác.",
+
+                    });
+                    setLoading(false);
+                    return;
+                }
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -314,6 +324,35 @@ const AssetManagement = () => {
         setLoading(false);
     }
 
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const handleFilter2 = async (category_name) => {
+        try {
+            console.log(category_name);
+
+            if (category_name) {
+                await assetManagementApi.listAssetManagement().then((res) => {
+                    // Tiến hành lọc theo category_name
+                    const filteredByCategoryName = res.data.filter(item => item.category_name
+                        .toLowerCase() === category_name.toLowerCase());
+
+                    // Cập nhật danh sách tài sản
+                    setCategory(filteredByCategoryName);
+                });
+            } else {
+                await assetManagementApi.listAssetManagement().then((res) => {
+                    console.log(res);
+                    setCategory(res.data);
+                    setLoading(false);
+                });
+            }
+
+
+        } catch (error) {
+            console.log('search to fetch category list:' + error);
+        }
+    }
+
     useEffect(() => {
         (async () => {
             try {
@@ -359,7 +398,7 @@ const AssetManagement = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên và mô tả"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
@@ -368,6 +407,22 @@ const AssetManagement = () => {
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
+                                                <Select
+                                                    placeholder="Lọc theo danh mục"
+                                                    style={{ width: 150, marginRight: 10 }}
+                                                    onChange={(value) => {
+                                                        setSelectedCategory(value);
+                                                        handleFilter2(value);
+                                                    }}
+                                                    value={selectedCategory}
+                                                >
+                                                    <Option value="">Tất cả danh mục</Option>
+                                                    {categoryList.map(category => (
+                                                        <Option key={category.name} value={category.name}>
+                                                            {category.name}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo tài sản</Button>
                                             </Space>
                                         </Row>
@@ -513,19 +568,6 @@ const AssetManagement = () => {
                                 </Select>
                             </Form.Item>
 
-                            <Form.Item
-                                name="quantity"
-                                label="Số lượng"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập số lượng!',
-                                    },
-                                ]}
-                                style={{ marginBottom: 10 }}
-                            >
-                                <InputNumber placeholder="Số lượng" />
-                            </Form.Item>
                             <Form.Item
                                 name="image"
                                 label="Chọn ảnh"
@@ -688,7 +730,7 @@ const AssetManagement = () => {
                                 ]}
                                 style={{ marginBottom: 10 }}
                             >
-                                <InputNumber placeholder="Số lượng" />
+                                <InputNumber placeholder="Số lượng" disabled/>
                             </Form.Item>
 
                             <Form.Item name="image" label="Ảnh hiện tại">

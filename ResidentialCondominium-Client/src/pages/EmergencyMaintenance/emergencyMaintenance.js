@@ -3,7 +3,11 @@ import {
     EditOutlined,
     HomeOutlined,
     PlusOutlined,
-    ShoppingOutlined
+    ShoppingOutlined,
+    FileOutlined,
+    ScheduleOutlined,
+    TeamOutlined,
+    CalendarOutlined
 } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
@@ -19,15 +23,20 @@ import {
     Table,
     notification,
     Select,
-    DatePicker
+    DatePicker,
+    Layout,
+    Menu
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import emergencyMaintenanceApi from "../../../apis/emergencyMaintenanceApi";
+import emergencyMaintenanceApi from "../../apis/emergencyMaintenanceApi";
 import "./emergencyMaintenance.css";
 import dayjs from 'dayjs';
 import moment from 'moment';
-import userApi from '../../../apis/userApi';
-import assetManagementApi from '../../../apis/assetManagementApi';
+import userApi from '../../apis/userApi';
+import assetManagementApi from '../../apis/assetManagementApi';
+import { useHistory } from 'react-router-dom';
+
+const { Header, Content, Footer } = Layout;
 
 const { Option } = Select;
 
@@ -253,44 +262,69 @@ const EmergencyMaintenance = () => {
             key: 'created_at',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <div>
-                    <Row>
-                        <Button
-                            size="small"
-                            icon={<EditOutlined />}
-                            style={{ width: 150, borderRadius: 15, height: 30 }}
-                            onClick={() => handleEditCategory(record.id)}
-                        >
-                            {"Edit"}
-                        </Button>
-                        <div style={{ marginLeft: 10 }}>
-                            <Popconfirm
-                                title="Are you sure to delete this complaint?"
-                                onConfirm={() => handleDeleteCategory(record.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button
-                                    size="small"
-                                    icon={<DeleteOutlined />}
-                                    style={{ width: 150, borderRadius: 15, height: 30 }}
-                                >
-                                    {"Delete"}
-                                </Button>
-                            </Popconfirm>
-                        </div>
-                    </Row>
-                </div>
-            ),
-        },
+        // {
+        //     title: 'Action',
+        //     key: 'action',
+        //     render: (text, record) => (
+        //         <div>
+        //             <Row>
+        //                 <Button
+        //                     size="small"
+        //                     icon={<EditOutlined />}
+        //                     style={{ width: 150, borderRadius: 15, height: 30 }}
+        //                     onClick={() => handleEditCategory(record.id)}
+        //                 >
+        //                     {"Edit"}
+        //                 </Button>
+        //                 <div style={{ marginLeft: 10 }}>
+        //                     <Popconfirm
+        //                         title="Are you sure to delete this complaint?"
+        //                         onConfirm={() => handleDeleteCategory(record.id)}
+        //                         okText="Yes"
+        //                         cancelText="No"
+        //                     >
+        //                         <Button
+        //                             size="small"
+        //                             icon={<DeleteOutlined />}
+        //                             style={{ width: 150, borderRadius: 15, height: 30 }}
+        //                         >
+        //                             {"Delete"}
+        //                         </Button>
+        //                     </Popconfirm>
+        //                 </div>
+        //             </Row>
+        //         </div>
+        //     ),
+        // },
     ];
 
 
+    const history = useHistory();
 
+    const handleMenuClick = (key) => {
+        switch (key) {
+            case 'home':
+                history.push('/');
+                break;
+            case 'maintenance':
+                history.push('/maintenance-planning');
+                break;
+            case 'residence-event':
+                history.push('/residence-event');
+                break;
+            case 'profile':
+                history.push('/profile');
+                break;
+            case 'emergency':
+                history.push('/emergency');
+                break;
+            case 'complaint-management':
+                history.push('/complaint-management');
+                break;
+            default:
+                break;
+        }
+    };
 
 
 
@@ -331,52 +365,46 @@ const EmergencyMaintenance = () => {
     }, [])
     return (
         <div>
+            
+
             <Spin spinning={loading}>
-                <div className='container'>
-                    <div style={{ marginTop: 20 }}>
-                        <Breadcrumb>
-                            <Breadcrumb.Item href="">
-                                <HomeOutlined />
-                            </Breadcrumb.Item>
-                            <Breadcrumb.Item href="">
-                                <ShoppingOutlined />
-                                <span>Quản lý vấn đề khẩn cấp</span>
-                            </Breadcrumb.Item>
+                <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Header style={{ display: 'flex', alignItems: 'center' }}>
+                        <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
+                            <Menu.Item key="home" icon={<HomeOutlined />}>
+                                Home
+                            </Menu.Item>
+                            <Menu.Item key="maintenance" icon={<FileOutlined />}>
+                                Maintenance
+                            </Menu.Item>
+                            <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
+                                Residence Event
+                            </Menu.Item>
+                            <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
+                                Emergency
+                            </Menu.Item>
+                            <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
+                                Complaint
+                            </Menu.Item>
+
+                            <Menu.Item key="profile" icon={<TeamOutlined />}>
+                                Profile
+                            </Menu.Item>
+                        </Menu>
+                    </Header>
+                    <Content style={{ padding: '0 50px' }}>
+                        <Breadcrumb style={{ margin: '16px 0' }}>
+                            <Breadcrumb.Item>Home</Breadcrumb.Item>
+                            <Breadcrumb.Item>Vấn đề khẩn cấp</Breadcrumb.Item>
                         </Breadcrumb>
-                    </div>
-
-                    <div style={{ marginTop: 20 }}>
-                        <div id="my__event_container__list">
-                            <PageHeader
-                                subTitle=""
-                                style={{ fontSize: 14 }}
-                            >
-                                <Row>
-                                    <Col span="18">
-                                        <Input
-                                            placeholder="Tìm kiếm theo mô tả"
-                                            allowClear
-                                            onChange={handleFilter}
-                                            style={{ width: 300 }}
-                                        />
-                                    </Col>
-                                    <Col span="6">
-                                        <Row justify="end">
-                                            <Space>
-                                                <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo vấn đề khẩn cấp</Button>
-                                            </Space>
-                                        </Row>
-                                    </Col>
-                                </Row>
-
-                            </PageHeader>
+                        <div className="site-layout-content" >
+                            <div style={{ marginTop: 30 }}>
+                            <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
+                            </div>
                         </div>
-                    </div>
-
-                    <div style={{ marginTop: 30 }}>
-                        <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
-                    </div>
-                </div>
+                    </Content>
+                    <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by CondoOperationsManagement</Footer>
+                </Layout>
 
                 <Modal
                     title="Tạo vấn đề khẩn cấp mới"
@@ -591,6 +619,7 @@ const EmergencyMaintenance = () => {
 
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>
+
         </div >
     )
 }

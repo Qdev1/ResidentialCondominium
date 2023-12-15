@@ -109,7 +109,7 @@ const AssetHistory = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}

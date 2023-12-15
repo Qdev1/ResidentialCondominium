@@ -1,8 +1,8 @@
 import axiosClient from "./axiosClient";
 
-const maintenancePlansApi = {
-    async getAllMaintenancePlans() {
-        const url = 'maintenance-plans';
+const assetManagementApi = {
+    async listAssetManagement() {
+        const url = 'assets';
         try {
             const response = await axiosClient.get(url);
             return response;
@@ -10,8 +10,8 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async listMaintenancePlans() {
-        const url = 'maintenance-plans/2';
+    async listAssetReports(id) {
+        const url = 'assets/'+id+"/reports";
         try {
             const response = await axiosClient.get(url);
             return response;
@@ -19,16 +19,7 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async listMaintenanceReports(id) {
-        const url = 'maintenance-plans/' + id + '/reports';
-        try {
-            const response = await axiosClient.get(url);
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    },
-    async getMaintenanceStatistics(year, month) {
+    async getAssetStatistics(year, month) {
         const url = `statistics?year=${year}&month=${month}`;
         try {
             const response = await axiosClient.get(url);
@@ -37,8 +28,8 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async createMaintenancePlan(data) {
-        const url = 'maintenance-plans';
+    async createAssetManagement(data) {
+        const url = 'assets';
         try {
             const response = await axiosClient.post(url, data);
             return response;
@@ -46,8 +37,8 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async createMaintenanceReports(data) {
-        const url = 'maintenance-plans/reports';
+    async createAssetReports(data) {
+        const url = 'assets/reports';
         try {
             const response = await axiosClient.post(url, data);
             return response;
@@ -55,8 +46,8 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async updateMaintenancePlan(data, id) {
-        const url = 'maintenance-plans/' + id;
+    async updateAssetManagement(data, id) {
+        const url = 'assets/' + id;
         try {
             const response = await axiosClient.put(url, data);
             return response;
@@ -64,8 +55,8 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async searchMaintenancePlans(name) {
-        const url = 'maintenance-plans/search?keyword=' + name.target.value;
+    async searchAssetManagement(name) {
+        const url = 'assets/search?keyword=' + name.target.value;
         try {
             const response = await axiosClient.get(url);
             return response;
@@ -73,8 +64,8 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async deleteMaintenancePlan(id) {
-        const url = 'maintenance-plans/' + id;
+    async deleteAssetManagement(id) {
+        const url = 'assets/' + id;
         try {
             const response = await axiosClient.delete(url);
             return response;
@@ -82,8 +73,17 @@ const maintenancePlansApi = {
             throw error;
         }
     },
-    async getDetailMaintenancePlan(id) {
-        const url = 'maintenance-plans/' + id;
+    async getDetailAssetManagement(id) {
+        const url = 'assets/' + id;
+        try {
+            const response = await axiosClient.get(url);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },  
+    async searchAssetsByName(name) {
+        const url = 'assets/searchAssetReport?name=' + name.target.value;
         try {
             const response = await axiosClient.get(url);
             return response;
@@ -93,4 +93,4 @@ const maintenancePlansApi = {
     },  
 }
 
-export default maintenancePlansApi;
+export default assetManagementApi;

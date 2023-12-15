@@ -19,7 +19,8 @@ import {
     Table,
     notification,
     Select,
-    DatePicker
+    DatePicker,
+    InputNumber
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import accessCardApi from "../../../apis/accessCardApi";
@@ -49,6 +50,17 @@ const AssetCards = () => {
     const handleOkUser = async (values) => {
         setLoading(true);
         try {
+            const issueDate = values.issue_date.format("YYYY-MM-DD");
+            const expirationDate = values.expiration_date.format("YYYY-MM-DD");
+
+            if (expirationDate < issueDate) {
+                notification["error"]({
+                    message: `Thông báo`,
+                    description: 'Ngày hết hạn phải lớn hơn hoặc bằng ngày phát hành',
+                });
+                setLoading(false);
+                return;
+            }
             const categoryList = {
                 residentId: values.resident_id,
                 cardNumber: values.card_number,
@@ -82,6 +94,18 @@ const AssetCards = () => {
     const handleUpdateCategory = async (values) => {
         setLoading(true);
         try {
+            const issueDate = values.issue_date.format("YYYY-MM-DD");
+            const expirationDate = values.expiration_date.format("YYYY-MM-DD");
+
+            // Check if expiration date is greater than or equal to issue date
+            if (expirationDate < issueDate) {
+                notification["error"]({
+                    message: `Thông báo`,
+                    description: 'Ngày hết hạn phải lớn hơn hoặc bằng ngày phát hành',
+                });
+                setLoading(false);
+                return; 
+            }
             const categoryList = {
                 residentId: values.resident_id,
                 cardNumber: values.card_number,
@@ -309,7 +333,7 @@ const AssetCards = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo số thẻ"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
@@ -387,21 +411,21 @@ const AssetCards = () => {
 
                         <Form.Item
                             name="card_number"
-                            label="Card Number"
+                            label="số thẻ"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Card Number!',
+                                    message: 'Vui lòng nhập số thẻ!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Card Number" />
+                            <InputNumber placeholder="Số thẻ" />
                         </Form.Item>
 
                         <Form.Item
                             name="issue_date"
-                            label="Issue Date"
+                            label="Ngày phát hành"
                             rules={[
                                 {
                                     required: true,
@@ -415,7 +439,7 @@ const AssetCards = () => {
 
                         <Form.Item
                             name="expiration_date"
-                            label="Expiration Date"
+                            label="Ngày hết hạn"
                             rules={[
                                 {
                                     required: true,
@@ -485,21 +509,21 @@ const AssetCards = () => {
 
                         <Form.Item
                             name="card_number"
-                            label="Card Number"
+                            label="Số thẻ"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập Card Number!',
+                                    message: 'Vui lòng nhập số thẻ!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Card Number" />
+                            <InputNumber placeholder="Số thẻ" />
                         </Form.Item>
 
                         <Form.Item
                             name="issue_date"
-                            label="Issue Date"
+                            label="Ngày phát hành"
                             rules={[
                                 {
                                     required: true,
@@ -513,7 +537,7 @@ const AssetCards = () => {
 
                         <Form.Item
                             name="expiration_date"
-                            label="Expiration Date"
+                            label="Ngày hết hạn"
                             rules={[
                                 {
                                     required: true,

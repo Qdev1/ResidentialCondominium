@@ -229,40 +229,6 @@ const ReceptionManagement = () => {
             dataIndex: 'note',
             key: 'note',
         },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <div>
-                    <Row>
-                        <Button
-                            size="small"
-                            icon={<EditOutlined />}
-                            style={{ width: 150, borderRadius: 15, height: 30 }}
-                            onClick={() => handleEditCategory(record.id)}
-                        >
-                            {"Edit"}
-                        </Button>
-                        <div style={{ marginLeft: 10 }}>
-                            <Popconfirm
-                                title="Are you sure to delete this complaint?"
-                                onConfirm={() => handleDeleteCategory(record.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button
-                                    size="small"
-                                    icon={<DeleteOutlined />}
-                                    style={{ width: 150, borderRadius: 15, height: 30 }}
-                                >
-                                    {"Delete"}
-                                </Button>
-                            </Popconfirm>
-                        </div>
-                    </Row>
-                </div>
-            ),
-        },
     ];
 
 
@@ -316,7 +282,7 @@ const ReceptionManagement = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên khách"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}

@@ -18,13 +18,16 @@ import {
     Spin,
     Table,
     notification,
-    Select
+    Select,
+    DatePicker,
+    InputNumber
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import assetEventApi from "../../../apis/assetEventHistoryApi";
 import "./salesManagement.css";
 import assetCategoryApi from '../../../apis/assetCategoryApi';
+import assetManagementApi from '../../../apis/assetManagementApi';
 
 const { Option } = Select;
 
@@ -38,6 +41,8 @@ const SalesManagement = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [assetList, setAssetList] = useState();
+
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -47,64 +52,58 @@ const SalesManagement = () => {
         setLoading(true);
         try {
             const categoryList = {
+                "asset_id": values.asset_id,
+                "event_type": values.event_type,
+                "event_date": values.event_date.format("YYYY-MM-DD"),
                 "description": values.description,
                 "quantity": values.quantity,
-
             }
-            return assetEventApi.purchaseEvent(categoryList).then(response => {
-                if (response === undefined) {
-                    notification["error"]({
-                        message: `Thông báo`,
-                        description:
-                            'mua tài sản thất bại',
-                    });
-                }
-                else {
-                    notification["success"]({
-                        message: `Thông báo`,
-                        description:
-                            'Tạo mua bán tài sản thành công',
-                    });
-                    setOpenModalCreate(false);
-                    handleCategoryList();
-                }
-            })
+
+            if (values.event_type == "Mua") {
+                return assetEventApi.purchaseEvent(categoryList).then(response => {
+                    if (response === undefined) {
+                        notification["error"]({
+                            message: `Thông báo`,
+                            description:
+                                'mua tài sản thất bại',
+                        });
+                    }
+                    else {
+                        notification["success"]({
+                            message: `Thông báo`,
+                            description:
+                                'Tạo mua bán tài sản thành công',
+                        });
+                        setOpenModalCreate(false);
+                        handleCategoryList();
+                    }
+                })
+            } else {
+                return assetEventApi.sellEvent(categoryList).then(response => {
+                    if (response === undefined) {
+                        notification["error"]({
+                            message: `Thông báo`,
+                            description:
+                                'Bán tài sản thất bại',
+                        });
+                    }
+                    else {
+                        notification["success"]({
+                            message: `Thông báo`,
+                            description:
+                                'Bán tài sản thành công',
+                        });
+                        setOpenModalCreate(false);
+                        handleCategoryList();
+                    }
+                })
+            }
 
         } catch (error) {
             throw error;
         }
     }
 
-    const handleUpdateCategory = async (values) => {
-        setLoading(true);
-        try {
-            const categoryList = {
-                "description": values.description,
-                "quantity": values.quantity,
-            }
-            return assetEventApi.sellEvent(categoryList, id).then(response => {
-                if (response === undefined) {
-                    notification["error"]({
-                        message: `Thông báo`,
-                        description:
-                            'Bán tài sản thất bại',
-                    });
-                }
-                else {
-                    notification["success"]({
-                        message: `Thông báo`,
-                        description:
-                            'Chỉnh sửa mua bán tài sản thành công',
-                    });
-                    handleCategoryList();
-                    setOpenModalUpdate(false);
-                }
-            })
-
-        } catch (error) {
-            throw error;
-        }
-    }
 
     const handleCancel = (type) => {
         if (type === "create") {
@@ -127,59 +126,7 @@ const SalesManagement = () => {
         };
     }
 
-    const handleDeleteCategory = async (id) => {
-        setLoading(true);
-        try {
-            await assetEventApi.deleteEvent(id).then(response => {
-                if (response === undefined) {
-                    notification["error"]({
-                        message: `Thông báo`,
-                        description:
-                            'Xóa mua bán tài sản thất bại',
-
-                    });
-                    setLoading(false);
-                }
-                else {
-                    notification["success"]({
-                        message: `Thông báo`,
-                        description:
-                            'Xóa mua bán tài sản thành công',
-
-                    });
-                    handleCategoryList();
-                    setLoading(false);
-                }
-            }
-            );
-
-        } catch (error) {
-            console.log('Failed to fetch event list:' + error);
-        }
-    }
-
-    const handleEditCategory = (id) => {
-        setOpenModalUpdate(true);
-        (async () => {
-            try {
-                const response = await assetEventApi.getDetailEvent(id);
-                setId(id);
-                form2.setFieldsValue({
-                    name: response.data.name,
-                    description: response.data.description,
-                    value: response.data.value,
-                    location: response.data.location,
-                    status: response.data.status,
-                    categoryId: response.data.category_id,
-                    quantity: response.data.quantity,
-                });
-                console.log(form2);
-                setLoading(false);
-            } catch (error) {
-                throw error;
-            }
-        })();
-    }
+   
 
     const handleFilter = async (name) => {
         try {
@@ -205,6 +152,7 @@ const SalesManagement = () => {
             title: 'Loại',
             dataIndex: 'event_type',
             key: 'event_type',
+            render: (text) => (text === 'purchase' ? 'Mua' : 'Bán'),
         },
         {
             title: 'Ngày tạo',
@@ -223,39 +171,6 @@ const SalesManagement = () => {
             key: 'quantity',
             dataIndex: 'quantity',
         },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <div>
-                    <Row>
-                        <Button
-                            size="small"
-                            icon={<EditOutlined />}
-                            style={{ width: 150, borderRadius: 15, height: 30 }}
-                            onClick={() => handleEditCategory(record.id)}
-                        >{"Mua"}
-                        </Button>
-                        <div
-                            style={{ marginLeft: 10 }}>
-                            <Popconfirm
-                                title="Bạn có chắc chắn muốn bán tài sản này?"
-                                onConfirm={() => handleDeleteCategory(record.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button
-                                    size="small"
-                                    icon={<DeleteOutlined />}
-                                    style={{ width: 150, borderRadius: 15, height: 30 }}
-                                >{"Bán"}
-                                </Button>
-                            </Popconfirm>
-                        </div>
-                    </Row>
-                </div >
-            ),
-        },
     ];
 
 
@@ -265,6 +180,12 @@ const SalesManagement = () => {
                 await assetEventApi.listEvents().then((res) => {
                     console.log(res);
                     setCategory(res.data);
+                    setLoading(false);
+                });
+
+                await assetManagementApi.listAssetManagement().then((res) => {
+                    console.log(res);
+                    setAssetList(res.data);
                     setLoading(false);
                 });
 
@@ -298,7 +219,7 @@ const SalesManagement = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo mô tả"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
@@ -306,6 +227,7 @@ const SalesManagement = () => {
                                     </Col>
                                     <Col span="6">
                                         <Row justify="end">
+                                            <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo mua bán tài sản</Button>
 
                                         </Row>
                                     </Col>
@@ -320,8 +242,9 @@ const SalesManagement = () => {
                     </div>
                 </div>
 
+
                 <Modal
-                    title="Tạo mua bán tài sản mới"
+                    title="Tạo mua bán tài sản"
                     visible={openModalCreate}
                     style={{ top: 100 }}
                     onOk={() => {
@@ -342,66 +265,6 @@ const SalesManagement = () => {
                 >
                     <Form
                         form={form}
-                        name="purchaseCreate"
-                        layout="vertical"
-                        initialValues={{
-                            residence: ['zhejiang', 'hangzhou', 'xihu'],
-                            prefix: '86',
-                        }}
-                        scrollToFirstError
-                    >
-                        <Form.Item
-                            name="description"
-                            label="Mô tả"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập mô tả!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Mô tả" />
-                        </Form.Item>
-                        <Form.Item
-                            name="quantity"
-                            label="Số lượng"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập số lượng!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Số lượng" />
-                        </Form.Item>
-                    </Form>
-                </Modal>
-
-
-                <Modal
-                    title="Bán tài sản"
-                    visible={openModalUpdate}
-                    style={{ top: 100 }}
-                    onOk={() => {
-                        form2
-                            .validateFields()
-                            .then((values) => {
-                                form2.resetFields();
-                                handleUpdateCategory(values);
-                            })
-                            .catch((info) => {
-                                console.log('Validate Failed:', info);
-                            });
-                    }}
-                    onCancel={handleCancel}
-                    okText="Hoàn thành"
-                    cancelText="Hủy"
-                    width={600}
-                >
-                    <Form
-                        form={form2}
                         name="eventCreate"
                         layout="vertical"
                         initialValues={{
@@ -410,7 +273,55 @@ const SalesManagement = () => {
                         }}
                         scrollToFirstError
                     >
-                            <Form.Item
+                        <Form.Item
+                            name="asset_id"
+                            label="Tài sản"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn tài sản!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn tài sản">
+                                {assetList?.map(asset => (
+                                    <Option key={asset.id} value={asset.id}>
+                                        {asset.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name="event_type"
+                            label="Loại sự kiện"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn loại sự kiện!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn loại sự kiện">
+                                <Option value="Mua">Mua</Option>
+                                <Option value="Bán">Bán</Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name="event_date"
+                            label="Ngày sự kiện"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập ngày sự kiện!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <DatePicker format="YYYY-MM-DD" />
+                        </Form.Item>
+                        <Form.Item
                             name="description"
                             label="Mô tả"
                             rules={[
@@ -434,11 +345,12 @@ const SalesManagement = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Số lượng" />
+                            <InputNumber placeholder="Số lượng" />
                         </Form.Item>
 
                     </Form>
                 </Modal>
+
 
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>

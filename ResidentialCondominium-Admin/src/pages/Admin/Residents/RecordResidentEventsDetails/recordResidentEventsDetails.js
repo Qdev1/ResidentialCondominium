@@ -96,8 +96,11 @@ const RecordResidentEventsDetails = () => {
     }
 
     const handleFilter = async (name) => {
+        console.log(name);
+        console.log(id);
+        const currentId = id;
         try {
-            const res = await meetingResidentsApi.searchMeetingsByTitle(name);
+            const res = await meetingResidentsApi.searchEventsByMeeting(name, currentId);
             setCategory(res.data);
         } catch (error) {
             console.log('search to fetch category list:' + error);
@@ -187,7 +190,7 @@ const RecordResidentEventsDetails = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm báo cáo cuộc họp"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}

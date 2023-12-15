@@ -137,6 +137,23 @@ const residentEventsController = {
         }
     },
 
+    searchEventsByMeeting: async (req, res) => {
+        try {
+            const { meetingId } = req.params;
+            console.log(meetingId);
+            // Truy vấn sự kiện dựa trên meeting_id và tìm kiếm sự kiện theo tiêu đề
+            const [eventRows] = await db.execute(
+                'SELECT * FROM events WHERE meeting_id = ? AND event_name LIKE ?',
+                [meetingId, `%${req.query.eventName || ''}%`]
+            );
+    
+            res.status(200).json({ data: eventRows });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
+
 
     registerForMeeting: async (req, res) => {
         try {

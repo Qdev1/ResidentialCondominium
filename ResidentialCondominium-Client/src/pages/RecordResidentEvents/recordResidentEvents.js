@@ -1,7 +1,9 @@
 import {
     HomeOutlined,
     FileOutlined,
-    ScheduleOutlined
+    ScheduleOutlined,
+    TeamOutlined,
+    CalendarOutlined
 } from '@ant-design/icons';
 import {
     BackTop, Breadcrumb,
@@ -64,6 +66,12 @@ const RecordResidentEvents = () => {
             case 'profile':
                 history.push('/profile');
                 break;
+            case 'emergency':
+                history.push('/emergency');
+                break;
+            case 'complaint-management':
+                history.push('/complaint-management');
+                break;
             default:
                 break;
         }
@@ -98,7 +106,14 @@ const RecordResidentEvents = () => {
                             <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
                                 Residence Event
                             </Menu.Item>
-                            <Menu.Item key="profile" icon={<ScheduleOutlined />}>
+                            <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
+                                Emergency
+                            </Menu.Item>
+                            <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
+                                Complaint
+                            </Menu.Item>
+
+                            <Menu.Item key="profile" icon={<TeamOutlined />}>
                                 Profile
                             </Menu.Item>
                         </Menu>

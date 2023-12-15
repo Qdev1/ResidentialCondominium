@@ -166,6 +166,17 @@ const MaintenancePlanning = () => {
         setLoading(true);
         try {
             await maintenancePlanningApi.deleteMaintenancePlan(id).then(response => {
+                if (response.message === "Cannot delete the asset because it is referenced in another process or event.") {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                        "Không thể xóa vì nó đã được sử dụng trong một sự kiện hoặc quá trình khác.",
+
+                    });
+                    setLoading(false);
+                    return;
+                }
+               
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -258,12 +269,6 @@ const MaintenancePlanning = () => {
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
         {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updated_at',
-            key: 'updated_at',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
-        },
-        {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
@@ -346,7 +351,7 @@ const MaintenancePlanning = () => {
                                 <Row>
                                     <Col span="18">
                                         <Input
-                                            placeholder="Tìm kiếm"
+                                            placeholder="Tìm kiếm theo tên tài sản"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
