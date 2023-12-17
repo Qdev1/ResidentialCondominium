@@ -44,7 +44,7 @@ const EmergencyMaintenance = () => {
     const [userList, setUserList] = useState();
     const [assetList, setAssetList] = useState();
     const [security, setSecurity] = useState();
-
+    const [disabled, setDisable] = useState(false);
 
     const showModal = () => {
         setOpenModalCreate(true);
@@ -91,6 +91,7 @@ const EmergencyMaintenance = () => {
                 reported_by: values.reported_by,
                 resolved_by: values.resolved_by,
                 resolved_description: values.resolved_description,
+                status: values.status
             };
             return emergencyMaintenanceApi.updateEmergencyMaintenance(categoryList, id).then(response => {
                 if (response === undefined) {
@@ -174,12 +175,17 @@ const EmergencyMaintenance = () => {
             try {
                 const response = await emergencyMaintenanceApi.getDetailEmergencyMaintenance(id);
                 setId(id);
+                if(response.data.status != "pending"){
+                    setDisable(true);
+                }
                 form2.setFieldsValue({
                     asset_id: response.data.asset_id,
                     description: response.data.description,
                     reported_by: response.data.reported_by,
                     resolved_by: response.data.resolved_by,
                     resolved_description: response.data.resolved_description,
+                    status: response.data.status,
+
                 });
 
                 console.log(form2);
@@ -265,24 +271,26 @@ const EmergencyMaintenance = () => {
                             style={{ width: 150, borderRadius: 15, height: 30 }}
                             onClick={() => handleEditCategory(record.id)}
                         >
-                            {"Edit"}
+                            {"Chỉnh sửa"}
                         </Button>
-                        <div style={{ marginLeft: 10 }}>
-                            <Popconfirm
-                                title="Are you sure to delete this complaint?"
-                                onConfirm={() => handleDeleteCategory(record.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button
-                                    size="small"
-                                    icon={<DeleteOutlined />}
-                                    style={{ width: 150, borderRadius: 15, height: 30 }}
+                        {record.status === 'pending' && (
+                            <div style={{ marginLeft: 10 }}>
+                                <Popconfirm
+                                    title="Are you sure to delete this complaint?"
+                                    onConfirm={() => handleDeleteCategory(record.id)}
+                                    okText="Yes"
+                                    cancelText="No"
                                 >
-                                    {"Delete"}
-                                </Button>
-                            </Popconfirm>
-                        </div>
+                                    <Button
+                                        size="small"
+                                        icon={<DeleteOutlined />}
+                                        style={{ width: 150, borderRadius: 15, height: 30 }}
+                                    >
+                                        {"Xóa"}
+                                    </Button>
+                                </Popconfirm>
+                            </div>
+                        )}
                     </Row>
                 </div>
             ),
@@ -509,7 +517,7 @@ const EmergencyMaintenance = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Select placeholder="Chọn tài sản">
+                            <Select placeholder="Chọn tài sản" disabled={disabled}>
                                 {assetList?.map(asset => (
                                     <Option key={asset.id} value={asset.id}>
                                         {asset.name}
@@ -529,7 +537,7 @@ const EmergencyMaintenance = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Input placeholder="Mô tả" />
+                            <Input placeholder="Mô tả" disabled={disabled}/>
                         </Form.Item>
 
                         <Form.Item
@@ -543,7 +551,7 @@ const EmergencyMaintenance = () => {
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Select placeholder="Chọn người báo cáo">
+                            <Select placeholder="Chọn người báo cáo" disabled={disabled}>
                                 {userList?.map(user => (
                                     <Option key={user.id} value={user.id}>
                                         {user.username}
@@ -573,8 +581,26 @@ const EmergencyMaintenance = () => {
                         </Form.Item>
 
                         <Form.Item
+                            name="status"
+                            label="Trạng thái"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn trạng thái!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn trạng thái">
+                                <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
+                                <Select.Option value="Đang xử lý">Đang xử lý</Select.Option>
+                                <Select.Option value="Đã xong">Đã xong</Select.Option>
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
                             name="resolved_description"
-                            label="Mô tả"
+                            label="Chi tiết giải quyết"
                             rules={[
                                 {
                                     required: true,

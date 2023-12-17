@@ -16,6 +16,14 @@ const assetController = {
         try {
             const { name, description, value, location, status, categoryId, quantity, image } = req.body;
     
+            // Kiểm tra xem tên đã tồn tại chưa
+            const checkQuery = 'SELECT id FROM assets WHERE name = ?';
+            const [existingAsset] = await db.execute(checkQuery, [name]);
+    
+            if (existingAsset.length > 0) {
+                return res.status(200).json({ message: 'Asset with the same name already exists' });
+            }
+    
             const query = 'INSERT INTO assets (name, description, value, location, status, category_id, quantity, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             const [result] = await db.execute(query, [name, description, value, location, status, categoryId, quantity, image]);
     
@@ -29,7 +37,7 @@ const assetController = {
                 status,
                 categoryId,
                 quantity,
-                image, 
+                image,
             });
         } catch (err) {
             res.status(500).json(err);
@@ -40,6 +48,16 @@ const assetController = {
         try {
             const assetId = req.params.id;
             const { name, description, value, location, status, categoryId, image } = req.body;
+    
+            // Kiểm tra xem tên đã tồn tại chưa (nếu tên được cập nhật)
+            if (name) {
+                const checkQuery = 'SELECT id FROM assets WHERE name = ? AND id != ?';
+                const [existingAsset] = await db.execute(checkQuery, [name, assetId]);
+    
+                if (existingAsset.length > 0) {
+                    return res.status(200).json({ message: 'Asset with the same name already exists' });
+                }
+            }
     
             let query;
             let params;

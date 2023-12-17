@@ -3,7 +3,7 @@ import {
     EditOutlined,
     HomeOutlined,
     PlusOutlined,
-    ShoppingOutlined,
+    StarOutlined,
     FileOutlined,
     ScheduleOutlined,
     TeamOutlined,
@@ -24,7 +24,8 @@ import {
     notification,
     Select,
     Layout,
-    Menu
+    Menu,
+    Rate
 } from 'antd';
 import { useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
@@ -217,11 +218,67 @@ const ComplaintManagement = () => {
     const handleFilter = async (name) => {
         try {
             const res = await complaintApi.searchComplaint(name);
-            setCategory(res);
+            const filteredComplaints = res.filter(complaint => complaint.created_by === userData.id);
+
+            setCategory(filteredComplaints);
         } catch (error) {
             console.log('search to fetch category list:' + error);
         }
     }
+
+    const [ratingModalVisible, setRatingModalVisible] = useState(false);
+    const [rating, setRating] = useState(0);
+
+    const handleRatingModal = (categoryId) => {
+        // Hiển thị modal đánh giá khi người dùng bấm vào nút "Đánh giá"
+        setId(categoryId)
+        setRatingModalVisible(true);
+    };
+
+    const handleRatingChange = (value) => {
+        // Lưu giá trị đánh giá khi người dùng thay đổi số sao
+        setRating(value);
+    };
+
+    const handleRatingSubmit = async () => {
+        setLoading(true);
+        try {
+            const response = await complaintApi.getDetailComplaint(id);
+            const categoryList = {
+                user_id: response.user_id,
+                subject: response.subject,
+                description: response.description,
+                status: response.status,
+                progress: rating,
+                assigned_to: response.assigned_to,
+            }
+            return complaintApi.updateComplaint(categoryList, id).then(response => {
+                if (response === undefined) {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Đánh giá khiếu nại thất bại',
+                    });
+                }
+                else {
+                    notification["success"]({
+                        message: `Thông báo`,
+                        description:
+                            'Đánh giá khiếu nại thành công',
+                    });
+                    handleCategoryList();
+                    setRatingModalVisible(false);
+                }
+            })
+
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const handleRatingCancel = () => {
+        setRatingModalVisible(false);
+    };
 
     const columns = [
         {
@@ -296,6 +353,17 @@ const ComplaintManagement = () => {
                                 </Popconfirm>
                             </div>
                         </Row>
+                    )}
+
+                    {record.status === 'Đã xong' && record.progress === 0 && (
+                        <Button
+                            size="small"
+                            icon={<StarOutlined />}
+                            style={{ width: 150, borderRadius: 15, height: 30 }}
+                            onClick={() => handleRatingModal(record.id)}
+                        >
+                            {"Đánh giá"}
+                        </Button>
                     )}
                 </div>
             ),
@@ -477,23 +545,22 @@ const ComplaintManagement = () => {
                     <Header style={{ display: 'flex', alignItems: 'center' }}>
                         <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
                             <Menu.Item key="home" icon={<HomeOutlined />}>
-                                Home
+                                Trang chủ
                             </Menu.Item>
                             <Menu.Item key="maintenance" icon={<FileOutlined />}>
-                                Maintenance
+                                Kế hoạch bảo trì
                             </Menu.Item>
                             <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
-                                Residence Event
+                                Sự kiện cư dân
                             </Menu.Item>
                             <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
-                                Emergency
+                                Vấn đề khẩn cấp
                             </Menu.Item>
                             <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
-                                Complaint
+                                Khiếu nại
                             </Menu.Item>
-
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
-                                Profile
+                                Trang cá nhân
                             </Menu.Item>
                         </Menu>
                     </Header>
@@ -509,32 +576,32 @@ const ComplaintManagement = () => {
                             >
                                 <Row>
                                     <Col span="18">
-                                        {/* <Input
+                                        <Input
                                             placeholder="Tìm kiếm theo chủ đề"
                                             allowClear
                                             onChange={handleFilter}
                                             style={{ width: 300 }}
-                                        /> */}
+                                        />
                                     </Col>
                                     <Col span="6">
                                         <Row justify="end">
                                             <Space>
-                                            {
+                                                {
                                                     userData.role == "isAdmin" ?
-                                              
-                                                <Select
-                                                    style={{ width: 120, marginRight: 10 }}
-                                                    onChange={(value) => {
-                                                        handleFilter2(value);
-                                                    }}
-                                                >
-                                                    <Option value="all">Toàn bộ</Option>
-                                                    <Option value="resident">Cư đân</Option>
-                                                    <Option value="isReceptionist">Lễ tân</Option>
-                                                    <Option value="isAdmin">Admin</Option>
 
-                                                </Select>
-                                                  : null}
+                                                        <Select
+                                                            style={{ width: 120, marginRight: 10 }}
+                                                            onChange={(value) => {
+                                                                handleFilter2(value);
+                                                            }}
+                                                        >
+                                                            <Option value="all">Toàn bộ</Option>
+                                                            <Option value="resident">Cư đân</Option>
+                                                            <Option value="isReceptionist">Lễ tân</Option>
+                                                            <Option value="isAdmin">Admin</Option>
+
+                                                        </Select>
+                                                        : null}
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo khiếu nại</Button>
                                             </Space>
                                         </Row>
@@ -674,6 +741,17 @@ const ComplaintManagement = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+
+            <Modal
+                title="Đánh giá"
+                visible={ratingModalVisible}
+                onOk={handleRatingSubmit}
+                onCancel={handleRatingCancel}
+            >
+                <p>Chọn số sao:</p>
+                <Rate allowHalf onChange={handleRatingChange} value={rating} />
+            </Modal>
+
 
             <BackTop style={{ textAlign: 'right' }} />
         </div >

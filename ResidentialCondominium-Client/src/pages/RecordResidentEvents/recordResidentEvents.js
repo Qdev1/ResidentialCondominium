@@ -10,13 +10,18 @@ import {
     Spin,
     Table,
     Layout,
-    Menu
+    Menu,
+    Row,
+    Col,
+    Input
 } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import meetingResidentsApi from "../../apis/meetingResidentsApi";
 import "./recordResidentEvents.css";
+import { PageHeader } from '@ant-design/pro-layout';
+
 const { Header, Content, Footer } = Layout;
 
 const RecordResidentEvents = () => {
@@ -43,12 +48,6 @@ const RecordResidentEvents = () => {
             title: 'Mô tả',
             dataIndex: 'description',
             key: 'description',
-        },
-        {
-            title: 'Ngày tạo',
-            dataIndex: 'created_at',
-            key: 'created_at',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
         },
     ];
 
@@ -77,6 +76,16 @@ const RecordResidentEvents = () => {
         }
     };
 
+    
+    const handleFilter = async (name) => {
+        try {
+            const res = await meetingResidentsApi.searchMeetingsByTitle(name);
+            setCategory(res);
+        } catch (error) {
+            console.log('search to fetch category list:' + error);
+        }
+    }
+
     useEffect(() => {
         (async () => {
             try {
@@ -97,24 +106,23 @@ const RecordResidentEvents = () => {
                 <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
                     <Header style={{ display: 'flex', alignItems: 'center' }}>
                         <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
-                            <Menu.Item key="home" icon={<HomeOutlined />}>
-                                Home
+                        <Menu.Item key="home" icon={<HomeOutlined />}>
+                                Trang chủ
                             </Menu.Item>
                             <Menu.Item key="maintenance" icon={<FileOutlined />}>
-                                Maintenance
+                                Kế hoạch bảo trì
                             </Menu.Item>
                             <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
-                                Residence Event
+                                Sự kiện cư dân
                             </Menu.Item>
                             <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
-                                Emergency
+                                Vấn đề khẩn cấp
                             </Menu.Item>
                             <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
-                                Complaint
+                                Khiếu nại
                             </Menu.Item>
-
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
-                                Profile
+                                Trang cá nhân
                             </Menu.Item>
                         </Menu>
                     </Header>
@@ -123,6 +131,30 @@ const RecordResidentEvents = () => {
                             <Breadcrumb.Item>Home</Breadcrumb.Item>
                             <Breadcrumb.Item>Sự kiện cư dân</Breadcrumb.Item>
                         </Breadcrumb>
+                        <div style={{ marginTop: 20 }}>
+                        <div id="my__event_container__list">
+                            <PageHeader
+                                subTitle=""
+                                style={{ fontSize: 14 }}
+                            >
+                                <Row>
+                                    <Col span="18">
+                                        <Input
+                                            placeholder="Tìm kiếm theo tên"
+                                            allowClear
+                                            onChange={handleFilter}
+                                            style={{ width: 300 }}
+                                        />
+                                    </Col>
+                                    <Col span="6">
+                                        <Row justify="end">
+                                        </Row>
+                                    </Col>
+                                </Row>
+
+                            </PageHeader>
+                        </div>
+                    </div>
                         <div className="site-layout-content" >
                             <div style={{ marginTop: 30 }}>
                                 <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />

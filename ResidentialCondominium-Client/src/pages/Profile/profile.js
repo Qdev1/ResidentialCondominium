@@ -123,7 +123,7 @@ const Profile = () => {
                                             style={{
                                                 width: 150,
                                                 height: 150,
-                                                borderRadius: '50%', 
+                                                borderRadius: '50%',
                                             }}
                                         />
                                     </Row>
@@ -164,7 +164,6 @@ const Profile = () => {
                         </Row>
                     </div>
                 </div>
-
                 <div>
                     <Modal
                         title="Cập nhật thông tin cá nhân"
@@ -179,6 +178,7 @@ const Profile = () => {
                                 phone: userData?.phone,
                             }}
                             onFinish={handleFormSubmit}
+                            style={{ padding: '24px', maxWidth: '500px', margin: 'auto', borderRadius: '8px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}
                         >
                             <Spin spinning={loading}>
                                 <Form.Item
@@ -190,36 +190,48 @@ const Profile = () => {
                                             message: 'Vui lòng nhập username!',
                                         },
                                     ]}
+                                    style={{ marginBottom: '16px' }}
                                 >
-                                    <Input />
+                                    <Input style={{ width: '100%' }} />
                                 </Form.Item>
-                                <Form.Item label="Email" name="email" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập email!',
-                                    },
-                                    {
-                                        type: 'email',
-                                        message: 'Email không hợp lệ!',
-                                    },
-                                ]}>
-                                    <Input />
+                                <Form.Item
+                                    label="Email"
+                                    name="email"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập email!',
+                                        },
+                                        {
+                                            type: 'email',
+                                            message: 'Email không hợp lệ!',
+                                        },
+                                    ]}
+                                    style={{ marginBottom: '16px' }}
+                                >
+                                    <Input style={{ width: '100%' }} />
                                 </Form.Item>
-                                <Form.Item label="Số điện thoại" name="phone" rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập số điện thoại!',
-                                    },
-                                    {
-                                        pattern: /^[0-9]{10}$/,
-                                        message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
-                                    },
-                                ]}>
-                                    <Input />
+                                <Form.Item
+                                    label="Số điện thoại"
+                                    name="phone"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập số điện thoại!',
+                                        },
+                                        {
+                                            pattern: /^[0-9]{10}$/,
+                                            message: "Số điện thoại phải có 10 chữ số và chỉ chứa số",
+                                        },
+                                    ]}
+                                    style={{ marginBottom: '16px' }}
+                                >
+                                    <Input style={{ width: '100%' }} />
                                 </Form.Item>
                                 <Form.Item
                                     name="image"
                                     label="Chọn ảnh"
+                                    style={{ marginBottom: '16px' }}
                                 >
                                     <input
                                         type="file"
@@ -229,8 +241,8 @@ const Profile = () => {
                                         name="file"
                                     />
                                 </Form.Item>
-                                <Form.Item>
-                                    <Button type="primary" htmlType="submit">
+                                <Form.Item style={{ marginTop: '16px' }}>
+                                    <Button type="primary" htmlType="submit" style={{ width: '100%', backgroundColor: '#1890ff', borderColor: '#1890ff' }}>
                                         Cập nhật
                                     </Button>
                                 </Form.Item>
@@ -238,6 +250,7 @@ const Profile = () => {
                         </Form>
                     </Modal>
                 </div>
+
             </Spin>
         </div >
     )

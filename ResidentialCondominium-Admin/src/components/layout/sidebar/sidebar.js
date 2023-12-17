@@ -44,12 +44,6 @@ function Sidebar() {
       icon: <BarcodeOutlined />
     },
     {
-      key: "asset-history",
-      title: "Lịch sử mua bán",
-      link: "/asset-history",
-      icon: <AlertOutlined />
-    },
-    {
       key: "asset-report",
       title: "Báo cáo tài sản",
       link: "/asset-report",
@@ -69,7 +63,7 @@ function Sidebar() {
     },
     {
       key: "maintenance-funds",
-      title: "Quản lý chi phí bảo trì",
+      title: "Tổng chi phí bảo trì",
       link: "/maintenance-funds",
       icon: <AlertOutlined />
     },

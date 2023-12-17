@@ -80,6 +80,16 @@ const SalesManagement = () => {
                 })
             } else {
                 return assetEventApi.sellEvent(categoryList).then(response => {
+                    console.log(response.message);
+                    if (response.message == "Not enough assets to sell") {
+                        notification["error"]({
+                            message: `Thông báo`,
+                            description:
+                                'Số lượng tài sản không đủ để bán!',
+                        });
+                        setLoading(false);
+                        return;
+                    }
                     if (response === undefined) {
                         notification["error"]({
                             message: `Thông báo`,
@@ -142,6 +152,11 @@ const SalesManagement = () => {
             title: 'ID',
             key: 'index',
             render: (text, record, index) => index + 1,
+        },
+        {
+            title: 'Tên',
+            dataIndex: 'asset_name',
+            key: 'asset_name',
         },
         {
             title: 'Mô tả',

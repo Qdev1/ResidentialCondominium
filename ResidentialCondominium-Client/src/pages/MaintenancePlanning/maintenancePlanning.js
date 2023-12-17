@@ -1,22 +1,29 @@
 import {
-    HomeOutlined,
-    FileOutlined,
-    ScheduleOutlined,
     CalendarOutlined,
+    FileOutlined,
+    HomeOutlined,
+    ScheduleOutlined,
     TeamOutlined
 } from '@ant-design/icons';
+import { PageHeader } from '@ant-design/pro-layout';
 import {
     BackTop, Breadcrumb,
-    Spin,
-    Table,
+    Button,
+    Col,
+    Input,
     Layout,
-    Menu
+    Menu,
+    Row,
+    Space,
+    Spin,
+    Table
 } from 'antd';
+
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import maintenancePlanningApi from "../../apis/maintenancePlansApi";
 import "./maintenancePlanning.css";
-import { useHistory } from 'react-router-dom';
 
 const { Header, Content, Footer } = Layout;
 
@@ -54,12 +61,6 @@ const MaintenancePlanning = () => {
             key: 'end_date',
             render: (text) => moment(text).format('YYYY-MM-DD'),
         },
-        {
-            title: 'Ngày tạo',
-            dataIndex: 'created_at',
-            key: 'created_at',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
-        },
     ];
 
     const handleMenuClick = (key) => {
@@ -87,6 +88,15 @@ const MaintenancePlanning = () => {
         }
     };
 
+    const handleFilter = async (name) => {
+        try {
+            const res = await maintenancePlanningApi.searchMaintenancePlans(name);
+            setCategory(res.data);
+        } catch (error) {
+            console.log('search to fetch category list:' + error);
+        }
+    }
+
     useEffect(() => {
         (async () => {
             try {
@@ -106,25 +116,24 @@ const MaintenancePlanning = () => {
             <Spin spinning={loading}>
                 <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
                     <Header style={{ display: 'flex', alignItems: 'center' }}>
-                    <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
+                        <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
                             <Menu.Item key="home" icon={<HomeOutlined />}>
-                                Home
+                                Trang chủ
                             </Menu.Item>
                             <Menu.Item key="maintenance" icon={<FileOutlined />}>
-                                Maintenance
+                                Kế hoạch bảo trì
                             </Menu.Item>
                             <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
-                                Residence Event
+                                Sự kiện cư dân
                             </Menu.Item>
                             <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
-                                Emergency
+                                Vấn đề khẩn cấp
                             </Menu.Item>
                             <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
-                                Complaint
+                                Khiếu nại
                             </Menu.Item>
-
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
-                                Profile
+                                Trang cá nhân
                             </Menu.Item>
                         </Menu>
                     </Header>
@@ -133,6 +142,32 @@ const MaintenancePlanning = () => {
                             <Breadcrumb.Item>Home</Breadcrumb.Item>
                             <Breadcrumb.Item>Kế hoạch bảo trì</Breadcrumb.Item>
                         </Breadcrumb>
+                        <div style={{ marginTop: 20 }}>
+                        <div id="my__event_container__list">
+                            <PageHeader
+                                subTitle=""
+                                style={{ fontSize: 14 }}
+                            >
+                                <Row>
+                                    <Col span="18">
+                                        <Input
+                                            placeholder="Tìm kiếm theo tên tài sản"
+                                            allowClear
+                                            onChange={handleFilter}
+                                            style={{ width: 300 }}
+                                        />
+                                    </Col>
+                                    <Col span="6">
+                                        <Row justify="end">
+                                            <Space>
+                                            </Space>
+                                        </Row>
+                                    </Col>
+                                </Row>
+
+                            </PageHeader>
+                        </div>
+                    </div>
                         <div className="site-layout-content" >
                             <div style={{ marginTop: 30 }}>
                                 <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />

@@ -57,7 +57,7 @@ const ComplaintManagement = () => {
                 description: values.description,
                 status: values.status,
                 progress: values.progress || 0,
-                assigned_to: values.assigned_to,
+                assigned_to: values.assigned_to || "",
             };
             return complaintApi.createComplaint(categoryList).then(response => {
                 if (response === undefined) {
@@ -272,7 +272,7 @@ const ComplaintManagement = () => {
                                 style={{ width: 150, borderRadius: 15, height: 30 }}
                                 onClick={() => handleEditCategory(record.id)}
                             >
-                                {"Edit"}
+                                {"Chỉnh sửa"}
                             </Button>
                             <div style={{ marginLeft: 10 }}>
                                 <Popconfirm
@@ -351,7 +351,7 @@ const ComplaintManagement = () => {
                             style={{ width: 150, borderRadius: 15, height: 30 }}
                             onClick={() => handleEditCategory(record.id)}
                         >
-                            {"Edit"}
+                            {"Chỉnh sửa"}
                         </Button>
                         <div style={{ marginLeft: 10 }}>
                             <Popconfirm
@@ -365,7 +365,7 @@ const ComplaintManagement = () => {
                                     icon={<DeleteOutlined />}
                                     style={{ width: 150, borderRadius: 15, height: 30 }}
                                 >
-                                    {"Delete"}
+                                    {"Xóa"}
                                 </Button>
                             </Popconfirm>
                         </div>
@@ -480,7 +480,7 @@ const ComplaintManagement = () => {
                                                     <Option value="all">Toàn bộ</Option>
                                                     <Option value="resident">Cư đân</Option>
                                                     <Option value="isReceptionist">Lễ tân</Option>
-                                                    <Option value="isAdmin">Admin</Option>
+                                                    <Option value="isSecurity">Bảo vệ</Option>
 
                                                 </Select>
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo khiếu nại</Button>
@@ -579,38 +579,6 @@ const ComplaintManagement = () => {
                         >
                             <Input placeholder="Mô tả" />
                         </Form.Item>
-                        <Form.Item
-                            name="status"
-                            label="Trạng thái"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn trạng thái!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Select placeholder="Chọn trạng thái">
-                                <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
-                                <Select.Option value="Đang xử lý">Đang xử lý</Select.Option>
-                                <Select.Option value="Đã xong">Đã xong</Select.Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="assigned_to"
-                            label="Người đảm nhiệm!"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng chọn người đảm nhiệm!!',
-                                },
-                            ]}
-                            style={{ marginBottom: 10 }}
-                        >
-                            <Input placeholder="Người đảm nhiệm" />
-
-                        </Form.Item>
 
                     </Form>
 
@@ -700,7 +668,7 @@ const ComplaintManagement = () => {
                                     message: 'Vui lòng chọn trạng thái!',
                                 },
                             ]}
-                            style={{ marginBottom: 10 }}
+                            style={{ marginBottom: 10, display: userData?.role === 'isAdmin' ? 'block' : 'none' }}
                         >
                             <Select placeholder="Chọn trạng thái">
                                 <Select.Option value="Đang chờ xử lý">Đang chờ xử lý</Select.Option>
@@ -718,10 +686,9 @@ const ComplaintManagement = () => {
                                     message: 'Vui lòng chọn người đảm nhiệm!!',
                                 },
                             ]}
-                            style={{ marginBottom: 10 }}
+                            style={{ marginBottom: 10, display: userData?.role === 'isAdmin' ? 'block' : 'none' }}
                         >
                             <Input placeholder="Người đảm nhiệm" />
-
                         </Form.Item>
                     </Form>
                 </Modal>

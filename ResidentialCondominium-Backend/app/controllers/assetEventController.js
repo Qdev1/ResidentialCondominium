@@ -31,7 +31,7 @@ const assetEventController = {
             const currentQuantity = assetData[0].quantity;
 
             if (quantity > currentQuantity) {
-                return res.status(400).json({ message: 'Not enough assets to sell' });
+                return res.status(200).json({ message: 'Not enough assets to sell' });
             }
 
             // Thêm dữ liệu vào bảng asset_event_history
@@ -69,7 +69,7 @@ const assetEventController = {
 
     getAllAssetEvents: async (req, res) => {
         try {
-            const query = 'SELECT * FROM asset_event_history';
+            const query = 'SELECT aeh.*, a.name AS asset_name FROM asset_event_history aeh LEFT JOIN assets a ON aeh.asset_id = a.id';
             const [assetEvents] = await db.execute(query);
             res.status(200).json({ data: assetEvents });
         } catch (err) {
@@ -108,8 +108,8 @@ const assetEventController = {
         try {
             const { keyword } = req.query;
             const searchTerm = `%${keyword}%`;
-            const query = 'SELECT * FROM asset_event_history WHERE description LIKE ?';
-            const [assetEvents] = await db.execute(query, [searchTerm]);
+            const query = 'SELECT aeh.*, a.name AS asset_name FROM asset_event_history aeh LEFT JOIN assets a ON aeh.asset_id = a.id WHERE aeh.description LIKE ? OR a.name LIKE ?';
+            const [assetEvents] = await db.execute(query, [searchTerm, searchTerm]);
             res.status(200).json({ data: assetEvents });
         } catch (err) {
             res.status(500).json(err);

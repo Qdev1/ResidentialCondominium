@@ -60,6 +60,15 @@ const AssetManagement = () => {
                 "image": file
             }
             return assetManagementApi.createAssetManagement(categoryList).then(response => {
+                if (response.message === "Asset with the same name already exists") {
+                   notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Tên tài sản không được trùng',
+                    });
+                    setLoading(false);
+                    return;
+                }
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,
@@ -97,6 +106,16 @@ const AssetManagement = () => {
                 "image": file
             }
             return assetManagementApi.updateAssetManagement(categoryList, id).then(response => {
+                if (response.message === "Asset with the same name already exists") {
+                    notification["error"]({
+                         message: `Thông báo`,
+                         description:
+                             'Tên tài sản không được trùng',
+                     });
+                     setLoading(false);
+                     return;
+                 }
+                
                 if (response === undefined) {
                     notification["error"]({
                         message: `Thông báo`,

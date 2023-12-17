@@ -104,7 +104,7 @@ const AssetCards = () => {
                     description: 'Ngày hết hạn phải lớn hơn hoặc bằng ngày phát hành',
                 });
                 setLoading(false);
-                return; 
+                return;
             }
             const categoryList = {
                 residentId: values.resident_id,
@@ -226,8 +226,8 @@ const AssetCards = () => {
         },
         {
             title: 'Chủ thẻ',
-            dataIndex: 'resident_username',
-            key: 'resident_username',
+            dataIndex: 'resident_id',
+            key: 'resident_id',
         },
         {
             title: 'Số thẻ',
@@ -258,7 +258,7 @@ const AssetCards = () => {
                             style={{ width: 150, borderRadius: 15, height: 30 }}
                             onClick={() => handleEditCategory(record.id)}
                         >
-                            {"Edit"}
+                            {"Chỉnh sửa"}
                         </Button>
                         <div style={{ marginLeft: 10 }}>
                             <Popconfirm
@@ -395,18 +395,12 @@ const AssetCards = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng chọn người được cấp!',
+                                    message: 'Vui lòng nhập người được cấp!',
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
                         >
-                            <Select placeholder="Chọn người được cấp">
-                                {userList?.map(user => (
-                                    <Option key={user.id} value={user.id}>
-                                        {user.username}
-                                    </Option>
-                                ))}
-                            </Select>
+                            <Input placeholder="Nhập người được cấp" />
                         </Form.Item>
 
                         <Form.Item

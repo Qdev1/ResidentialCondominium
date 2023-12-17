@@ -227,18 +227,6 @@ const MaintenanceHistory = () => {
             key: 'description',
         },
         {
-            title: 'Ngày bắt đầu',
-            dataIndex: 'start_date',
-            key: 'start_date',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
-        },
-        {
-            title: 'Ngày kết thúc',
-            dataIndex: 'end_date',
-            key: 'end_date',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
-        },
-        {
             title: 'Ngày tạo',
             dataIndex: 'created_at',
             key: 'created_at',

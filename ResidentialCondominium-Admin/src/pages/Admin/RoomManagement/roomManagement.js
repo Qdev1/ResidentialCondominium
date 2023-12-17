@@ -237,11 +237,15 @@ const RoomManagement = () => {
             title: 'Diện tích',
             dataIndex: 'area',
             key: 'area',
+            render: (text) => <div>{text}m2</div>,
+
         },
         {
             title: 'Sức chứa',
             dataIndex: 'capacity',
             key: 'capacity',
+            render: (text) => <div>{text} người</div>,
+
         },
         {
             title: 'Trạng thái',
@@ -380,7 +384,6 @@ const RoomManagement = () => {
                                                     <Option value="">Tất cả danh mục</Option>
                                                     <Option value="Đã sử dụng">Đã sử dụng</Option>
                                                     <Option value="Phòng trống">Phòng trống</Option>
-                                                    <Option value="Phòng khác">Phòng khác</Option>
                                                 </Select>
                                                 <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo phòng</Button>
                                             </Space>
@@ -461,7 +464,7 @@ const RoomManagement = () => {
                         </Form.Item>
                         <Form.Item
                             name="area"
-                            label="Diện tích"
+                            label="Diện tích (m2)"
                             rules={[
                                 {
                                     required: true,
@@ -471,15 +474,12 @@ const RoomManagement = () => {
                             style={{ marginBottom: 10 }}
                         >
                             <InputNumber
-                                placeholder="Diện tích"
-                                style={{ width: '100%' }}
-                                formatter={value => `${value} m²`}
-                                parser={value => value.replace(' m²', '')}
+                                placeholder="Diện tích (m2)"
                             />
                         </Form.Item>
                         <Form.Item
                             name="capacity"
-                            label="Sức chứa"
+                            label="Sức chứa (người)"
                             rules={[
                                 {
                                     required: true,
@@ -504,7 +504,6 @@ const RoomManagement = () => {
                             <Select placeholder="Chọn trạng thái">
                                 <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
                                 <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Phòng khác">Phòng khác</Select.Option>
                             </Select>
                         </Form.Item>
                         <Form.Item
@@ -582,7 +581,7 @@ const RoomManagement = () => {
                         </Form.Item>
                         <Form.Item
                             name="area"
-                            label="Diện tích"
+                            label="Diện tích (m2)"
                             rules={[
                                 {
                                     required: true,
@@ -592,15 +591,12 @@ const RoomManagement = () => {
                             style={{ marginBottom: 10 }}
                         >
                             <InputNumber
-                                placeholder="Diện tích"
-                                style={{ width: '100%' }}
-                                formatter={value => `${value} m²`}
-                                parser={value => value.replace(' m²', '')}
+                                placeholder="Diện tích (m2)"
                             />
                         </Form.Item>
                         <Form.Item
                             name="capacity"
-                            label="Sức chứa"
+                            label="Sức chứa (người)"
                             rules={[
                                 {
                                     required: true,

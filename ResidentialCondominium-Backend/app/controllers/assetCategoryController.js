@@ -60,17 +60,18 @@ const assetCategoryController = {
         try {
             const assetCategoryId = req.params.id;
             const { name, description } = req.body;
-            
-             // Kiểm tra xem tên loại tài sản đã tồn tại chưa
-             const checkQuery = 'SELECT * FROM asset_categories WHERE name = ?';
-             const [checkResult] = await db.execute(checkQuery, [name]);
-     
-             if (checkResult.length > 0) {
-                 // Nếu tên đã tồn tại, trả về lỗi
-                 return res.status(200).json({ error: 'Tên loại tài sản đã tồn tại.' });
-             }
     
-             
+            // Kiểm tra xem tên loại tài sản đã tồn tại chưa (nếu có thay đổi về tên)
+            if (name) {
+                const checkQuery = 'SELECT * FROM asset_categories WHERE name = ? AND id != ?';
+                const [checkResult] = await db.execute(checkQuery, [name, assetCategoryId]);
+    
+                if (checkResult.length > 0) {
+                    // Nếu tên đã tồn tại, trả về lỗi
+                    return res.status(200).json({ error: 'Tên loại tài sản đã tồn tại.' });
+                }
+            }
+    
             const query = 'UPDATE asset_categories SET name = ?, description = ? WHERE id = ?';
             await db.execute(query, [name, description, assetCategoryId]);
             res.status(200).json({ message: 'Asset category updated successfully' });

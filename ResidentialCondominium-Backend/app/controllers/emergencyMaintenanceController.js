@@ -14,10 +14,13 @@ const emergencyMaintenanceController = {
     createEmergencyMaintenance: async (req, res) => {
         try {
             const { asset_id, description, reported_by } = req.body;
-            const query = 'INSERT INTO emergency_maintenance (asset_id, description, reported_by) VALUES (?, ?, ?)';
-            const [result] = await db.execute(query, [asset_id, description, reported_by]);
+            const query = 'INSERT INTO emergency_maintenance (asset_id, description, reported_by, status) VALUES (?, ?, ?, ?)';
+            
+            const status = 'pending';
+    
+            const [result] = await db.execute(query, [asset_id, description, reported_by, status]);
             const maintenanceId = result.insertId;
-            res.status(201).json({ id: maintenanceId, asset_id, description, reported_by });
+            res.status(201).json({ id: maintenanceId, asset_id, description, reported_by, status });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -27,8 +30,11 @@ const emergencyMaintenanceController = {
         try {
             const maintenanceId = req.params.id;
             const { resolved_description, resolved_by } = req.body;
-            const query = 'UPDATE emergency_maintenance SET resolved_description = ?, resolved_by = ?, status = "resolved", resolved_at = CURRENT_TIMESTAMP WHERE id = ?';
-            await db.execute(query, [resolved_description, resolved_by, maintenanceId]);
+            const query = 'UPDATE emergency_maintenance SET resolved_description = ?, resolved_by = ?, status = ?, resolved_at = CURRENT_TIMESTAMP WHERE id = ?';
+            
+            const status = req.body.status;
+    
+            await db.execute(query, [resolved_description, resolved_by, status, maintenanceId]);
             res.status(200).json({ message: 'Emergency maintenance resolved successfully' });
         } catch (err) {
             res.status(500).json(err);

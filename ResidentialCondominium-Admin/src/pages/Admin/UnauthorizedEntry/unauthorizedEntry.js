@@ -262,7 +262,7 @@ const UnauthorizedEntry = () => {
                             style={{ width: 150, borderRadius: 15, height: 30 }}
                             onClick={() => handleEditCategory(record.id)}
                         >
-                            {"Edit"}
+                            {"Chỉnh sửa"}
                         </Button>
                         <div style={{ marginLeft: 10 }}>
                             <Popconfirm
@@ -276,7 +276,7 @@ const UnauthorizedEntry = () => {
                                     icon={<DeleteOutlined />}
                                     style={{ width: 150, borderRadius: 15, height: 30 }}
                                 >
-                                    {"Delete"}
+                                    {"Xóa"}
                                 </Button>
                             </Popconfirm>
                         </div>

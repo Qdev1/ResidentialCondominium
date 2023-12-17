@@ -65,7 +65,7 @@ const EmergencyMaintenance = () => {
             const categoryList = {
                 asset_id: values.asset_id,
                 description: values.description,
-                reported_by: values.reported_by,
+                reported_by: userData.id,
             };
             return emergencyMaintenanceApi.createEmergencyMaintenance(categoryList).then(response => {
                 if (response === undefined) {
@@ -137,7 +137,9 @@ const EmergencyMaintenance = () => {
     const handleCategoryList = async () => {
         try {
             await emergencyMaintenanceApi.listEmergencyMaintenance().then((res) => {
-                setCategory(res.data);
+                const filteredComplaints = res.data.filter(emergency => emergency.reported_by === userData.id);
+
+                setCategory(filteredComplaints);
                 setLoading(false);
             });
             ;
@@ -202,11 +204,15 @@ const EmergencyMaintenance = () => {
     const handleFilter = async (name) => {
         try {
             const res = await emergencyMaintenanceApi.searchEmergencyMaintenance(name);
-            setCategory(res.data);
+            const filteredComplaints = res.data.filter(emergency => emergency.reported_by === userData.id);
+
+            setCategory(filteredComplaints);
         } catch (error) {
             console.log('search to fetch category list:' + error);
         }
     }
+
+    
 
     const columns = [
         {
@@ -257,45 +263,44 @@ const EmergencyMaintenance = () => {
             key: 'resolved_by_name',
         },
         {
-            title: 'Ngày tạo',
-            dataIndex: 'created_at',
-            key: 'created_at',
-            render: (text) => moment(text).format('YYYY-MM-DD'),
+            title: 'Action',
+            key: 'action',
+            render: (text, record) => (
+                <div>
+                    <Row>
+                        {record.status === 'pending' && (
+
+                            <Button
+                                size="small"
+                                icon={<EditOutlined />}
+                                style={{ width: 150, borderRadius: 15, height: 30 }}
+                                onClick={() => handleEditCategory(record.id)}
+                            >
+                                {"Chỉnh sửa"}
+                            </Button>
+                        )}
+                        {record.status === 'pending' && (
+                            <div style={{ marginLeft: 10 }}>
+                                <Popconfirm
+                                    title="Are you sure to delete this complaint?"
+                                    onConfirm={() => handleDeleteCategory(record.id)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button
+                                        size="small"
+                                        icon={<DeleteOutlined />}
+                                        style={{ width: 150, borderRadius: 15, height: 30 }}
+                                    >
+                                        {"Xóa"}
+                                    </Button>
+                                </Popconfirm>
+                            </div>
+                        )}
+                    </Row>
+                </div>
+            ),
         },
-        // {
-        //     title: 'Action',
-        //     key: 'action',
-        //     render: (text, record) => (
-        //         <div>
-        //             <Row>
-        //                 <Button
-        //                     size="small"
-        //                     icon={<EditOutlined />}
-        //                     style={{ width: 150, borderRadius: 15, height: 30 }}
-        //                     onClick={() => handleEditCategory(record.id)}
-        //                 >
-        //                     {"Edit"}
-        //                 </Button>
-        //                 <div style={{ marginLeft: 10 }}>
-        //                     <Popconfirm
-        //                         title="Are you sure to delete this complaint?"
-        //                         onConfirm={() => handleDeleteCategory(record.id)}
-        //                         okText="Yes"
-        //                         cancelText="No"
-        //                     >
-        //                         <Button
-        //                             size="small"
-        //                             icon={<DeleteOutlined />}
-        //                             style={{ width: 150, borderRadius: 15, height: 30 }}
-        //                         >
-        //                             {"Delete"}
-        //                         </Button>
-        //                     </Popconfirm>
-        //                 </div>
-        //             </Row>
-        //         </div>
-        //     ),
-        // },
     ];
 
 
@@ -326,14 +331,22 @@ const EmergencyMaintenance = () => {
         }
     };
 
-
+    const [userData, setUserData] = useState([]);
 
     useEffect(() => {
         (async () => {
             try {
+                const response = await userApi.getProfile();
+                console.log(response);
+                setUserData(response.user);
+
+                const createdById = response.user.id;
+
                 await emergencyMaintenanceApi.listEmergencyMaintenance().then((res) => {
+                    const filteredComplaints = res.data.filter(emergency => emergency.reported_by === createdById);
+
                     console.log(res);
-                    setCategory(res.data);
+                    setCategory(filteredComplaints);
                     setLoading(false);
                 });
 
@@ -365,30 +378,29 @@ const EmergencyMaintenance = () => {
     }, [])
     return (
         <div>
-            
+
 
             <Spin spinning={loading}>
                 <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
                     <Header style={{ display: 'flex', alignItems: 'center' }}>
                         <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
                             <Menu.Item key="home" icon={<HomeOutlined />}>
-                                Home
+                                Trang chủ
                             </Menu.Item>
                             <Menu.Item key="maintenance" icon={<FileOutlined />}>
-                                Maintenance
+                                Kế hoạch bảo trì
                             </Menu.Item>
                             <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
-                                Residence Event
+                                Sự kiện cư dân
                             </Menu.Item>
                             <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
-                                Emergency
+                                Vấn đề khẩn cấp
                             </Menu.Item>
                             <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
-                                Complaint
+                                Khiếu nại
                             </Menu.Item>
-
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
-                                Profile
+                                Trang cá nhân
                             </Menu.Item>
                         </Menu>
                     </Header>
@@ -397,9 +409,36 @@ const EmergencyMaintenance = () => {
                             <Breadcrumb.Item>Home</Breadcrumb.Item>
                             <Breadcrumb.Item>Vấn đề khẩn cấp</Breadcrumb.Item>
                         </Breadcrumb>
+                        <div style={{ marginTop: 20 }}>
+                            <div id="my__event_container__list">
+                                <PageHeader
+                                    subTitle=""
+                                    style={{ fontSize: 14 }}
+                                >
+                                    <Row>
+                                        <Col span="18">
+                                            <Input
+                                                placeholder="Tìm kiếm theo mô tả"
+                                                allowClear
+                                                onChange={handleFilter}
+                                                style={{ width: 300 }}
+                                            />
+                                        </Col>
+                                        <Col span="6">
+                                            <Row justify="end">
+                                                <Space>
+                                                    <Button onClick={showModal} icon={<PlusOutlined />} style={{ marginLeft: 10 }} >Tạo vấn đề khẩn cấp</Button>
+                                                </Space>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+
+                                </PageHeader>
+                            </div>
+                        </div>
                         <div className="site-layout-content" >
                             <div style={{ marginTop: 30 }}>
-                            <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
+                                <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
                             </div>
                         </div>
                     </Content>
@@ -570,6 +609,7 @@ const EmergencyMaintenance = () => {
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
+                            hidden
                         >
                             <Select placeholder="Chọn người báo cáo">
                                 {userList?.map(user => (
@@ -590,6 +630,7 @@ const EmergencyMaintenance = () => {
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
+                            hidden
                         >
                             <Select placeholder="Chọn người giải quyết">
                                 {security?.map(user => (
@@ -610,6 +651,7 @@ const EmergencyMaintenance = () => {
                                 },
                             ]}
                             style={{ marginBottom: 10 }}
+                            hidden
                         >
                             <Input placeholder="Chi tiết giải quyết" />
                         </Form.Item>
