@@ -1,55 +1,54 @@
 import {
-    HomeOutlined,
+    CalendarOutlined,
     FileOutlined,
+    HomeOutlined,
     ScheduleOutlined,
     TeamOutlined,
-    CalendarOutlined,
     SettingOutlined,
     FileProtectOutlined
 } from '@ant-design/icons';
+import { PageHeader } from '@ant-design/pro-layout';
 import {
     BackTop, Breadcrumb,
-    Spin,
-    Table,
+    Col,
+    Input,
     Layout,
     Menu,
     Row,
-    Col,
-    Input
+    Space,
+    Spin,
+    Table
 } from 'antd';
-import moment from 'moment';
+
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import meetingResidentsApi from "../../apis/meetingResidentsApi";
-import "./recordResidentEvents.css";
-import { PageHeader } from '@ant-design/pro-layout';
+import residenceRulesApi from "../../apis/residenceRulesApi";
+
+import "./residenceRules.css";
 
 const { Header, Content, Footer } = Layout;
 
-const RecordResidentEvents = () => {
+const ResidenceRules = () => {
 
     const [category, setCategory] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const history = useHistory();
-
 
     const columns = [
         {
             title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
+            key: 'index',
+            render: (text, record, index) => index + 1,
         },
         {
             title: 'Tên',
             dataIndex: 'title',
             key: 'title',
-            render: (text, record) => <a>{text}</a>,
         },
         {
-            title: 'Mô tả',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Nội dung',
+            dataIndex: 'content',
+            key: 'content',
         },
     ];
 
@@ -84,10 +83,9 @@ const RecordResidentEvents = () => {
         }
     };
 
-    
     const handleFilter = async (name) => {
         try {
-            const res = await meetingResidentsApi.searchMeetingsByTitle(name);
+            const res = await residenceRulesApi.searchResidenceRule(name);
             setCategory(res);
         } catch (error) {
             console.log('search to fetch category list:' + error);
@@ -97,12 +95,11 @@ const RecordResidentEvents = () => {
     useEffect(() => {
         (async () => {
             try {
-                await meetingResidentsApi.getAllMeetings().then((res) => {
+                await residenceRulesApi.listResidenceRules().then((res) => {
                     console.log(res);
                     setCategory(res);
                     setLoading(false);
                 });
-                ;
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }
@@ -114,7 +111,7 @@ const RecordResidentEvents = () => {
                 <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
                     <Header style={{ display: 'flex', alignItems: 'center' }}>
                         <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
-                        <Menu.Item key="home" icon={<HomeOutlined />}>
+                            <Menu.Item key="home" icon={<HomeOutlined />}>
                                 Trang chủ
                             </Menu.Item>
                             <Menu.Item key="maintenance" icon={<FileOutlined />}>
@@ -143,32 +140,34 @@ const RecordResidentEvents = () => {
                     <Content style={{ padding: '0 50px' }}>
                         <Breadcrumb style={{ margin: '16px 0' }}>
                             <Breadcrumb.Item>Home</Breadcrumb.Item>
-                            <Breadcrumb.Item>Sự kiện cư dân</Breadcrumb.Item>
+                            <Breadcrumb.Item>Nội quy tòa nhà</Breadcrumb.Item>
                         </Breadcrumb>
                         <div style={{ marginTop: 20 }}>
-                        <div id="my__event_container__list">
-                            <PageHeader
-                                subTitle=""
-                                style={{ fontSize: 14 }}
-                            >
-                                <Row>
-                                    <Col span="18">
-                                        <Input
-                                            placeholder="Tìm kiếm theo tên"
-                                            allowClear
-                                            onChange={handleFilter}
-                                            style={{ width: 300 }}
-                                        />
-                                    </Col>
-                                    <Col span="6">
-                                        <Row justify="end">
-                                        </Row>
-                                    </Col>
-                                </Row>
+                            <div id="my__event_container__list">
+                                <PageHeader
+                                    subTitle=""
+                                    style={{ fontSize: 14 }}
+                                >
+                                    <Row>
+                                        <Col span="18">
+                                            <Input
+                                                placeholder="Tìm kiếm theo tên"
+                                                allowClear
+                                                onChange={handleFilter}
+                                                style={{ width: 300 }}
+                                            />
+                                        </Col>
+                                        <Col span="6">
+                                            <Row justify="end">
+                                                <Space>
+                                                </Space>
+                                            </Row>
+                                        </Col>
+                                    </Row>
 
-                            </PageHeader>
+                                </PageHeader>
+                            </div>
                         </div>
-                    </div>
                         <div className="site-layout-content" >
                             <div style={{ marginTop: 30 }}>
                                 <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
@@ -180,8 +179,7 @@ const RecordResidentEvents = () => {
                 <BackTop style={{ textAlign: 'right' }} />
             </Spin>
         </div >
-
     )
 }
 
-export default RecordResidentEvents;
+export default ResidenceRules;

@@ -3,7 +3,9 @@ import {
     FileOutlined,
     HomeOutlined,
     ScheduleOutlined,
-    TeamOutlined
+    TeamOutlined,
+    SettingOutlined,
+    FileProtectOutlined
 } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
@@ -83,6 +85,12 @@ const MaintenancePlanning = () => {
             case 'complaint-management':
                 history.push('/complaint-management');
                 break;
+            case 'residence-rules':
+                history.push('/residence-rules');
+                break;
+            case 'change-password':
+                history.push('/change-password');
+                break;
             default:
                 break;
         }
@@ -132,8 +140,14 @@ const MaintenancePlanning = () => {
                             <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
                                 Khiếu nại
                             </Menu.Item>
+                            <Menu.Item key="residence-rules" icon={<FileProtectOutlined />}>
+                               Nội quy tòa nhà
+                            </Menu.Item>
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
                                 Trang cá nhân
+                            </Menu.Item>
+                            <Menu.Item key="change-password" icon={<SettingOutlined />}>
+                                Thay đổi mật khẩu
                             </Menu.Item>
                         </Menu>
                     </Header>

@@ -8,17 +8,27 @@ const Home = () => {
     const history = useHistory();
     const [userData, setUserData] = useState(null);
 
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const handleDropdown = (value) => {
+      setShowDropdown(value);
+    };
 
     const handleClick = (link) => {
         history.push(link);
     };
+
+    const handleLogout = () => {
+        localStorage.clear();
+        history.push("/");
+    }
 
     useEffect(() => {
         (async () => {
             try {
                 const response = await userApi.getProfile();
                 console.log(response);
-                if(response != "Invalid Token"){
+                if (response != "Invalid Token") {
                     setUserData(response.user);
                 }
             } catch (error) {
@@ -37,11 +47,19 @@ const Home = () => {
                         <div className={styles.navContent}>
                             <div className={styles.aboutUs} onClick={() => handleClick("/residence-event")}>Residence</div>
                             <div className={styles.services} onClick={() => handleClick("/maintenance-planning")}>Maintenance</div>
-                            {userData ?
-                                <div className={styles.project} onClick={() => handleClick("/login")}>{userData?.username}</div>
-                                :
+                            {userData ? (
+                                <div className={styles.project} onMouseEnter={() => handleDropdown(true)} onMouseLeave={() => handleDropdown(false)}>
+                                    {userData?.username}
+                                    {showDropdown && (
+                                        <div className={styles.dropdown}>
+                                            <div onClick={() => handleClick("/profile")}>Trang cá nhân</div>
+                                            <div onClick={() =>handleLogout()}>Logout</div>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
                                 <div className={styles.project} onClick={() => handleClick("/login")}>Login</div>
-                            }
+                            )}
                             <div className={styles.groupParent}>
                                 <div className={styles.homeWrapper}>
                                     <div className={styles.home} onClick={() => handleClick("/home")}>Home</div>

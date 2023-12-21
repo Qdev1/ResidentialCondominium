@@ -47,7 +47,7 @@ const authController = {
             const user = rows[0];
 
             if (!user) {
-                return res.status(400).json({ message: 'Unregistered account!', status: false });
+                return res.status(200).json({ message: 'Unregistered account!', status: false });
             }
 
             // So sánh mật khẩu

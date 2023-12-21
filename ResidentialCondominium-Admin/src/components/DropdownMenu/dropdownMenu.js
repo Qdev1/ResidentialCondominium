@@ -12,7 +12,7 @@ function DropdownAvatar() {
 
   const Logout = async () => {
     localStorage.clear();
-    history.push("/");
+    window.location.reload();
   }
 
   useEffect(() => {

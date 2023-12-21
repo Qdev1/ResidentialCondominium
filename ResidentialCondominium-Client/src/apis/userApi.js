@@ -13,6 +13,8 @@ const userApi = {
                 console.log(response);
                 if (response) {
                     localStorage.setItem("client", response.token);
+                    localStorage.setItem("user", JSON.stringify(response.user));
+
                 }
                 return response;
             });

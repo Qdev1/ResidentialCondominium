@@ -7,7 +7,9 @@ import {
     FileOutlined,
     ScheduleOutlined,
     TeamOutlined,
-    CalendarOutlined
+    CalendarOutlined,
+    SettingOutlined,
+    FileProtectOutlined
 } from '@ant-design/icons';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
@@ -370,84 +372,6 @@ const ComplaintManagement = () => {
         },
     ];
 
-
-    const columns2 = [
-        {
-            title: 'ID',
-            key: 'index',
-            render: (text, record, index) => index + 1,
-        },
-        {
-            title: 'Chủ hộ khiếu nại',
-            dataIndex: 'user_name',
-            key: 'user_name',
-        },
-        {
-            title: 'Email',
-            dataIndex: 'user_email',
-            key: 'user_email',
-        },
-        {
-            title: 'Chủ đề',
-            dataIndex: 'subject',
-            key: 'subject',
-        },
-        {
-            title: 'Mô tả',
-            dataIndex: 'description',
-            key: 'description',
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-        },
-        {
-            title: 'Đánh giá',
-            dataIndex: 'progress',
-            key: 'progress',
-        },
-        {
-            title: 'Đảm nhiệm bởi',
-            dataIndex: 'assigned_to',
-            key: 'assigned_to',
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <div>
-                    <Row>
-                        <Button
-                            size="small"
-                            icon={<EditOutlined />}
-                            style={{ width: 150, borderRadius: 15, height: 30 }}
-                            onClick={() => handleEditCategory(record.id)}
-                        >
-                            {"Edit"}
-                        </Button>
-                        <div style={{ marginLeft: 10 }}>
-                            <Popconfirm
-                                title="Are you sure to delete this complaint?"
-                                onConfirm={() => handleDeleteCategory(record.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button
-                                    size="small"
-                                    icon={<DeleteOutlined />}
-                                    style={{ width: 150, borderRadius: 15, height: 30 }}
-                                >
-                                    {"Delete"}
-                                </Button>
-                            </Popconfirm>
-                        </div>
-                    </Row>
-                </div>
-            ),
-        },
-    ];
-
     const history = useHistory();
 
 
@@ -470,6 +394,12 @@ const ComplaintManagement = () => {
                 break;
             case 'complaint-management':
                 history.push('/complaint-management');
+                break;
+            case 'residence-rules':
+                history.push('/residence-rules');
+                break;
+            case 'change-password':
+                history.push('/change-password');
                 break;
             default:
                 break;
@@ -559,9 +489,17 @@ const ComplaintManagement = () => {
                             <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
                                 Khiếu nại
                             </Menu.Item>
+                            <Menu.Item key="residence-rules" icon={<FileProtectOutlined />}>
+                               Nội quy tòa nhà
+                            </Menu.Item>
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
                                 Trang cá nhân
                             </Menu.Item>
+                            <Menu.Item key="change-password" icon={<SettingOutlined />}>
+                                Thay đổi mật khẩu
+                            </Menu.Item>
+
+
                         </Menu>
                     </Header>
                     <Content style={{ padding: '0 50px' }}>

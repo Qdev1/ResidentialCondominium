@@ -10,6 +10,7 @@ module.exports = {
 
         try {
             const verified = jwt.verify(token, _const.JWT_ACCESS_KEY);
+            console.log(verified);
             next();
         } catch (err) {
             return res.status(400).send('Invalid Token');

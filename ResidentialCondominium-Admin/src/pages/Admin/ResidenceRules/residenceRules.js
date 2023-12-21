@@ -242,7 +242,6 @@ const ResidenceRules = () => {
                     setCategory(res);
                     setLoading(false);
                 });
-                ;
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }

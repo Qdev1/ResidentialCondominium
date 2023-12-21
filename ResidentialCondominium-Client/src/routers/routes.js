@@ -14,7 +14,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import RecordResidentEvents from "../pages/RecordResidentEvents/recordResidentEvents";
 import ComplaintManagement from "../pages/ComplaintManagement/complaintManagement";
 import EmergencyMaintenance from "../pages/EmergencyMaintenance/emergencyMaintenance";
-
+import ChangePassword from "../pages/ChangePassword/changePassword";
+import ResidenceRules from "../pages/ResidenceRules/residenceRules";
 
 const RouterURL = withRouter(({ location }) => {
 
@@ -42,8 +43,16 @@ const RouterURL = withRouter(({ location }) => {
                         <ComplaintManagement />
                     </PrivateRoute>
 
+                    <PrivateRoute exact path="/change-password">
+                        <ChangePassword />
+                    </PrivateRoute>
+
                     <PrivateRoute exact path="/emergency">
                         <EmergencyMaintenance />
+                    </PrivateRoute>
+
+                    <PrivateRoute exact path="/residence-rules">
+                        <ResidenceRules />
                     </PrivateRoute>
 
                 </Layout>
@@ -121,8 +130,15 @@ const RouterURL = withRouter(({ location }) => {
                         <PrivateContainer />
                     </Route>
 
+                    <Route exact path="/change-password">
+                        <PrivateContainer />
+                    </Route>
                     
                     <Route exact path="/emergency">
+                        <PrivateContainer />
+                    </Route>
+
+                    <Route exact path="/residence-rules">
                         <PrivateContainer />
                     </Route>
 

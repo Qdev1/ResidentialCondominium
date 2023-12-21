@@ -129,6 +129,8 @@ const userController = {
             } else {
                 try {
                     const userId = decodedToken.user.id;
+
+                    console.log(decodedToken)
     
                     // Thực hiện truy vấn để lấy thông tin người dùng dựa trên userId
                     const [user] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);

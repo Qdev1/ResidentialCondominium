@@ -16,10 +16,18 @@ const Login = () => {
     userApi.login(values.email, values.password)
       .then(function (response) {
         console.log(response);
-        if (response.user.role === "resident" && response.user.status !== "noactive") {
+        if(response.message == "Unregistered account!"){
+          notification["error"]({
+            message: `Thông báo`,
+            description:
+              'Tài khoản không tồn tại',
+
+          });
+          return;
+        }
+        if (response.user.role === "resident" && response.user.status !== "noactived") {
           history.push("/home");
         } else {
-          setLogin(false);
           notification["error"]({
             message: `Thông báo`,
             description:
@@ -29,6 +37,12 @@ const Login = () => {
         }
       })
       .catch(error => {
+        notification["error"]({
+          message: `Thông báo`,
+          description:
+            'Tài khoản hoặc mật khẩu sai',
+
+        });
         console.log("email or password error" + error)
       });
   }

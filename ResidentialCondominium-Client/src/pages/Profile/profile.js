@@ -1,26 +1,35 @@
 import {
     FormOutlined,
-    HomeOutlined, PhoneOutlined,
-    SafetyOutlined,
-    UserOutlined
+    HomeOutlined,
+    CalendarOutlined,
+    FileOutlined,
+    ScheduleOutlined,
+    TeamOutlined,
+    SettingOutlined,
+    FileProtectOutlined
 } from '@ant-design/icons';
 import {
     Breadcrumb,
+    Button,
     Card,
     Col,
     Divider,
+    Form, Input,
+    Layout,
+    Modal,
     Row,
     Spin,
     notification,
-    Form, Input,
-    Button, Modal
+    Menu
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ReactWeather, { useOpenWeather } from 'react-open-weather';
 import { useHistory } from 'react-router-dom';
+import uploadFileApi from '../../apis/uploadFileApi';
 import userApi from "../../apis/userApi";
 import "./profile.css";
-import uploadFileApi from '../../apis/uploadFileApi';
+
+const { Header, Content, Footer } = Layout;
 
 
 const Profile = () => {
@@ -29,6 +38,9 @@ const Profile = () => {
     const [userData, setUserData] = useState([]);
     const [isVisibleModal, setVisibleModal] = useState(false);
     const [file, setUploadFile] = useState();
+
+    const history = useHistory();
+
 
     const { data, isLoading, errorMessage } = useOpenWeather({
         key: '03b81b9c18944e6495d890b189357388',
@@ -97,73 +109,137 @@ const Profile = () => {
         setLoading(false);
     }
 
+    const handleMenuClick = (key) => {
+        switch (key) {
+            case 'home':
+                history.push('/');
+                break;
+            case 'maintenance':
+                history.push('/maintenance-planning');
+                break;
+            case 'residence-event':
+                history.push('/residence-event');
+                break;
+            case 'profile':
+                history.push('/profile');
+                break;
+            case 'emergency':
+                history.push('/emergency');
+                break;
+            case 'complaint-management':
+                history.push('/complaint-management');
+                break;
+            case 'residence-rules':
+                history.push('/residence-rules');
+                break;
+            case 'change-password':
+                history.push('/change-password');
+                break;
+            default:
+                break;
+        }
+    };
+
     return (
         <div>
             <Spin spinning={loading}>
-                <div style={{ marginTop: 20, marginLeft: 24 }}>
-                    <Breadcrumb>
-                        <Breadcrumb.Item href="">
-                            <HomeOutlined />
-                        </Breadcrumb.Item>
-                        <Breadcrumb.Item href="">
-                            <FormOutlined />
-                            <span>Trang cá nhân</span>
-                        </Breadcrumb.Item>
-                    </Breadcrumb>
-                </div>
+                <Layout className="layout" style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Header style={{ display: 'flex', alignItems: 'center' }}>
+                        <Menu theme="dark" mode="horizontal" onClick={({ key }) => handleMenuClick(key)}>
+                            <Menu.Item key="home" icon={<HomeOutlined />}>
+                                Trang chủ
+                            </Menu.Item>
+                            <Menu.Item key="maintenance" icon={<FileOutlined />}>
+                                Kế hoạch bảo trì
+                            </Menu.Item>
+                            <Menu.Item key="residence-event" icon={<ScheduleOutlined />}>
+                                Sự kiện cư dân
+                            </Menu.Item>
+                            <Menu.Item key="emergency" icon={<ScheduleOutlined />}>
+                                Vấn đề khẩn cấp
+                            </Menu.Item>
+                            <Menu.Item key="complaint-management" icon={<CalendarOutlined />}>
+                                Khiếu nại
+                            </Menu.Item>
+                            <Menu.Item key="residence-rules" icon={<FileProtectOutlined />}>
+                               Nội quy tòa nhà
+                            </Menu.Item>
+                            <Menu.Item key="profile" icon={<TeamOutlined />}>
+                                Trang cá nhân
+                            </Menu.Item>
+                            <Menu.Item key="change-password" icon={<SettingOutlined />}>
+                                Thay đổi mật khẩu
+                            </Menu.Item>
+                        </Menu>
+                    </Header>
+                    <Content style={{ padding: '0 50px' }}>
+                        <div style={{ marginTop: 20, marginLeft: 24 }}>
+                            <Breadcrumb>
+                                <Breadcrumb.Item href="">
+                                    <HomeOutlined />
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item href="">
+                                    <FormOutlined />
+                                    <span>Trang cá nhân</span>
+                                </Breadcrumb.Item>
+                            </Breadcrumb>
+                        </div>
 
-                <div>
-                    <div>
-                        <Row justify="center">
-                            <Col span="9" style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
-                                <Card hoverable={true} className="profile-card" style={{ padding: 0, margin: 0 }}>
-                                    <Row justify="center">
-                                        <img
-                                            src={userData?.image}
-                                            style={{
-                                                width: 150,
-                                                height: 150,
-                                                borderRadius: '50%',
-                                            }}
+                        <div>
+                            <div>
+                                <Row justify="center">
+                                    <Col span="9" style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+                                        <Card hoverable={true} className="profile-card" style={{ padding: 0, margin: 0 }}>
+                                            <Row justify="center">
+                                                <img
+                                                    src={userData?.image}
+                                                    style={{
+                                                        width: 150,
+                                                        height: 150,
+                                                        borderRadius: '50%',
+                                                    }}
+                                                />
+                                            </Row>
+                                            <Row justify="center">
+                                                <Col span="24">
+                                                    <Row justify="center">
+                                                        <strong style={{ fontSize: 18 }}>{userData?.username}</strong>
+                                                    </Row>
+                                                    <Row justify="center">
+                                                        <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.email}</p>
+                                                    </Row>
+                                                    <Row justify="center">
+                                                        <p style={{ padding: 0, margin: 0, marginBottom: 0 }}>{userData?.birthday}</p>
+                                                    </Row>
+                                                    <Row justify="center">
+                                                        <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.phone}</p>
+                                                    </Row>
+                                                    <Divider style={{ padding: 0, margin: 0 }} ></Divider>
+                                                </Col>
+                                                <Button type="primary" style={{ marginTop: 15 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
+
+                                            </Row>
+
+                                        </Card>
+                                    </Col>
+
+                                    <Col span="6" style={{ marginTop: 20 }}>
+                                        <ReactWeather
+                                            isLoading={isLoading}
+                                            errorMessage={errorMessage}
+                                            data={data}
+                                            lang="en"
+                                            locationLabel="Hà Nội"
+                                            unitsLabels={{ temperature: 'C', windSpeed: 'Km/h' }}
+                                            showForecast
                                         />
-                                    </Row>
-                                    <Row justify="center">
-                                        <Col span="24">
-                                            <Row justify="center">
-                                                <strong style={{ fontSize: 18 }}>{userData?.username}</strong>
-                                            </Row>
-                                            <Row justify="center">
-                                                <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.email}</p>
-                                            </Row>
-                                            <Row justify="center">
-                                                <p style={{ padding: 0, margin: 0, marginBottom: 0 }}>{userData?.birthday}</p>
-                                            </Row>
-                                            <Row justify="center">
-                                                <p style={{ padding: 0, margin: 0, marginBottom: 5 }}>{userData?.phone}</p>
-                                            </Row>
-                                            <Divider style={{ padding: 0, margin: 0 }} ></Divider>
-                                        </Col>
-                                        <Button type="primary" style={{ marginTop: 15 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
+                                    </Col>
+                                </Row>
+                            </div>
+                        </div>
+                    </Content>
+                </Layout>
 
-                                    </Row>
-
-                                </Card>
-                            </Col>
-
-                            <Col span="6" style={{ marginTop: 20 }}>
-                                <ReactWeather
-                                    isLoading={isLoading}
-                                    errorMessage={errorMessage}
-                                    data={data}
-                                    lang="en"
-                                    locationLabel="Hà Nội"
-                                    unitsLabels={{ temperature: 'C', windSpeed: 'Km/h' }}
-                                    showForecast
-                                />
-                            </Col>
-                        </Row>
-                    </div>
-                </div>
                 <div>
                     <Modal
                         title="Cập nhật thông tin cá nhân"

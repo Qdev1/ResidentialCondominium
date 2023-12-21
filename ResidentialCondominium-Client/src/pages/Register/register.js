@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import "./register.css";
-import { DatePicker, Input } from 'antd';
-import { Card, Table, Space, Tag, PageHeader, Divider, Form, Button, notification } from 'antd';
-import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, AimOutlined, MoneyCollectOutlined } from '@ant-design/icons';
-import { useHistory, Link } from "react-router-dom";
+import { LockOutlined, MailOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Divider, Form, Input, notification } from 'antd';
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import axiosClient from "../../apis/axiosClient";
+import "./register.css";
 
 const { Search } = Input;
 
@@ -27,7 +26,7 @@ const RegisterCustomer = () => {
                 "password": values.password,
                 "phone": values.phoneNo,
                 "role": "resident",
-                "status": "actived"
+                "status": "noactived"
             }
             await axiosClient.post("http://localhost:3100/api/auth/register", formatData)
                 .then(response => {
@@ -104,6 +103,8 @@ const RegisterCustomer = () => {
                                         required: true,
                                         message: 'Vui lòng nhập mật khẩu!',
                                     },
+                                    { max: 20, message: 'Mật khẩu tối đa 20 ký tự' },
+                                    { min: 6, message: 'Mật khẩu ít nhất 5 ký tự' },
                                 ]}
                             >
                                 <Input
