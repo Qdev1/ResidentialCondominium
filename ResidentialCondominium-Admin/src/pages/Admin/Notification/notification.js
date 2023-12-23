@@ -12,11 +12,11 @@ import {
     Col,
     Form,
     Input,
-    Modal, Popconfirm,
+    Modal, Table,
     Row,
     Space,
     Spin,
-    Table,
+    Select,
     notification,
     DatePicker
 } from 'antd';
@@ -26,6 +26,7 @@ import { useHistory } from 'react-router-dom';
 import userApi from "../../../apis/userApi";
 import "./notification.css";
 import dayjs from 'dayjs';
+const { Option } = Select;
 
 const Visitors = () => {
 
@@ -36,6 +37,7 @@ const Visitors = () => {
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
     const [id, setId] = useState();
+    const [newsList, setNewsList] = useState();
 
     const history = useHistory();
 
@@ -66,6 +68,7 @@ const Visitors = () => {
                             'Tạo thông báo thành công',
                     });
                     setOpenModalCreate(false);
+                    handleList();
                 }
             })
 
@@ -83,20 +86,59 @@ const Visitors = () => {
         console.log('Clicked cancel button');
     };
 
+    const columns = [
+        {
+            title: 'ID',
+            key: 'index',
+            render: (text, record, index) => index + 1,
+        },
+        {
+            title: 'Tiêu đề',
+            dataIndex: 'title',
+            key: 'title',
+        },
+        {
+            title: 'Nội dung',
+            dataIndex: 'content',
+            key: 'content',
+        },
+        {
+            title: 'Ngày bắt đầu',
+            dataIndex: 'start_date',
+            key: 'start_date',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
+        {
+            title: 'Ngày kết thúc',
+            dataIndex: 'end_date',
+            key: 'end_date',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'created_at',
+            key: 'created_at',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
+    ];
 
-    useEffect(() => {
+    const handleList = () => {
         (async () => {
             try {
-                await userApi.listVisitors().then((res) => {
+
+                await userApi.listNotification().then((res) => {
                     console.log(res);
-                    setCategory(res);
+                    setNewsList(res);
                     setLoading(false);
                 });
-                ;
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }
         })();
+    }
+
+    useEffect(() => {
+        handleList();
     }, [])
     return (
         <div>
@@ -135,6 +177,10 @@ const Visitors = () => {
 
                             </PageHeader>
                         </div>
+                    </div>
+
+                    <div style={{ marginTop: 30 }}>
+                        <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={newsList} />
                     </div>
 
                     <div style={{ marginTop: 30 }}>
@@ -205,7 +251,12 @@ const Visitors = () => {
                                     ]}
                                     style={{ marginBottom: 10 }}
                                 >
-                                    <Input placeholder="Vai trò" />
+                                    <Select placeholder="Chọn vai trò">
+                                        <Option value="resident">Cư dân</Option>
+                                        <Option value="isReceptionist">Lễ tân</Option>
+                                        <Option value="isSecurity">Bảo vệ</Option>
+                                        <Option value="isAdmin">Admin</Option>
+                                    </Select>
                                 </Form.Item>
 
                             </Form>

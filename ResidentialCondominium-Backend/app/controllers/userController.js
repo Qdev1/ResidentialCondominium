@@ -6,7 +6,7 @@ const _const = require('../config/constant');
 const userController = {
     getAllUsers: async (req, res) => {
         const page = req.query.page || 1;
-        const limit = req.query.limit || 10;
+        const limit = req.query.limit || 10000;
         const offset = (page - 1) * limit;
 
         try {

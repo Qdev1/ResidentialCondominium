@@ -11,7 +11,8 @@ const userApi = {
             .then(response => {
 
                 console.log(response);
-                if (response) {
+                if (response.user.status != "noactived") {
+                    console.log(response);
                     localStorage.setItem("client", response.token);
                     localStorage.setItem("user", JSON.stringify(response.user));
 

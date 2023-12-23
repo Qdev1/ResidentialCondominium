@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>47/47</span>
+                <span class='fraction'>49/49</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>47/47</span>
+                <span class='fraction'>49/49</span>
             </div>
         
             
@@ -168,7 +168,16 @@
 <a name='L103'></a><a href='#L103'>103</a>
 <a name='L104'></a><a href='#L104'>104</a>
 <a name='L105'></a><a href='#L105'>105</a>
-<a name='L106'></a><a href='#L106'>106</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -185,6 +194,9 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -198,6 +210,9 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -244,6 +259,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -255,6 +272,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -289,10 +307,13 @@ const emergencyMaintenanceController = {
     createEmergencyMaintenance: async (req, res) =&gt; {
         try {
             const { asset_id, description, reported_by } = req.body;
-            const query = 'INSERT INTO emergency_maintenance (asset_id, description, reported_by) VALUES (?, ?, ?)';
-            const [result] = await db.execute(query, [asset_id, description, reported_by]);
+            const query = 'INSERT INTO emergency_maintenance (asset_id, description, reported_by, status) VALUES (?, ?, ?, ?)';
+            
+            const status = 'pending';
+    
+            const [result] = await db.execute(query, [asset_id, description, reported_by, status]);
             const maintenanceId = result.insertId;
-            res.status(201).json({ id: maintenanceId, asset_id, description, reported_by });
+            res.status(201).json({ id: maintenanceId, asset_id, description, reported_by, status });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -302,8 +323,11 @@ const emergencyMaintenanceController = {
         try {
             const maintenanceId = req.params.id;
             const { resolved_description, resolved_by } = req.body;
-            const query = 'UPDATE emergency_maintenance SET resolved_description = ?, resolved_by = ?, status = "resolved", resolved_at = CURRENT_TIMESTAMP WHERE id = ?';
-            await db.execute(query, [resolved_description, resolved_by, maintenanceId]);
+            const query = 'UPDATE emergency_maintenance SET resolved_description = ?, resolved_by = ?, status = ?, resolved_at = CURRENT_TIMESTAMP WHERE id = ?';
+            
+            const status = req.body.status;
+    
+            await db.execute(query, [resolved_description, resolved_by, status, maintenanceId]);
             res.status(200).json({ message: 'Emergency maintenance resolved successfully' });
         } catch (err) {
             res.status(500).json(err);
@@ -345,31 +369,34 @@ const emergencyMaintenanceController = {
     getAllEmergencyMaintenance: async (req, res) =&gt; {
         try {
             const query = `
-            SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
-            FROM emergency_maintenance
-            LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
-            LEFT JOIN users ON emergency_maintenance.reported_by = users.id`;
+                SELECT em.*, a.name AS asset_name, ur.username AS reported_by_name, ures.username AS resolved_by_name
+                FROM emergency_maintenance em
+                LEFT JOIN assets a ON em.asset_id = a.id
+                LEFT JOIN users ur ON em.reported_by = ur.id
+                LEFT JOIN users ures ON em.resolved_by = ures.id
+            `;
             const [maintenanceRecords] = await db.execute(query);
             res.status(200).json({ data: maintenanceRecords });
         } catch (err) {
             res.status(500).json(err);
         }
     },
-&nbsp;
+    
     searchEmergencyMaintenance: async (req, res) =&gt; {
         try {
             const { keyword } = req.query;
             const query = `
-                SELECT emergency_maintenance.*, assets.name AS asset_name, users.username AS reported_by_name
-                FROM emergency_maintenance
-                LEFT JOIN assets ON emergency_maintenance.asset_id = assets.id
-                LEFT JOIN users ON emergency_maintenance.reported_by = users.id
+                SELECT em.*, a.name AS asset_name, ur.username AS reported_by_name, ures.username AS resolved_by_name
+                FROM emergency_maintenance em
+                LEFT JOIN assets a ON em.asset_id = a.id
+                LEFT JOIN users ur ON em.reported_by = ur.id
+                LEFT JOIN users ures ON em.resolved_by = ures.id
                 WHERE 
-                    emergency_maintenance.description LIKE ? OR 
-                    emergency_maintenance.resolved_description LIKE ?
+                    em.description LIKE ? OR 
+                    em.resolved_description LIKE ?
             `;
             const [result] = await db.execute(query, [`%${keyword}%`, `%${keyword}%`]);
-&nbsp;
+    
             res.status(200).json({ data: result });
         } catch (err) {
             res.status(500).json(err);
@@ -385,7 +412,7 @@ module.exports = emergencyMaintenanceController;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-12-11T11:46:09.663Z
+                at 2023-12-22T03:57:38.368Z
             </div>
         <script src="../prettify.js"></script>
         <script>

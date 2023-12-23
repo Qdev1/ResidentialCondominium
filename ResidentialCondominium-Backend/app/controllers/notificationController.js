@@ -63,6 +63,19 @@ const notificationController = {
             res.status(500).json(err);
         }
     },
+
+    getAllNotifications: async (req, res) => {
+        try {
+            // Truy vấn tất cả thông báo từ cơ sở dữ liệu
+            const [notificationRows] = await db.execute('SELECT * FROM notifications');
+
+            // Trả về danh sách thông báo
+            res.status(200).json(notificationRows);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json(err);
+        }
+    },
 };
 
 module.exports = notificationController;

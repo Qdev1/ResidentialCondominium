@@ -74,6 +74,11 @@ const userApi = {
         return axiosClient.post(url, data);
     },
 
+    listNotification() {
+        const url = '/notifications';
+        return axiosClient.get(url);
+    }
+
 }
 
 export default userApi;

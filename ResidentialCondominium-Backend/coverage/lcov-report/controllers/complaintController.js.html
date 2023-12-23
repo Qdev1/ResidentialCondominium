@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.74% </span>
+                <span class="strong">68.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>42/62</span>
+                <span class='fraction'>41/60</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/6</span>
+                <span class='fraction'>3/6</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.74% </span>
+                <span class="strong">68.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>42/62</span>
+                <span class='fraction'>41/60</span>
             </div>
         
             
@@ -187,12 +187,7 @@
 <a name='L122'></a><a href='#L122'>122</a>
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
-<a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a>
-<a name='L127'></a><a href='#L127'>127</a>
-<a name='L128'></a><a href='#L128'>128</a>
-<a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L125'></a><a href='#L125'>125</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -204,22 +199,25 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -299,14 +297,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -327,25 +317,28 @@ const complaintController = {
 &nbsp;
     submitComplaint: async (req, res) =&gt; {
         try {
-            const { user_id, subject, description, assigned_to } = req.body;
-&nbsp;
-            // Kiểm tra xem user_id có tồn tại trong cơ sở dữ liệu không
+            const { user_id, subject, description, assigned_to, created_by } = req.body;
+    
+            // Check if user_id and created_by exist in the database
             const [userRows] = await db.execute('SELECT * FROM users WHERE id = ?', [user_id]);
+            const [creatorRows] = await db.execute('SELECT * FROM users WHERE id = ?', [created_by]);
+    
             const user = userRows[0];
-&nbsp;
-            if (!user) {
-                return res.status(400).json({ message: 'User not found', status: false });
+            const creator = creatorRows[0];
+    
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (!user || !creator) {
+                return res.status(400).json({ message: 'User or creator not found', status: false });
             }
-&nbsp;
-            // Lưu thông tin khiếu nại vào cơ sở dữ liệu
-            const [complaintRows] = await db.execute(
-                'INSERT INTO complaints (user_id, subject, description, status, progress, assigned_to) VALUES (?, ?, ?, ?, ?, ?)',
-                [user_id, subject, description, 'pending', 0, assigned_to]
+    
+            // Submit the complaint without checking assigned_to
+            const [complaintRows] = <span class="cstat-no" title="statement not covered" >await db.execute(</span>
+                'INSERT INTO complaints (user_id, subject, description, status, progress, assigned_to, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [user_id, subject, description, 'pending', 0, assigned_to, created_by]
             );
-&nbsp;
-            const complaintId = complaintRows.insertId;
-&nbsp;
-            res.status(201).json({ message: 'Complaint submitted successfully', status: true });
+    
+            const complaintId = <span class="cstat-no" title="statement not covered" >complaintRows.insertId;</span>
+    
+<span class="cstat-no" title="statement not covered" >            res.status(201).json({ message: 'Complaint submitted successfully', status: true });</span>
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -355,7 +348,7 @@ const complaintController = {
     // Lấy tất cả thông tin về khiếu nại
     getAllComplaints: async (req, res) =&gt; {
         try {
-            const query = 'SELECT complaints.*, users.username AS user_name, assigned_users.username AS assigned_to_name FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN users AS assigned_users ON complaints.assigned_to = assigned_users.id';
+            const query = 'SELECT complaints.*, users.username AS user_name, users.email AS user_email, users.role AS user_role, assigned_users.username AS assigned_to_name, assigned_users.email AS assigned_to_email, assigned_users.role AS assigned_to_role FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN (SELECT id, username, email, role FROM users) AS assigned_users ON complaints.assigned_to = assigned_users.id';
             const [complaints] = await db.execute(query);
             res.status(200).json(complaints);
         } catch (err) {
@@ -413,7 +406,7 @@ const complaintController = {
         try {
             const { subject } = req.query;
     
-            const query = 'SELECT complaints.*, users.username AS user_name, assigned_users.username AS assigned_to_name FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN users AS assigned_users ON complaints.assigned_to = assigned_users.id WHERE complaints.subject LIKE ?';
+            const query = 'SELECT complaints.*, users.username AS user_name, users.email AS user_email, assigned_to_name, assigned_to_email FROM complaints INNER JOIN users ON complaints.user_id = users.id LEFT JOIN (SELECT id, username AS assigned_to_name, email AS assigned_to_email FROM users) AS assigned_users ON complaints.assigned_to = assigned_users.id WHERE complaints.subject LIKE ?';
             const [complaints] = await db.execute(query, [`%${subject}%`]);
     
             res.status(200).json(complaints);
@@ -428,14 +421,6 @@ const complaintController = {
 <span class="cstat-no" title="statement not covered" >        try {</span>
             const { complaintId } = <span class="cstat-no" title="statement not covered" >req.params;</span>
             const { assigned_to } = <span class="cstat-no" title="statement not covered" >req.body;</span>
-&nbsp;
-            // Kiểm tra xem người đảm nhiệm tồn tại trong cơ sở dữ liệu không
-            const [userRows] = <span class="cstat-no" title="statement not covered" >await db.execute('SELECT * FROM users WHERE id = ?', [assigned_to]);</span>
-            const user = <span class="cstat-no" title="statement not covered" >userRows[0];</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >            if (!user) {</span>
-<span class="cstat-no" title="statement not covered" >                return res.status(400).json({ message: 'Assigned user not found', status: false });</span>
-            }
 &nbsp;
             // Cập nhật người đảm nhiệm nhiệm vụ cho khiếu nại
             const query = <span class="cstat-no" title="statement not covered" >'UPDATE complaints SET assigned_to = ? WHERE id = ?';</span>
@@ -457,7 +442,7 @@ module.exports = complaintController;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-12-11T11:46:09.663Z
+                at 2023-12-22T03:57:38.368Z
             </div>
         <script src="../prettify.js"></script>
         <script>
