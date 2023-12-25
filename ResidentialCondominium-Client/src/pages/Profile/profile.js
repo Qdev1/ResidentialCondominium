@@ -140,6 +140,83 @@ const Profile = () => {
         }
     };
 
+    const [form] = Form.useForm();
+
+    const handlePersonalInfoSubmit = (values) => {
+        // Gọi API hoặc xử lý dữ liệu sau khi người dùng nhấn nút "Submit"
+        console.log('Submitted personal info:', values);
+        try {
+            const data = {
+                "userId": 1,
+                "personalInfo": {
+                    "fullName": values.fullName,
+                    "address": values.address,
+                    "phoneNumber": values.phoneNumber
+                },
+                "familyInfo": {
+                    "spouseName": values.spouseName,
+                    "children": [values.children]
+                }
+            }
+            return userApi.registerPersonal(data).then(response => {
+                if (response === undefined) {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Tạo khiếu nại thất bại',
+                    });
+                }
+                else {
+                    notification["success"]({
+                        message: `Thông báo`,
+                        description:
+                            'Tạo khiếu nại thành công',
+                    });
+
+                    handleCancel();
+                }
+            })
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const showModal = () => {
+        setModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setModalVisible(false);
+    };
+
+
+    // Các field cho form nhập thông tin
+    const formFields = [
+        { name: 'fullName', label: 'Họ và tên' },
+        { name: 'address', label: 'Địa chỉ' },
+        { name: 'phoneNumber', label: 'Số điện thoại' },
+        { name: 'spouseName', label: 'Tên vợ/chồng' },
+        { name: 'children', label: 'Danh sách con', isArray: true },
+    ];
+
+    // Tạo các Form.Item cho mỗi field
+    const formItems = formFields.map(field => (
+        <Form.Item
+            key={field.name}
+            label={field.label}
+            name={field.name}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            style={{marginTop: 10}}
+        >
+            {field.isArray ? <Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} /> : <Input />}
+        </Form.Item>
+    ));
+
     return (
         <div>
             <Spin spinning={loading}>
@@ -162,7 +239,7 @@ const Profile = () => {
                                 Khiếu nại
                             </Menu.Item>
                             <Menu.Item key="residence-rules" icon={<FileProtectOutlined />}>
-                               Nội quy tòa nhà
+                                Nội quy tòa nhà
                             </Menu.Item>
                             <Menu.Item key="profile" icon={<TeamOutlined />}>
                                 Trang cá nhân
@@ -217,6 +294,7 @@ const Profile = () => {
                                                     <Divider style={{ padding: 0, margin: 0 }} ></Divider>
                                                 </Col>
                                                 <Button type="primary" style={{ marginTop: 15 }} onClick={() => setVisibleModal(true)}>Cập nhật Profile</Button>
+                                                <Button type="primary" style={{ marginTop: 15, marginLeft: 5 }} onClick={() => showModal(true)}>Cập nhật thông tin gia đình</Button>
 
                                             </Row>
 
@@ -239,6 +317,29 @@ const Profile = () => {
                         </div>
                     </Content>
                 </Layout>
+
+                <Modal
+                    title="Thông tin cá nhân"
+                    visible={isModalVisible}
+                    onCancel={handleCancel}
+                    footer={[
+                        <Button key="submit" type="primary" onClick={handleCancel}>
+                            Đóng
+                        </Button>,
+                        <Button key="submit" type="primary" onClick={() => form.submit()}>
+                            Submit
+                        </Button>,
+                    ]}
+                >
+                    {/* Form để nhập thông tin */}
+                    <Form
+                        name="personalInfoForm"
+                        onFinish={handlePersonalInfoSubmit}
+                        form={form}
+                    >
+                        {formItems}
+                    </Form>
+                </Modal>
 
                 <div>
                     <Modal

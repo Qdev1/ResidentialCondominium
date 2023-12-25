@@ -148,7 +148,7 @@ const roomController = {
       const [checkUserExist] = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
 
       if (checkRoomExist.length === 0 || checkUserExist.length === 0) {
-        return res.status(404).json({ message: 'Room or user not found' });
+        return res.status(200).json({ message: 'Room or user not found' });
       }
 
       const insertQuery = 'INSERT INTO room_residents (room_id, user_id) VALUES (?, ?)';

@@ -25,6 +25,7 @@ import { useHistory } from 'react-router-dom';
 import residenceRulesApi from "../../apis/residenceRulesApi";
 
 import "./residenceRules.css";
+import moment from 'moment';
 
 const { Header, Content, Footer } = Layout;
 

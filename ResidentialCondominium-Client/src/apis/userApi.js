@@ -43,6 +43,11 @@ const userApi = {
         return axiosClient.post(url, data);
     },
 
+    registerPersonal(data) {
+        const url = '/auth/register-personal-info';
+        return axiosClient.post(url, data);
+    },
+
     banAccount(data, id) {
         const url = '/user/' + id;
         return axiosClient.put(url, data);

@@ -81,6 +81,7 @@ const emergencyMaintenanceController = {
                 LEFT JOIN assets a ON em.asset_id = a.id
                 LEFT JOIN users ur ON em.reported_by = ur.id
                 LEFT JOIN users ures ON em.resolved_by = ures.id
+                ORDER BY em.reported_at DESC
             `;
             const [maintenanceRecords] = await db.execute(query);
             res.status(200).json({ data: maintenanceRecords });
@@ -88,6 +89,7 @@ const emergencyMaintenanceController = {
             res.status(500).json(err);
         }
     },
+    
     
     searchEmergencyMaintenance: async (req, res) => {
         try {

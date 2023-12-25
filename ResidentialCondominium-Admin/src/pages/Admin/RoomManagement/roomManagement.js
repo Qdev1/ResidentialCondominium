@@ -24,6 +24,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import roomManagementApi from "../../../apis/roomManagementApi";
 import "./roomManagement.css";
+import userApi from '../../../apis/userApi';
 
 const { Option } = Select;
 
@@ -36,6 +37,8 @@ const RoomManagement = () => {
     const [loading, setLoading] = useState(true);
     const [form] = Form.useForm();
     const [form2] = Form.useForm();
+    const [form3] = Form.useForm();
+
     const [id, setId] = useState();
 
     const showModal = () => {
@@ -76,6 +79,49 @@ const RoomManagement = () => {
                         message: `Thông báo`,
                         description:
                             'Tạo phòng thành công',
+                    });
+                    setOpenModalCreate(false);
+                    handleCategoryList();
+                }
+            })
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    const handleOkUser2 = async (values) => {
+        console.log(values);
+        
+        setLoading(true);
+        try {
+            const categoryList = {
+                userId: values.resident_id,
+                roomId: roomId,
+            };
+            return roomManagementApi.addResidentToRoom(categoryList).then(response => {
+                if (response.message === "Room or user not found") {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Phòng hoặc người dùng không tồn tại',
+                    });
+                    setLoading(false);
+                    return;
+                }
+
+                if (response === undefined) {
+                    notification["error"]({
+                        message: `Thông báo`,
+                        description:
+                            'Thêm người thất bại',
+                    });
+                }
+                else {
+                    notification["success"]({
+                        message: `Thông báo`,
+                        description:
+                            'Tạo người thành công',
                     });
                     setOpenModalCreate(false);
                     handleCategoryList();
@@ -217,6 +263,14 @@ const RoomManagement = () => {
         }
     }
 
+    const [openModalAddResident, setOpenModalAddResident] = useState(false);
+    const [roomId, setRoomId] = useState(false);
+
+    const showAddResidentModal = (id) => {
+        setRoomId(id);
+        setOpenModalAddResident(true);
+    };
+
     const columns = [
         {
             title: 'ID',
@@ -258,11 +312,25 @@ const RoomManagement = () => {
             key: 'description',
         },
         {
+            title: 'Chủ hộ',
+            dataIndex: 'residents',
+            key: 'residents',
+            render: (text, record) => (
+                <div>
+                    {text && text.length > 0 ? (
+                        `${text[0].username} - ${text[0].email}`
+                    ) : (
+                        'Chưa có chủ phòng'
+                    )}
+                </div>
+            ),
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
                 <div>
-                    <Row>
+                    <Row style={{display: 'flex', flexDirection: 'column'}}>
                         <Button
                             size="small"
                             icon={<EditOutlined />}
@@ -271,7 +339,7 @@ const RoomManagement = () => {
                         >
                             {"Chỉnh sửa"}
                         </Button>
-                        <div style={{ marginLeft: 10 }}>
+                        <div style={{ marginTop: 6 }}>
                             <Popconfirm
                                 title="Bạn có chắc chắn xóa phòng này?"
                                 onConfirm={() => handleDeleteCategory(record.id)}
@@ -287,10 +355,33 @@ const RoomManagement = () => {
                                 </Button>
                             </Popconfirm>
                         </div>
+                        <div style={{ marginTop: 6 }}>
+                            {record.residents && record.residents.length > 0 ? (
+                                <Button
+                                    size="small"
+                                    icon={<PlusOutlined />}
+                                    style={{ width: 150, borderRadius: 15, height: 30, display: 'none' }}
+                                    onClick={() => showAddResidentModal(record.id)}
+                                >
+                                    {"Thêm cư dân"}
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="small"
+                                    icon={<PlusOutlined />}
+                                    style={{ width: 150, borderRadius: 15, height: 30 }}
+                                    onClick={() => showAddResidentModal(record.id)}
+                                >
+                                    {"Thêm cư dân"}
+                                </Button>
+                            )}
+                        </div>
                     </Row>
-                </div >
+                </div>
             ),
         },
+        
+        
     ];
 
     const roomTypes = ['Căn hộ thông thường', 'Căn hộ studio', 'Shophouse', 'Căn hộ Duplex', ' Căn hộ Sky Villa'];
@@ -333,11 +424,25 @@ const RoomManagement = () => {
                     setLoading(false);
                 });
 
+                await userApi.listUserByAdmin().then((res) => {
+                    const residentsList = res.data.filter(user => user.role === 'resident');
+                    setUserList(residentsList);
+                    setLoading(false);
+                });
+
             } catch (error) {
                 console.log('Failed to fetch category list:' + error);
             }
         })();
     }, [])
+
+    const handleCancelAddResident = () => {
+        setOpenModalAddResident(false);
+    };
+
+    const [residentList, setUserList] = useState();
+
+
     return (
         <div>
             <Spin spinning={loading}>
@@ -399,6 +504,59 @@ const RoomManagement = () => {
                         <Table columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={category} />
                     </div>
                 </div>
+
+                <Modal
+                    title="Thêm cư dân"
+                    visible={openModalAddResident}
+                    style={{ top: 100 }}
+                    onOk={() => {
+                        form3
+                            .validateFields()
+                            .then((values) => {
+                                form3.resetFields();
+                                handleOkUser2(values);
+                            })
+                            .catch((info) => {
+                                console.log('Validate Failed:', info);
+                            });
+                    }}
+                    onCancel={handleCancelAddResident}
+                    okText="Hoàn thành"
+                    cancelText="Hủy"
+                    width={600}
+                >
+                    <Form
+                        form={form3}
+                        name="eventCreate"
+                        layout="vertical"
+                        initialValues={{
+                            residence: ['zhejiang', 'hangzhou', 'xihu'],
+                            prefix: '86',
+                        }}
+                        scrollToFirstError
+                    >
+                        <Form.Item
+                            name="resident_id"
+                            label="Cư dân"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng chọn cư dân!',
+                                },
+                            ]}
+                            style={{ marginBottom: 10 }}
+                        >
+                            <Select placeholder="Chọn cư dân">
+                                {residentList?.map(resident => (
+                                    <Option key={resident.id} value={resident.id}>
+                                        {resident.username}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+
+                    </Form>
+                </Modal>
 
                 <Modal
                     title="Tạo phòng mới"
@@ -621,7 +779,6 @@ const RoomManagement = () => {
                             <Select placeholder="Chọn trạng thái">
                                 <Select.Option value="Đã sử dụng">Đã sử dụng</Select.Option>
                                 <Select.Option value="Phòng trống">Phòng trống</Select.Option>
-                                <Select.Option value="Phòng khác">Phòng khác</Select.Option>
                             </Select>
                         </Form.Item>
                         <Form.Item

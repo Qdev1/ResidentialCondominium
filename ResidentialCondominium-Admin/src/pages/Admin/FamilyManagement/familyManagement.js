@@ -62,6 +62,17 @@ const FamilyManagement = () => {
             dataIndex: 'children',
             key: 'children',
         },
+        {
+            title: 'Số phòng',
+            dataIndex: 'rooms',
+            key: 'rooms',
+            render: (text) => {
+                const roomArray = text.split(', ');
+                const firstRoom = roomArray[0];
+                
+                return <div>{firstRoom ? firstRoom : 'Chưa có phòng'}</div>;
+            },
+        },
     ];
 
     useEffect(() => {

@@ -23,30 +23,38 @@ const userController = {
     createUser: async (req, res) => {
         try {
             const inputEmail = req.body.email;
-
+            const inputPhone = req.body.phone;
+    
+            // Check if email already exists
             const [checkEmailExist] = await db.execute('SELECT * FROM users WHERE email = ?', [inputEmail]);
-
             if (checkEmailExist.length > 0) {
-                return res.status(200).json("User already exists");
+                return res.status(200).json("User with this email already exists");
             }
-
+    
+            // Check if phone already exists
+            const [checkPhoneExist] = await db.execute('SELECT * FROM users WHERE phone = ?', [inputPhone]);
+            if (checkPhoneExist.length > 0) {
+                return res.status(200).json("User with this phone number already exists");
+            }
+    
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(req.body.password, salt);
-
+    
             const { email, phone, username, role, status } = req.body;
-
+    
             const values = [email || null, phone || null, username || null, hashed || null, role || null, status || null];
-
+    
             const query = 'INSERT INTO users (email, phone, username, password, role, status) VALUES (?, ?, ?, ?, ?, ?)';
-
+    
             const [result] = await db.execute(query, values);
             const userId = result.insertId;
-
+    
             res.status(200).json({ id: userId, email, phone, username, role, status });
         } catch (err) {
             res.status(500).json(err);
         }
     },
+    
 
 
     deleteUser: async (req, res) => {

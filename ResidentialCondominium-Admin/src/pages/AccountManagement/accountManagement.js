@@ -266,6 +266,14 @@ const AccountManagement = () => {
             await axiosClient.post("/user", formatData)
                 .then(response => {
                     console.log(response)
+                    if (response == "User with this phone number already exists") {
+                        return message.error('Số điện thoại không được trùng');
+                    }
+
+                    if (response == "User with this email already exists") {
+                        return message.error('Email không được trùng');
+                    }
+
                     if (response == "User already exists") {
                         return message.error('Tài khoản đã tổn tại');
                     } else

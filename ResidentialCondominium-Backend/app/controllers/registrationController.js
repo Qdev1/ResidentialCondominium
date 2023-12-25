@@ -88,43 +88,72 @@ const registrationController = {
 
     getAllPersonalInfo: async (req, res) => {
         try {
-            // Query to retrieve all personal information records along with family_info
+            // Query to retrieve all personal information records along with family_info and rooms
             const [personalInfoRows] = await db.execute(`
-                SELECT 
-                pi.id,
-                pi.full_name,
-                pi.address,
-                pi.phone_number,
-                fi.spouse_name, 
-                GROUP_CONCAT(fi.child_name SEPARATOR ', ') AS children
-                FROM personal_info pi
-                LEFT JOIN family_info fi ON pi.id = fi.personal_info_id
-                GROUP BY pi.id, pi.full_name, pi.address, pi.phone_number, fi.spouse_name;
+            SELECT 
+            pi.id AS personal_info_id,
+            pi.user_id,
+            pi.created_at AS personal_info_created_at,
+            pi.full_name,
+            pi.address,
+            pi.phone_number,
+            fi.spouse_name, 
+            GROUP_CONCAT(fi.child_name SEPARATOR ', ') AS children,
+            GROUP_CONCAT(r.name SEPARATOR ', ') AS rooms
+        FROM personal_info pi
+        LEFT JOIN family_info fi ON pi.id = fi.personal_info_id
+        LEFT JOIN rooms r ON pi.user_id = r.id
+        GROUP BY pi.id, pi.user_id, pi.created_at, pi.full_name, pi.address, pi.phone_number, fi.spouse_name;
+        
             `);
-    
+
             // If there are no records, return an empty array
             if (!personalInfoRows || personalInfoRows.length === 0) {
                 return res.status(404).json({ message: 'No personal information records found', status: false });
             }
-    
+            console.log(personalInfoRows);
             // Transform the structure of each personalInfo object
             const transformedData = personalInfoRows.map(personalInfo => ({
-                id: personalInfo.id,
+                id: personalInfo.user_id,
+                personal_info_id: personalInfo.personal_info_id,
+                personal_info_created_at: personalInfo.personal_info_created_at,
                 full_name: personalInfo.full_name,
                 address: personalInfo.address,
                 phone_number: personalInfo.phone_number,
                 spouse_name: personalInfo.spouse_name,
                 children: personalInfo.children,
+                rooms: personalInfo.rooms,
             }));
-    
+
+            // Sắp xếp transformedData theo user_id và personal_info_created_at giảm dần
+            const sortedData = transformedData.sort((a, b) => {
+                if (a.user_id === b.user_id) {
+                    return new Date(b.personal_info_created_at) - new Date(a.personal_info_created_at);
+                }
+                return a.user_id - b.user_id;
+            });
+
+            // Tạo một đối tượng để theo dõi user_id đã xử lý và giữ lại bản ghi có personal_info_created_at mới nhất
+            const uniqueTransformedData = sortedData.reduce((accumulator, currentRecord) => {
+                if (!accumulator[currentRecord.user_id]) {
+                    accumulator[currentRecord.user_id] = currentRecord;
+                }
+                return accumulator;
+            }, {});
+
+            // Chuyển uniqueTransformedData từ đối tượng về mảng
+            const resultArray = Object.values(uniqueTransformedData);
+
+            console.log(resultArray);
+
             // Return the list of transformed personal information records
-            res.status(200).json({ data: transformedData });
+            res.status(200).json({ data: resultArray });
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
         }
     },
-    
+
 };
 
 module.exports = registrationController;

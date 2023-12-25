@@ -75,7 +75,7 @@ const Home = () => {
                     </div>
                     <div className={styles.headerContent}>
                         <div className={styles.heroText}>
-                            our All-in-One Solution for Efficient Condo Operations
+                            Thông tin của kế hoạch bảo trì
                         </div>
                         <div className={styles.heroHeading}>
                             <b className={styles.condoOperationsManagement}>

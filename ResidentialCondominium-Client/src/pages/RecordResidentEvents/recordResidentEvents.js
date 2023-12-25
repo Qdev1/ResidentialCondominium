@@ -51,6 +51,12 @@ const RecordResidentEvents = () => {
             dataIndex: 'description',
             key: 'description',
         },
+        {
+            title: 'Ngày diễn ra',
+            dataIndex: 'date',
+            key: 'date',
+            render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
     ];
 
     const handleMenuClick = (key) => {

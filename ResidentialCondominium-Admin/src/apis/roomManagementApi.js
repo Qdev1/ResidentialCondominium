@@ -19,6 +19,24 @@ const roomManagementApi = {
             throw error;
         }
     },
+    async addResidentToRoom(data) {
+        const url = 'room/addResident';
+        try {
+            const response = await axiosClient.post(url, data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+    async removeResidentFromRoom(data) {
+        const url = 'room/removeResident';
+        try {
+            const response = await axiosClient.post(url, data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
     async updateRoomManagement(data, id) {
         const url = 'room/' + id;
         try {

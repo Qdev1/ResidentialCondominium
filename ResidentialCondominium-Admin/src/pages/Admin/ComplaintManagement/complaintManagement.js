@@ -342,36 +342,44 @@ const ComplaintManagement = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (text, record) => (
-                <div>
-                    <Row>
-                        <Button
-                            size="small"
-                            icon={<EditOutlined />}
-                            style={{ width: 150, borderRadius: 15, height: 30 }}
-                            onClick={() => handleEditCategory(record.id)}
-                        >
-                            {"Chỉnh sửa"}
-                        </Button>
-                        <div style={{ marginLeft: 10 }}>
-                            <Popconfirm
-                                title="Are you sure to delete this complaint?"
-                                onConfirm={() => handleDeleteCategory(record.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
+            render: (text, record) => {
+                const isCompleted = record.status === 'Đã xong';
+        
+                return (
+                    <div>
+                        <Row>
+                            {!isCompleted && (
                                 <Button
                                     size="small"
-                                    icon={<DeleteOutlined />}
+                                    icon={<EditOutlined />}
                                     style={{ width: 150, borderRadius: 15, height: 30 }}
+                                    onClick={() => handleEditCategory(record.id)}
                                 >
-                                    {"Xóa"}
+                                    {"Chỉnh sửa"}
                                 </Button>
-                            </Popconfirm>
-                        </div>
-                    </Row>
-                </div>
-            ),
+                            )}
+                            <div style={{ marginLeft: 10 }}>
+                                {!isCompleted && (
+                                    <Popconfirm
+                                        title="Are you sure to delete this complaint?"
+                                        onConfirm={() => handleDeleteCategory(record.id)}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
+                                        <Button
+                                            size="small"
+                                            icon={<DeleteOutlined />}
+                                            style={{ width: 150, borderRadius: 15, height: 30 }}
+                                        >
+                                            {"Xóa"}
+                                        </Button>
+                                    </Popconfirm>
+                                )}
+                            </div>
+                        </Row>
+                    </div>
+                );
+            },
         },
     ];
 
