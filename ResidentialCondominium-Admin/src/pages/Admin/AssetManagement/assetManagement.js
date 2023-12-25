@@ -380,6 +380,7 @@ const AssetManagement = () => {
                     setCategory(res.data);
                     setLoading(false);
                 });
+                
 
                 await assetCategoryApi.listAssetCategories().then((res) => {
                     console.log(res);

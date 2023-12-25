@@ -52,7 +52,7 @@ const MaintenanceHistory = () => {
         setLoading(true);
         try {
             const categoryList = {
-                "asset_id": values.assetId || 1,
+                "asset_id": values.asset_id || 67,
                 "plan_id": values.plan_id,
                 "description": values.description,
                 "date": values.date.format("YYYY-MM-DD"),
@@ -88,7 +88,7 @@ const MaintenanceHistory = () => {
         setLoading(true);
         try {
             const categoryList = {
-                "asset_id": values.asset_id || 1,
+                "asset_id": values.asset_id || 67,
                 "plan_id": values.plan_id,
                 "description": values.description,
                 "date": values.date.format("YYYY-MM-DD"),
