@@ -67,10 +67,14 @@ const FamilyManagement = () => {
             dataIndex: 'rooms',
             key: 'rooms',
             render: (text) => {
-                const roomArray = text.split(', ');
-                const firstRoom = roomArray[0];
+                if(text){
+                    const roomArray = text.split(', ');
+                    const firstRoom = roomArray[0];
+                    return <div>{firstRoom ? firstRoom : 'Chưa có phòng'}</div>;
+                }
+                return <div>{'Chưa có phòng'}</div>;
                 
-                return <div>{firstRoom ? firstRoom : 'Chưa có phòng'}</div>;
+              
             },
         },
     ];

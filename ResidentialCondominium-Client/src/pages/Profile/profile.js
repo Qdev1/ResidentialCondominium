@@ -147,7 +147,7 @@ const Profile = () => {
         console.log('Submitted personal info:', values);
         try {
             const data = {
-                "userId": 1,
+                "userId": userData.id,
                 "personalInfo": {
                     "fullName": values.fullName,
                     "address": values.address,
@@ -163,14 +163,14 @@ const Profile = () => {
                     notification["error"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo khiếu nại thất bại',
+                            'Đăng ký thông tin gia đình thất bại',
                     });
                 }
                 else {
                     notification["success"]({
                         message: `Thông báo`,
                         description:
-                            'Tạo khiếu nại thành công',
+                            'Đăng ký thông tin gia đình thành công',
                     });
 
                     handleCancel();
